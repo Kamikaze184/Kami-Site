@@ -1,30 +1,23 @@
-const fs = require('fs');
-const path = require('path');
-const dbPath = path.join(process.env.local)
 var firstS = true
+const map = new Map()
 
-module.exports = class json_database {
+module.exports = class map_database {
     constructor() {
         if (firstS) {
-            fs.writeFileSync(dbPath, "{}", { flag: "w+" }, (err) => {
-                if (err) {
-                    throw err;
-                }
+            map.set("botinfo", {
+                "serverCount": 1,
+                "userCount": 1,
+                "fichasCount": 1,
+                "commandsTotal": 1,
+                "inviteLink": "/"
             })
+
             firstS = false
         }
     }
 
     set(key, value) {
-        var db = require(dbPath)
-        db[key] = { content: value }
-
-        fs.writeFileSync(dbPath, JSON.stringify(db), { flag: "w+" }, (err) => {
-            if (err) {
-                throw err;
-            }
-        })
-
+        map.set(key, value)
         return true
     }
 
@@ -32,7 +25,7 @@ module.exports = class json_database {
         let toReturn
 
         try {
-            toReturn = require(dbPath)[key].content
+            toReturn = map.get(key)
         }
         catch (err) {
             toReturn = undefined
@@ -42,26 +35,16 @@ module.exports = class json_database {
     }
 
     delete(key) {
-        var db = require(dbPath)
-        db[key] = undefined
-
-        fs.writeFileSync(dbPath, JSON.stringify(db), { flag: "w+" }, (err) => {
-            if (err) {
-                throw err;
-            }
-        })
-
+        map.delete(key)
         return true
     }
 
     has(key) {
-        const db = require(dbPath)
-        if (db[key].content) { return true }
+        if (map.get(key)) { return true }
         else { return false }
     }
 
     length() {
-        const db = require(dbPath)
-        return db.size
+        return map.length
     }
 }
