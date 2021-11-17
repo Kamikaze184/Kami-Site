@@ -8,7 +8,7 @@ const services = new viewsServices()
 
 routes.get("/", (req, res) => {
     const botinfo = services.getBotinfo()
-    res.render("index", {
+    res.render("index.ejs", {
         botStatus: botinfo,
         inviteLink: botinfo.inviteLink
     });
@@ -16,7 +16,7 @@ routes.get("/", (req, res) => {
 
 routes.get("/sobre", (req, res) => {
     const botinfo = services.getBotinfo()
-    res.render("sobre", {
+    res.render("sobre.ejs", {
         inviteLink: botinfo.inviteLink
     })
 });
@@ -24,7 +24,7 @@ routes.get("/sobre", (req, res) => {
 routes.get("/comandos", (req, res) => {
     const botinfo = services.getBotinfo()
     const commands = services.getCommands()
-    res.render("comandos", {
+    res.render("comandos.ejs", {
         comandos: commands,
         inviteLink: botinfo.inviteLink
     })
@@ -37,7 +37,7 @@ routes.get("/tutoriais", (req, res) => {
     if (req.query.search) {
         const result = services.tutorialSearchEngine(req.query.search, tutoriais)
 
-        res.render("tutoriais", {
+        res.render("tutoriais.ejs", {
             comandos: commands,
             inviteLink: botinfo.inviteLink,
             queryResult: result.find,
@@ -48,7 +48,7 @@ routes.get("/tutoriais", (req, res) => {
 
     }
     else {
-        res.render("tutoriais", {
+        res.render("tutoriais.ejs", {
             comandos: commands,
             inviteLink: botinfo.inviteLink,
             queryResult: null,
@@ -63,7 +63,7 @@ routes.get("/tutoriais/:tutorial", (req, res) => {
     const botinfo = services.getBotinfo()
     const tutorial = services.getTutorial(req.params.tutorial, tutoriais)
 
-    res.render("tutorial", {
+    res.render("tutorial.ejs", {
         inviteLink: botinfo.inviteLink,
         tutorial: tutorial
     })
