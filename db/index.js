@@ -7,7 +7,7 @@ module.exports = class json_database {
     constructor() {
         if (firstS) {
             if (!fs.existsSync(dbPath)) {
-                fs.writeFileSync(dbPath, "{}", { flag: "w" }, (err) => {
+                fs.writeFileSync(dbPath, "{}", { flag: "w+" }, (err) => {
                     if (err) {
                         throw err;
                     }
@@ -21,7 +21,7 @@ module.exports = class json_database {
         var db = require('./json/db.json')
         db[key] = { content: value }
 
-        fs.writeFileSync(dbPath, JSON.stringify(db), { flag: "w" }, (err) => {
+        fs.writeFileSync(dbPath, JSON.stringify(db), { flag: "w+" }, (err) => {
             if (err) {
                 throw err;
             }
@@ -47,7 +47,7 @@ module.exports = class json_database {
         var db = require('./json/db.json')
         db[key] = undefined
 
-        fs.writeFileSync(dbPath, JSON.stringify(db), { flag: "w" }, (err) => {
+        fs.writeFileSync(dbPath, JSON.stringify(db), { flag: "w+" }, (err) => {
             if (err) {
                 throw err;
             }
@@ -66,5 +66,4 @@ module.exports = class json_database {
         const db = require('./json/db.json')
         return db.size
     }
-
 }
