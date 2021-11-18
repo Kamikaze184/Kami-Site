@@ -22,5 +22,6 @@ app.set('public', path.join(__dirname, 'public'))
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.static("public/assets/tutoriais"))
+app.use(express.static("public/assets/img/"))
 
 module.exports = app

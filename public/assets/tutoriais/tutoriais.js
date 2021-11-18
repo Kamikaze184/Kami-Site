@@ -5,7 +5,7 @@ module.exports = new Map([
                 link: "criar-ficha",
                 title: 'Criando a sua primeira ficha',
                 desc: 'Aprendendo a usar o comando /ficha',
-                thumb: "/assets/tutoriais/img/f-cf-opcoes.png",
+                thumb: "/assets/tutoriais/img/f-cF-opcoes.png",
                 tags: ['ficha', 'criar', 'primeira', 'atributo', 'valor'],
                 tutorial: `
                 <h2>Para criar sua primeira ficha é bem simples!</h2>
@@ -13,7 +13,7 @@ module.exports = new Map([
                 <br>
                 <h4>O comando /ficha terá as seguintes opções: nome_da_ficha, atributo e valor.</h4>
                 <br>
-                <img src="/assets/tutoriais/img/f-cf-opcoes.png">
+                <img src="/assets/tutoriais/img/f-cF-opcoes.png">
                 <br>
 
                 <h4>O nome_da_ficha, como o nome sugere, é como você vai chamar sua ficha.</h4>
@@ -37,11 +37,11 @@ module.exports = new Map([
                 <br>
                 <p>Exemplo: /ficha RPG_Kami nome Kami BOT</p>
                 <br>
-                <img src="/assets/tutoriais/img/f-cf-ex.png">
+                <img src="/assets/tutoriais/img/f-cF-ex.png">
                 <br>
                 <p>Clique em confirmar e sua ficha estará criada!</p>
                 <br>
-                <img src="/assets/tutoriais/img/f-cf-conf.png">
+                <img src="/assets/tutoriais/img/f-cF-conf.png">
                 <br>
             `
             },
@@ -49,7 +49,7 @@ module.exports = new Map([
                 link: "atb-personalizados",
                 title: 'Adicionando à sua ficha atributos personalizados',
                 desc: 'Aprendendo a usar o Extras do /ficha',
-                thumb: "/assets/tutoriais/img/f-cf-extras.png",
+                thumb: "/assets/tutoriais/img/f-cF-extras.png",
                 tags: ['ficha', 'adicionar', 'atributo', 'personalizado', 'extras', 'custom'],
                 tutorial: `
                 <h2>Adicionar atributos personalizados não é tão complicado!</h2>
@@ -57,7 +57,7 @@ module.exports = new Map([
                 <br>
                 <h4>Você irá utilizar o /ficha com "extras" no local do atributo.</h4>
                 <br>
-                <img src="/assets/tutoriais/img/f-cf-extras.png">
+                <img src="/assets/tutoriais/img/f-cF-extras.png">
                 <br>
                 <p>Com isso o BOT irá entender que você quer adicionar um atributo que não está na lista dos padrões e não irá parar o comando se não encontrar o mesmo.</p>
                 <br>
@@ -69,7 +69,7 @@ module.exports = new Map([
                 <br>
                 <p>Exemplo: /ficha RPG_Kami extras meuAtb1:1 | meuAtb2:2</p>
                 <br>
-                <img src="/assets/tutoriais/img/f-cf-exExtras.png">
+                <img src="/assets/tutoriais/img/f-cF-exExtras.png">
                 <br>
                 <p>Pronto, agora sua ficha estará com os atributos que você mesmo criou!</p>
                 `
