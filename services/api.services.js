@@ -43,7 +43,7 @@ class apiServices {
                 })
 
                 this.saveBotinfo(res.data)
-            }, 1.8e+6)
+            }, 20 * 60 * 1000)
 
         }
 
@@ -56,7 +56,7 @@ class apiServices {
             })
 
             this.saveBotinfo(res.data)
-        }, 1.8e+6)
+        }, 20 * 60 * 1000)
     }
 
     async getCommands() {
@@ -78,7 +78,7 @@ class apiServices {
             })
 
             this.saveCommands(res.data)
-        }, 1.8e+6)
+        }, 20 * 60 * 1000)
     }
 }
 
