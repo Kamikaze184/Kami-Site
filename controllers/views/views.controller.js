@@ -4,7 +4,7 @@ const routes = Router()
 const tutoriais = require('../../public/assets/tutoriais/tutoriais');
 
 const viewsServices = require('../../services/views.service')
-const services = new viewsServices()
+const services = new viewsServices(require("../../db/index"))
 
 routes.get("/", (req, res) => {
     const botinfo = services.getBotinfo()
@@ -23,7 +23,8 @@ routes.get("/sobre", (req, res) => {
 
 routes.get("/comandos", (req, res) => {
     const botinfo = services.getBotinfo()
-    const commands = services.getCommands()
+    const commands = new Map(Object.entries(services.getCommands()))
+
     res.render("comandos.ejs", {
         comandos: commands,
         inviteLink: botinfo.inviteLink

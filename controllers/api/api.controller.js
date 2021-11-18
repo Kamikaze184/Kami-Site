@@ -2,12 +2,11 @@ const { Router, json } = require('express')
 const routes = Router()
 
 const apiServices = require('../../services/api.services')
-const services = new apiServices()
+const services = new apiServices(require("../../db/index"))
 
 routes.use(json())
 
 routes.post("/botinfo", (req, res) => {
-    console.log(req.body)
     if (req.headers.authorization === process.env.apiToken) {
         try {
             services.saveBotinfo(req.body)

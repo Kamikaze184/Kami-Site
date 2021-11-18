@@ -1,31 +1,19 @@
-var firstS = true
-const map = new Map()
-
-module.exports = class map_database {
+class DB {
     constructor() {
-        if (firstS) {
-            map.set("botinfo", {
-                "serverCount": 1,
-                "userCount": 1,
-                "fichasCount": 1,
-                "commandsTotal": 1,
-                "inviteLink": "/"
-            })
-
-            firstS = false
-        }
+        this.map = new Map()
     }
 
     set(key, value) {
-        map.set(key, value)
-        return true
+        this.map.set(key, { key: key, content: value })
+
+        return "Setado com sucesso"
     }
 
     get(key) {
         let toReturn
 
         try {
-            toReturn = map.get(key)
+            toReturn = this.map.get(key).content
         }
         catch (err) {
             toReturn = undefined
@@ -35,16 +23,23 @@ module.exports = class map_database {
     }
 
     delete(key) {
-        map.delete(key)
-        return true
+        this.map.delete(key)
+
+        return "Deletado com sucesso"
     }
 
     has(key) {
-        if (map.get(key)) { return true }
+        if (this.map.get(key)) { return true }
         else { return false }
     }
 
     length() {
-        return map.length
+        return this.map.size
     }
+}
+
+const db = new DB()
+
+module.exports = {
+    db
 }

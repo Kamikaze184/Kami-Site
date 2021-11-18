@@ -1,9 +1,8 @@
 const ss = require('string-similarity')
 
 class viewsService {
-    constructor() {
-        const db = require('../db/index')
-        this.db = new db()
+    constructor(db) {
+        this.db = db.db
     }
 
     getBotinfo() {
