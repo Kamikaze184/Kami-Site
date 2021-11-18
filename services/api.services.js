@@ -43,7 +43,7 @@ class apiServices {
                 })
 
                 this.saveBotinfo(res.data)
-            }, 10000)
+            }, 1.8e+6)
 
         }
 
