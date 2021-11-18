@@ -10,14 +10,14 @@ routes.get("/", (req, res) => {
     const botinfo = services.getBotinfo()
     res.render("index.ejs", {
         botStatus: botinfo,
-        inviteLink: botinfo.inviteLink
+        inviteLink: botinfo.inviteLink || "https://discord.com/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands"
     });
 });
 
 routes.get("/sobre", (req, res) => {
     const botinfo = services.getBotinfo()
     res.render("sobre.ejs", {
-        inviteLink: botinfo.inviteLink
+        inviteLink: botinfo.inviteLink || "https://discord.com/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands"
     })
 });
 
@@ -27,7 +27,7 @@ routes.get("/comandos", (req, res) => {
 
     res.render("comandos.ejs", {
         comandos: commands,
-        inviteLink: botinfo.inviteLink
+        inviteLink: botinfo.inviteLink || "https://discord.com/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands"
     })
 });
 
@@ -65,8 +65,8 @@ routes.get("/tutoriais/:tutorial", (req, res) => {
     const tutorial = services.getTutorial(req.params.tutorial, tutoriais)
 
     res.render("tutorial.ejs", {
-        inviteLink: botinfo.inviteLink,
-        tutorial: tutorial
+        tutorial: tutorial,
+        inviteLink: botinfo.inviteLink || "https://discord.com/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands"
     })
 });
 
