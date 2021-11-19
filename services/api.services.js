@@ -1,8 +1,7 @@
-const { default: axios } = require("axios")
-
 class apiServices {
-    constructor(db) {
-        this.db = db.db
+    constructor() {
+        const Database = require("@replit/database")
+        this.db = new Database()
     }
 
     saveBotinfo(botinfo) {
@@ -24,61 +23,22 @@ class apiServices {
     }
 
     async getBotinfo() {
-        const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            }
-        })
-
-        this.saveBotinfo(res.data)
-
-        if (res.data.oldInfo) {
-            setTimeout(async () => {
-                const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
-                    headers: {
-                        "Authorization": process.env.apiToken,
-                        "Content-Type": "application/json"
-                    }
-                })
-
-                this.saveBotinfo(res.data)
-            }, 20 * 60 * 1000)
-
+        try {
+            return this.db.get("botinfo")
+        }
+        catch (err) {
+            throw new Error(err)
         }
 
-        setInterval(async () => {
-            const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
-                headers: {
-                    "Authorization": process.env.apiToken,
-                    "Content-Type": "application/json"
-                }
-            })
-
-            this.saveBotinfo(res.data)
-        }, 20 * 60 * 1000)
     }
 
     async getCommands() {
-        const res = await axios.get(`${process.env.apiUrl}/comandos`, {
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            }
-        })
-
-        this.saveCommands(res.data)
-
-        setInterval(async () => {
-            const res = await axios.get(`${process.env.apiUrl}/comandos`, {
-                headers: {
-                    "Authorization": process.env.apiToken,
-                    "Content-Type": "application/json"
-                }
-            })
-
-            this.saveCommands(res.data)
-        }, 20 * 60 * 1000)
+        try {
+            return this.db.get("commands")
+        }
+        catch (err) {
+            throw new Error(err)
+        }
     }
 }
 
