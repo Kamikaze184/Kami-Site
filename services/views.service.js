@@ -36,7 +36,7 @@ class viewsService {
         tutoriais.forEach((c) => {
             c.forEach((t) => {
                 if (search.length > 1) {
-                    for (x in search) {
+                    for (var x in search) {
                         result = ss.findBestMatch(search[x], t.tags)
 
                         if (result.bestMatch.rating > 0.75) {
