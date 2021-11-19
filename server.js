@@ -9,12 +9,6 @@ for (c in controllers.paths) {
     app.use(controllers.paths[c], controllers.router[c])
 }
 
-const _apiServices = new require("./services/api.services")
-const apiServices = new _apiServices(require("./db/index"))
-
-apiServices.getBotinfo()
-apiServices.getCommands()
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 app.set('public', path.join(__dirname, 'public'))

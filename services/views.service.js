@@ -1,21 +1,34 @@
 const ss = require('string-similarity')
+const axios = require('axios')
 
 class viewsService {
-    constructor(db) {
-        this.db = db.db
+    constructor() {
     }
 
-    getBotinfo() {
-        return this.db.get("botinfo")
+    async getBotinfo() {
+        const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            }
+        })
+
+        return res.data.botinfo
     }
 
-    getCommands() {
-        return this.db.get("commands")
+    async getCommands() {
+        const res = await axios.get(`${process.env.apiUrl}/comandos`, {
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            }
+        })
+
+        return res.data
     }
 
     tutorialSearchEngine(search, tutoriais) {
         const find = new Array()
-        var search = req.query.search
         var result
 
         search = search.split(" ")
