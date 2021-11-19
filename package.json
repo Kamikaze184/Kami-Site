@@ -1,7 +1,7 @@
 {
-  "name": "kami-api",
-  "version": "1.0.0",
-  "description": "API entre o BOT para Discord Kami e seu site",
+  "name": "kami-site",
+  "version": "2.2.1",
+  "description": "Site para o BOT para Discord Kami",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
@@ -10,11 +10,13 @@
   "author": "Kamikaze_184",
   "license": "CC BY-NC-ND 4.0",
   "dependencies": {
-    "@replit/database": "^2.0.1",
+    "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "serve-favicon": "^2.5.0",
+    "string-similarity": "^4.0.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

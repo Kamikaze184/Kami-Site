@@ -1,7 +1,8 @@
+const { default: axios } = require("axios")
+
 class apiServices {
-    constructor() {
-        const Database = require("@replit/database")
-        this.db = new Database()
+    constructor(db) {
+        this.db = db.db
     }
 
     saveBotinfo(botinfo) {
@@ -23,22 +24,61 @@ class apiServices {
     }
 
     async getBotinfo() {
-        try {
-            return this.db.get("botinfo")
-        }
-        catch (err) {
-            throw new Error(err)
+        const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            }
+        })
+
+        this.saveBotinfo(res.data)
+
+        if (res.data.oldInfo) {
+            setTimeout(async () => {
+                const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
+                    headers: {
+                        "Authorization": process.env.apiToken,
+                        "Content-Type": "application/json"
+                    }
+                })
+
+                this.saveBotinfo(res.data)
+            }, 20 * 60 * 1000)
+
         }
 
+        setInterval(async () => {
+            const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
+                headers: {
+                    "Authorization": process.env.apiToken,
+                    "Content-Type": "application/json"
+                }
+            })
+
+            this.saveBotinfo(res.data)
+        }, 20 * 60 * 1000)
     }
 
     async getCommands() {
-        try {
-            return this.db.get("commands")
-        }
-        catch (err) {
-            throw new Error(err)
-        }
+        const res = await axios.get(`${process.env.apiUrl}/comandos`, {
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            }
+        })
+
+        this.saveCommands(res.data)
+
+        setInterval(async () => {
+            const res = await axios.get(`${process.env.apiUrl}/comandos`, {
+                headers: {
+                    "Authorization": process.env.apiToken,
+                    "Content-Type": "application/json"
+                }
+            })
+
+            this.saveCommands(res.data)
+        }, 20 * 60 * 1000)
     }
 }
 

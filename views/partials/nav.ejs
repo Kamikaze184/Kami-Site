@@ -1,0 +1,32 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/partials/nav.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&&display=swap" rel="stylesheet">
+    <script src="/scripts/navbar.js" defer></script>
+</head>
+
+<body>
+    <nav>
+        <a href="/">
+            <div class="logo">
+                <img src="/assets/img/logo.png">
+                <p>Kami</p>
+            </div>
+        </a>
+        <div class="links">
+            <a href="/">Início</a>
+            <a href="../comandos">Comandos</a>
+            <a href="../tutoriais">Tutoriais</a>
+            <a href="<%= inviteLink %>" target="_blank">Adicione o Kami</a>
+            <img src='/assets/img/menu.png' alt='botão menu' class='menuBtn' id="mobile-menu-btn"></img>
+            
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="/">Início</a>
+        <a href="../comandos">Comandos</a>
+        <a href="../tutoriais">Tutoriais</a>
+        <a href="<%= inviteLink %>" target="_blank">Adicione o Kami</a>
+    </div>
+</body>
