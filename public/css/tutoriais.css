@@ -85,7 +85,7 @@
 }
 
 .tutorial-nE a:hover {
-    box-shadow: 0px 0px 10px 1px var(--azul-escuro);
+    background-color: var(--azul-claro);
     transition: 0.3s;
 }
 
@@ -146,7 +146,7 @@
 }
 
 .tutorial:hover {
-    box-shadow: 0px 0px 20px 2px var(--azul-escuro);
+    background-color: var(--azul-claro);
     transition: 0.3s;
 }
 

@@ -3,8 +3,8 @@
 
 <head>
     <%- include('./partials/head.ejs') %>
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/tutorial.css">
+        <link rel="stylesheet" href="/css/global.css">
+        <link rel="stylesheet" href="/css/tutorial.css">
 </head>
 
 <body>
@@ -16,8 +16,12 @@
     <main>
         <section class="tutorial-body">
             <div class="title">
-                <h1><%= tutorial.title %></h1>
-                <p><%= tutorial.desc %></p>
+                <h1>
+                    <%= tutorial.title %>
+                </h1>
+                <p>
+                    <%= tutorial.desc %>
+                </p>
             </div>
             <div class="tutorial" id="tutorial">
                 <%- tutorial.tutorial %>
@@ -31,8 +35,10 @@
                 </div>
             </div>
         </section>
-
-        <img src="/assets/img/background.svg" class="background">
+        <div class="ocean">
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
     </main>
 
     <footer>
