@@ -25,11 +25,11 @@ nav .links {
   padding: 10px;
   font-family: "Roboto", sans-serif;
   color: white;
+  border-radius: 10px;
 }
 
 .links a:hover {
   background-color: var(--azul-escuro);
-  border-radius: 10px;
 }
 
 .links a:active {
