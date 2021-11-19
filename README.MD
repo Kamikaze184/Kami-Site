@@ -8,12 +8,15 @@
 ## Este projeto
 Este projeto é um site criado para realizar a apresentação do BOT e ensinar a como utilizar o mesmo, possuindo informações e estatísticas relacionadas ao BOT e tutoriais de como utilizá-lo.
 &nbsp;
-> ### O site em questão pode ser encontrado **[Clicando aqui](https://kamibot.vercel.app)**
+> ## O site em questão pode ser encontrado **[Clicando aqui](https://kamibot.vercel.app)**
 &nbsp;
 # Projetos relacionados
 - ## **[Kami](https://github.com/Kamikaze184/Kami)** 
   Projeto do BOT em si.
   &nbsp;
 
-- ## **[KamiAPI](https://github.com/Kamikaze184/Kami)**
+- ## **[KamiAPI](https://github.com/Kamikaze184/Kami-API)**
     API que conecta o BOT e o Site.
+
+&nbsp;
+> ## Adicione o Kami ao seu servidor **[Clicando aqui](https://discord.com/api/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands)**
