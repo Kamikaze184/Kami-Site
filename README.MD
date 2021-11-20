@@ -15,8 +15,12 @@ Este projeto é um site criado para realizar a apresentação do BOT e ensinar a
   Projeto do BOT em si.
   &nbsp;
 
-- ## **[KamiAPI](https://github.com/Kamikaze184/Kami-API)**
+- ## **[Kami-API](https://github.com/Kamikaze184/Kami-API)**
     API que conecta o BOT e o Site.
 
 &nbsp;
 > ## Adicione o Kami ao seu servidor **[Clicando aqui](https://discord.com/api/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands)**
+&nbsp;
+
+# Achou algum bug? tem alguma sugestão?
+### Abra uma issue **[clicando aqui](https://github.com/Kamikaze184/Kami-Site/issues)**, ela será respondida o mais rápido possível!
