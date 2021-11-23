@@ -107,7 +107,7 @@
     align-items: center;
     flex-wrap: nowrap;
     width: 22em;
-    height: 13em;
+    height: 15em;
     background-color: var(--azul-escuro);
     border: 3px solid var(--cinza-azulado);
     border-radius: 10px;
@@ -207,7 +207,7 @@
 
     .tutorial {
         width: 20em;
-        height: 12em;
+        height: 14em;
     }
 
     .tutorial h3 {
