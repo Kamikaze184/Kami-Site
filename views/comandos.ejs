@@ -9,7 +9,7 @@
 
 <body>
     <header>
-        <%- include('./partials/nav.ejs', {inviteLink: inviteLink}); %>
+        <%- include('./partials/nav.ejs'); %>
     </header>
     <main>
         <section class="top-text">
@@ -28,7 +28,7 @@
                 <div class="category">
                     <div class="cmd">
                         <h3>
-                            <%= `/${c[1].name}` %>
+                            <%= `${c[1].type == 1 ? "/" : "Apps > "}${c[1].name}` %>
                         </h3>
                         <p>
                             <%= c[1].description %>

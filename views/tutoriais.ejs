@@ -10,7 +10,7 @@
 <body>
 
     <header>
-        <%- include('./partials/nav.ejs', {inviteLink: inviteLink}); %>
+        <%- include('./partials/nav.ejs'); %>
     </header>
 
     <main>
@@ -24,7 +24,7 @@
 
             <div class="search-container">
                 <form role="search" id="form" class="search">
-                    <input class="searchTerm" type="search" id="query" name="search" placeholder="<%= query ? query : "Quer ajuda com o quê?"%>"
+                    <input class="searchTerm" type="search" id="query" name="search" placeholder="<%= query ? "" : "Quer ajuda com o quê?"%>" value="<%= query ? query : "" %>"
                         aria-label="Procure um tutorial.">
                     <button class="searchButton"><img src="../assets/img/search.svg" class="searchBtn"></button>
                 </form>
@@ -32,7 +32,6 @@
 
         </section>
         
-
         <% if( queryFind && query != null) { %>
 
         <section class="tutorial-list" id="tutorial-result">
