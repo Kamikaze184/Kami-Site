@@ -3,8 +3,8 @@
 
 <head>
     <%- include('./partials/head.ejs') %>
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/comandos.css">
+        <link rel="stylesheet" href="/css/global.css">
+        <link rel="stylesheet" href="/css/comandos.css">
 </head>
 
 <body>
@@ -26,9 +26,9 @@
         <section class="commands-list">
             <% for (c of comandos){ %>
                 <div class="category">
-                    <div class="cmd">
+                    <div class="cmd" <%=`style=width:${boxSize.width};height:${boxSize.height}` %>>
                         <h3>
-                            <%= `${c[1].type == 1 ? "/" : "Apps > "}${c[1].name}` %>
+                            <%= `${c[1].type==1 ? "/" : "Apps > " }${c[1].name}` %>
                         </h3>
                         <p>
                             <%= c[1].description %>
@@ -40,10 +40,11 @@
         <div class="ocean">
             <div class="wave"></div>
             <div class="wave"></div>
-          </div>
+        </div>
     </main>
     <footer>
         <%- include('./partials/footer.ejs', {}); %>
     </footer>
 </body>
+
 </html>

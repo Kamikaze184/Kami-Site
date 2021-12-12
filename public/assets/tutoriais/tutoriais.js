@@ -123,7 +123,6 @@ module.exports = new Map([
                 tags: ["ficha", "excluir", "adicionar", "imagem", "geral", "atributo"],
                 tutorial: `
                 <h2>Aqui você pode ver algumas funções comuns para utilizar na ficha</h2>
-
                 <br>
                 <h4>Adicionando uma imagem à sua ficha</h4>
                 <p>Para adicionar uma imagem à sua ficha basta utlizar o comando /ficha colocando como atributo "imagem" e como valor o link para a imagem</p>
@@ -131,6 +130,18 @@ module.exports = new Map([
                 <p>Exemplo: /ficha RPG_Kami imagem https://cdn.discordapp.com/attachments/836291199140102195/912397718859677737/Logo.png</p>
                 <br>
                 <img src="/assets/tutoriais/img/f-cF-exImg.png">
+                <br>
+                <h4>Ou então você pode utilizar outro tipo de comando:</h4>
+                <br>
+                <h4>Apps > Add imagem à ficha</h4>
+                <br>
+                <p>Clique com o botão direito sob uma mensagem que contenha uma imagem em anexo, passe o cursor sob "Apps" e clique em "Add imagem à ficha"</p>
+                <br>
+                <img src="/assets/tutoriais/img/f-cF-exImg2.png">
+                <br>
+                <p>Selecione a ficha onde deseja adicionar a imagem no menu de seleção que irá aparecer e pronto</p>
+                <br>
+                <img src="/assets/tutoriais/img/f-cF-exImg3.png">
                 <br>
                 <p>Só pra avisar, os tipos de imagens permitidas são: .png, .jpg, .jpeg, .gif e .gifv</p>
                 <br>

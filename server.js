@@ -18,4 +18,8 @@ app.use(express.static("public"));
 app.use(express.static("public/assets/tutoriais"))
 app.use(express.static("public/assets/img/"))
 
+app.use(function (req, res, next) {
+    res.status(404).render('404.ejs');
+});
+
 module.exports = app

@@ -15,9 +15,11 @@ routes.get("/", async (req, res) => {
 
 routes.get("/comandos", async (req, res) => {
     const commands = new Map(Object.entries(await services.getCommands()))
+    const boxSize = services.getBoxSize(commands)
 
     res.render("comandos.ejs", {
         comandos: commands,
+        boxSize: boxSize,
     })
 });
 

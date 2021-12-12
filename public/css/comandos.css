@@ -57,8 +57,6 @@
     align-items: center;
     flex-wrap: nowrap;
     margin: 5px;
-    width: 15em;
-    height: 7em;
     background-color: var(--azul-escuro);
     border: 3px solid var(--cinza-azulado);
     border-radius: 10px;

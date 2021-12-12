@@ -82,6 +82,25 @@ class viewsService {
         return tutorial
     }
 
+    getBoxSize(comandos) {
+        let titleSize = 0
+        let descriptionSize = 0
+
+        for (c of comandos) {
+            if (c[1].name.length > titleSize) {
+                titleSize = c[1].name.length
+            }
+            if(c[1].description.length > descriptionSize){
+                descriptionSize = c[1].description.length
+            }
+        }
+
+        return {
+            width: ((titleSize + 7) * 0.64) + "em",
+            height: ((descriptionSize) * 0.10606) + "em"
+        }
+    }
+
 }
 
 module.exports = viewsService
