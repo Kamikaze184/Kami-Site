@@ -13,7 +13,7 @@ function sleep(ms) {
 }
 
 async function count(local, value) {
-    var speed = Math.ceil(((value * 0.0001) + ((value * 1.3) / 500)))
+    var speed = Math.ceil(((value * 0.0001) + ((value * 1.4) / 400)))
     let count = 0;
 
     while (count < value) {

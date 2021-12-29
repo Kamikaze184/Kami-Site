@@ -127,7 +127,7 @@ module.exports = new Map([
                 <h4>Adicionando uma imagem à sua ficha</h4>
                 <p>Para adicionar uma imagem à sua ficha basta utlizar o comando /ficha colocando como atributo "imagem" e como valor o link para a imagem</p>
                 <br>
-                <p>Exemplo: /ficha RPG_Kami imagem https://cdn.discordapp.com/attachments/836291199140102195/912397718859677737/Logo.png</p>
+                <p>Exemplo: /ficha RPG_Kami imagem https://imgur.com/qwXGUYp</p>
                 <br>
                 <img src="/assets/tutoriais/img/f-cF-exImg.png">
                 <br>
