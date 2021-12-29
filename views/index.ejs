@@ -7,7 +7,6 @@
         <link rel="stylesheet" href="/css/index.css">
 </head>
 
-
 <body>
     <header>
         <%- include('./partials/nav.ejs') %>
@@ -25,26 +24,26 @@
                 <a href="/short/convite" target="_blank">Adicionar o Kami</a>
                 <div class="status-box">
                     <div class="status-box-item">
-                        <h4>
-                            <%= botStatus.serverCount %>
+                        <h4 id="serverCount">
+                            0
                         </h4>
                         <h5>Servidores</h5>
                     </div>
                     <div class="status-box-item">
-                        <h4>
-                            <%= botStatus.userCount %>
+                        <h4 id="userCount">
+                            0
                         </h4>
                         <h5>Usuários</h5>
                     </div>
                     <div class="status-box-item">
-                        <h4>
-                            <%= botStatus.fichasCount %>
+                        <h4 id="fichasCount">
+                            0
                         </h4>
                         <h5>Fichas Criadas</h5>
                     </div>
                     <div class="status-box-item">
-                        <h4>
-                            <%= botStatus.commandsTotal %>
+                        <h4 id="commandsTotal">
+                            0
                         </h4>
                         <h5>Comandos Executados</h5>
                     </div>
@@ -55,11 +54,13 @@
             <div class="wave"></div>
             <div class="wave"></div>
         </div>
+        <script src="/scripts/countUp.js" serverCount="<%= botStatus.serverCount %>"
+            userCount="<%= botStatus.userCount %>" fichasCount="<%= botStatus.fichasCount %>"
+            commandsTotal="<%= botStatus.commandsTotal %>"></script>
     </main>
     <footer>
         <%- include('./partials/footer.ejs', {}); %>
     </footer>
 </body>
-
 
 </html>
