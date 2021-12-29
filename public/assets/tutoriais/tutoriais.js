@@ -127,7 +127,7 @@ module.exports = new Map([
                 <h4>Adicionando uma imagem à sua ficha</h4>
                 <p>Para adicionar uma imagem à sua ficha basta utlizar o comando /ficha colocando como atributo "imagem" e como valor o link para a imagem</p>
                 <br>
-                <p>Exemplo: /ficha RPG_Kami imagem https://imgur.com/qwXGUYp</p>
+                <p>Exemplo: /ficha RPG_Kami imagem https://i.imgur.com/qwXGUYp.png</p>
                 <br>
                 <img src="/assets/tutoriais/img/f-cF-exImg.png">
                 <br>
