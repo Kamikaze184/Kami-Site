@@ -4,10 +4,6 @@ const routes = Router()
 const fichaServices = require('../../services/ficha.api.service')
 const services = new fichaServices()
 
-routes.get("/ping", (req, res) => {
-    res.status(200).end()
-})
-
 routes.post("/atb/add", async (req, res) => {
     if (req.session.validation == process.env.validation) {
         try {
