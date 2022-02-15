@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="/css/partials/userDropdown.css">
+
+<div class="dropdown">
+    <span class="userLink">
+        <%= session.user.username%><img src=<%=session.user.avatarURL%> class="userAvatar"></img>
+    </span>
+    <div class="dropdown-content">
+        <a href="/user/jogador">Jogador</a>
+        <!-- <a href="/user/mestre">Mestre</a> -->
+        <a href="/auth/logout">Sair</a>
+    </div>
+</div>

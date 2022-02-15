@@ -112,7 +112,8 @@
     border: 3px solid var(--cinza-azulado);
     border-radius: 10px;
     text-align: center;
-    margin: 7px
+    margin: 7px;
+    justify-content: center;
 }
 
 .tutorial h3 {

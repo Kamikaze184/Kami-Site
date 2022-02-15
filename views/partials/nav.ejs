@@ -15,18 +15,24 @@
             </div>
         </a>
         <div class="links">
-            <a href="/">Início</a>
-            <a href="../comandos">Comandos</a>
-            <a href="../tutoriais">Tutoriais</a>
-            <a href="/short/convite" target="_blank">Adicione o Kami</a>
-            <img src='/assets/img/menu.png' alt='botão menu' class='menuBtn' id="mobile-menu-btn"></img>
-            
+            <a class="linkItem" href="/">Início</a>
+            <a class="linkItem" href="/comandos">Comandos</a>
+            <a class="linkItem" href="/tutoriais">Tutoriais</a>
+            <a class="linkItem" href="/short/convite" target="_blank">Adicione o Kami</a>
+            <% if(session.user){%>
+                <%- include('./userDrop.ejs', {session: session})%>
+                    <% } else {%>
+                        <a href="/auth/login">Login</a>
+                        <% } %>
+                            <img src='/assets/img/menu.png' alt='botão menu' class='menuBtn' id="mobile-menu-btn"></img>
+
         </div>
     </nav>
     <div class="mobile-menu">
         <a href="/">Início</a>
-        <a href="../comandos">Comandos</a>
-        <a href="../tutoriais">Tutoriais</a>
+        <a href="/comandos">Comandos</a>
+        <a href="/tutoriais">Tutoriais</a>
         <a href="/short/convite" target="_blank">Adicione o Kami</a>
+        <a href="/auth/login" target="_parent">Login</a>
     </div>
 </body>

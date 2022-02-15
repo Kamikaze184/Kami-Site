@@ -1,7 +1,22 @@
-const viewsController = require('./views/views.controller');
-const urlShortController = require('./urlShort/urlShort.controller');
+const glob = require('fast-glob');
 
-module.exports = {
-    paths: [viewsController.path, urlShortController.path],
-    router: [viewsController.router, urlShortController.router]
+module.exports = class handleControllers {
+    constructor() {
+        var controllers = glob.sync(["**/controllers/**/*.controller.js", "!node_modules", "!public", "!views"],)
+
+        const paths = new Array();
+        const routers = new Array();
+
+        controllers.forEach(c => {
+            const controller = require(process.cwd() + "/" + c)
+
+            paths.push(controller.path);
+            routers.push(controller.router);
+        })
+
+        return {
+            paths,
+            routers
+        }
+    }
 }

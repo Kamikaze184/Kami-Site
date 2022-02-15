@@ -1,6 +1,6 @@
 {
   "name": "kami-site",
-  "version": "2.7.3",
+  "version": "3.0.0-beta",
   "description": "Site para o BOT para Discord Kami",
   "main": "app.js",
   "scripts": {
@@ -11,9 +11,13 @@
   "license": "CC BY-NC-ND 4.0",
   "dependencies": {
     "axios": "^0.24.0",
+    "cookie-parser": "^1.4.6",
+    "discord-oauth2": "^2.9.0",
     "dotenv": "^10.0.0",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "fast-glob": "^3.2.7",
     "lodash": "^4.17.21",
     "serve-favicon": "^2.5.0",
     "string-similarity": "^4.0.4"

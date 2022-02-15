@@ -10,6 +10,7 @@ routes.get("/", async (req, res) => {
     const botinfo = await services.getBotinfo()
     res.render("index.ejs", {
         botStatus: botinfo,
+        session: req.session
     });
 });
 
@@ -20,6 +21,7 @@ routes.get("/comandos", async (req, res) => {
     res.render("comandos.ejs", {
         comandos: commands,
         boxSize: boxSize,
+        session: req.session
     })
 });
 
@@ -31,7 +33,8 @@ routes.get("/tutoriais", async (req, res) => {
             queryResult: result.find,
             query: req.query.search,
             queryFind: result.queryFind,
-            tutoriais: result.tutoriais
+            tutoriais: result.tutoriais,
+            session: req.session
         })
     }
     else {
@@ -39,7 +42,8 @@ routes.get("/tutoriais", async (req, res) => {
             queryResult: null,
             query: null,
             queryFind: false,
-            tutoriais: tutoriais
+            tutoriais: tutoriais,
+            session: req.session
         })
     }
 });
@@ -49,6 +53,7 @@ routes.get("/tutoriais/:tutorial", async (req, res) => {
 
     res.render("tutorial.ejs", {
         tutorial: tutorial,
+        session: req.session
     })
 });
 

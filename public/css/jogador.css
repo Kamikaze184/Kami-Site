@@ -1,0 +1,117 @@
+.flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 80px;
+}
+
+.flex2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.topBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--azul-escuro);
+    border: 3px solid var(--cinza-azulado);
+    margin-top: 20px;
+    width: 20%;
+    height: 70px;
+    min-width: 230px;
+    border-radius: 10px;
+}
+
+.topBox h1 {
+    color: white;
+    font-weight: bold;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+}
+
+.title {
+    background-color: var(--azul-escuro);
+    border: 3px solid var(--cinza-azulado);
+    text-align: center;
+    align-self: center;
+    border: 3px solid var(--cinza-azulado);
+    width: 20em;
+    border-radius: 10px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.title h1 {
+    padding: 5px 0px 5px 0px;
+    color: white;
+    font-size: 1.5em;
+}
+
+.cardBody {
+    border-radius: 10px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+    background-color: var(--azul-escuro);
+    border: 3px solid var(--cinza-azulado);
+    border-top: none;
+    margin-left: 12px;
+    margin-right: 12px;
+    width: 20em;
+    height: 60vh;
+    min-width: 230px;
+    min-height: 430px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item {
+    background-color: var(--cinza-azulado);
+    border-radius: 10px;
+    color: white;
+    width: 80%;
+    height: 10%;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin: 10px;
+}
+
+.item h2{
+    font-size: 1.2em;
+}
+
+
+#cardScroll::-webkit-scrollbar {
+    width: 12px;
+}
+
+#cardScroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.212);
+    border-radius: 0px;
+    border-bottom-right-radius: 7px;
+}
+
+#cardScroll::-webkit-scrollbar-thumb {
+    background: var(--cinza-azulado);
+    border: 2px solid rgba(83, 83, 83, 0.411);
+    border-radius: 10px;
+}
+
+#cardScroll::-webkit-scrollbar-thumb:hover {
+    background: var(--azul-claro);
+}
