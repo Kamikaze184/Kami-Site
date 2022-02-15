@@ -14,8 +14,8 @@
     flex-wrap: wrap;
 }
 
-.text h1 {
-    font-size: 3em;
+.text h2 {
+    font-size: 2em;
     font-weight: bold;
     color: white;
     margin-bottom: 0.5em;
@@ -33,6 +33,14 @@
     transition: 0.3s;
     margin-bottom: 2em;
     border: 3px solid var(--cinza-azulado);
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .text a:hover {
