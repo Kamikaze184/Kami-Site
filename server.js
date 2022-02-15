@@ -32,8 +32,8 @@ for (c in controllers.paths) {
     app.use(controllers.paths[c], controllers.routers[c])
 }
 
-// app.use(function (req, res, next) {
-//     res.status(404).render('404.ejs', {session: req.session});
-// });
+app.use(function (req, res, next) {
+    res.status(404).render('404.ejs', {session: req.session});
+});
 
 module.exports = app
