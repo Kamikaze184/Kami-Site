@@ -22,7 +22,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 10px;
+    margin-top: 20px;
 }
 
 .controles {
@@ -170,13 +170,12 @@
     justify-content: center;
     margin: 10px;
     width: 45%;
+    height: 100%;
 }
 
 .avatar {
-    min-width: 25%;
-    width: 70%;
-    max-height: 90%;
-    margin: 20px;
+    max-height: 13em;
+    margin: 5px;
     border-radius: 10px;
     border: 3px solid var(--cinza-azulado);
 }
@@ -247,6 +246,7 @@
     resize: none;
     text-align: justify;
     padding: 5px;
+    white-space: pre-wrap;
 }
 
 .atbI2Input {
@@ -258,6 +258,7 @@
     resize: none;
     text-align: justify;
     padding: 5px;
+    white-space: pre-wrap;
 }
 
 .descInput {
@@ -270,6 +271,7 @@
     resize: none;
     text-align: justify;
     padding: 5px;
+    white-space: pre-wrap;
 }
 
 .addAtb {
@@ -389,7 +391,7 @@ input#addExtra.check, input#delExtra.check {
     margin: 0px;
 }
 
-.confApagar{
+.confApagar {
     display: none;
     flex-direction: row;
     flex-wrap: wrap;
@@ -452,7 +454,7 @@ input#addExtra.check, input#delExtra.check {
     }
 }
 
-.response{
+.response {
     display: none;
     flex-direction: column;
     align-items: center;
@@ -468,7 +470,7 @@ input#addExtra.check, input#delExtra.check {
     text-align: justify;
 }
 
-.response h2{
+.response h2 {
     color: white;
     margin: 5px;
     text-align: center;
@@ -489,4 +491,47 @@ input#addExtra.check, input#delExtra.check {
 
 .response button:hover {
     background: var(--azul-claro);
+}
+
+@media (max-width: 850px) {
+
+    main {
+        justify-content: center;
+    }
+
+    .topBox {
+        margin: 2em;
+    }
+
+    .inf1 {
+        width: 95vw;
+        height: 25em;
+    }
+
+    .desc {
+        width: 95vw;
+        height: 25em;
+    }
+
+    .inf2 {
+        width: 95vw;
+        height: 25em;
+    }
+
+    .inf2 {
+        width: 95vw;
+        height: 25em;
+    }
+
+    .status{
+        width: 95vw;
+        height: 25em;
+    }
+
+    #imagem {
+        margin-top: 10px;
+        width: 90%;
+        height: 6em;
+    }
+
 }

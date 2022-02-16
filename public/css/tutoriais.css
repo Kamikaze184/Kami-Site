@@ -206,8 +206,12 @@
         text-align: justify;
     }
 
+    .category{
+        width: 95%;
+    }
+
     .tutorial {
-        width: 20em;
+        width: 95%;
         height: 14em;
     }
 
@@ -218,7 +222,7 @@
     }
     
     .tutorial img {
-        width: 18em;
+        width: 95%;
         height: auto;
         max-height: 9em;
     }

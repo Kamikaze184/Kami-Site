@@ -22,9 +22,8 @@
     background-color: var(--azul-escuro);
     border: 3px solid var(--cinza-azulado);
     margin-top: 20px;
-    width: 20%;
-    height: 70px;
-    min-width: 230px;
+    width: 15em;
+    height: 4em;
     border-radius: 10px;
 }
 

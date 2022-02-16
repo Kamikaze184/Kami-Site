@@ -1,9 +1,9 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/partials/nav.css" />
+    <link rel="stylesheet" href="/css/partials/mobileNav.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&&display=swap" rel="stylesheet">
-    <script src="/scripts/navbar.js" defer></script>
 </head>
 
 <body>
@@ -22,17 +22,11 @@
             <% if(session.user){%>
                 <%- include('./userDrop.ejs', {session: session})%>
                     <% } else {%>
-                        <a href="/auth/login">Login</a>
+                        <a class="linkItem" href="/auth/login">Login</a>
                         <% } %>
-                            <img src='/assets/img/menu.png' alt='botão menu' class='menuBtn' id="mobile-menu-btn"></img>
+            <img src='/assets/img/menu.png' alt='botão menu' class='menuBtn' id="mobile-menu-btn"></img>
 
         </div>
     </nav>
-    <div class="mobile-menu">
-        <a href="/">Início</a>
-        <a href="/comandos">Comandos</a>
-        <a href="/tutoriais">Tutoriais</a>
-        <a href="/short/convite" target="_blank">Adicione o Kami</a>
-        <a href="/auth/login" target="_parent">Login</a>
-    </div>
+    <%- include("./mobileNav.ejs")  %> 
 </body>

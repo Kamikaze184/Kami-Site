@@ -33,6 +33,7 @@ nav .links {
 .linkItem {
   display: flex;
   align-items: center;
+  font-size: 1.2em;
 }
 
 .links a:hover {
@@ -79,50 +80,28 @@ nav .links {
   transition: 0.5s;
 }
 
-@media (max-width: 600px) {
-  #mobile-menu-btn {
-    display: block;
-  }
+.mobileNav {
+  display: none;
+}
 
-  nav a {
+@media (min-width: 750px) and (max-width: 1000px) {
+  .linkItem {
+    font-size: 0.95em;
+  }
+  .logo p{
+    font-size: 0.95em;
+  }
+  .userlink p{
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 750px) {
+  nav{
     display: none;
   }
-
-  .mobile-menu {
-    display: none;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 3;
-    background-color: var(--azul-escuro);
-    border: 3px solid black;
-    box-shadow: 0 7px 7px -3px black;
-    transition: 0.5s;
-    border-radius: 10px;
-    height: fit-content;
+  .mobileNav {
+    display: inherit;
   }
 
-  .menuBtn {
-    max-width: 50px;
-    width: auto;
-    left: 0;
-
-  }
-
-  .mobile-menu a {
-    padding: 10px;
-    font-family: "Roboto", sans-serif;
-    font-weight: 700;
-    color: white;
-
-  }
-
-  .mobile-menu a:hover {
-    background-color: var(--azul-escuro);
-    border-radius: 10px;
-  }
-
-  .mobile-menu a:active {
-    background-color: var(--azul-claro);
-  }
 }
