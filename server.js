@@ -23,17 +23,28 @@ app.use(cookieParser());
 
 app.use(session({
     secret: process.env.sessionSecret,
-    saveUninitialized:true,
+    saveUninitialized: true,
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
     resave: false
 }));
+
+if (process.env.deploy === 'production') {
+    app.use((req, res, next) => {
+        if (req.header('x-forwarded-proto') !== 'https') {
+            res.redirect(`https://${req.header('host')}${req.url}`)
+        }
+        else {
+            next()
+        }
+    })
+}
 
 for (c in controllers.paths) {
     app.use(controllers.paths[c], controllers.routers[c])
 }
 
 app.use(function (req, res, next) {
-    res.status(404).render('404.ejs', {session: req.session});
+    res.status(404).render('404.ejs', { session: req.session });
 });
 
 module.exports = app
