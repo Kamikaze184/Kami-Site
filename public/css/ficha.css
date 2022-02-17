@@ -504,6 +504,7 @@ input#addExtra.check, input#delExtra.check {
     }
 
     .inf1 {
+        flex-direction: column;
         width: 95vw;
         height: 25em;
     }
@@ -530,8 +531,14 @@ input#addExtra.check, input#delExtra.check {
 
     #imagem {
         margin-top: 10px;
-        width: 90%;
-        height: 6em;
+        width: 100%;
+    }
+
+    .avatar {
+        width: auto;
+        max-width: 80vw;
+        max-height: 10em;
+        object-fit: cover;
     }
 
 }
