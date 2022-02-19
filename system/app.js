@@ -136,13 +136,16 @@ module.exports = class App {
 
             var SequelizeStore = require("connect-session-sequelize")(session.Store)
 
+            store = new SequelizeStore({
+                db: this.db,
+                table: "session"
+            })
+
+            store.sync();
         }
 
         this.app.use(session({
-            store: new SequelizeStore({
-                db: this.db,
-                table: "session"
-            }),
+            store: store,
             secret: CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString(),
             saveUninitialized: true,
             cookie: { maxAge: 1 * 60 * 60 * 24 },
