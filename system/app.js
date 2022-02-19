@@ -134,14 +134,22 @@ module.exports = class App {
                 }
             })
 
-            var SequelizeStore = require("connect-session-sequelize")(session.Store)
+            const pg = require('pg');
+            const pgSession = require('connect-pg-simple')(session);
 
-            store = new SequelizeStore({
-                db: this.db,
-                tableName: "session"
+            const pgPoll = new pg.Pool({
+                connectionString: process.env.DATABASE_URL,
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
+            });
+
+            store = new pgSession({
+                pool: pgPool,
+                createTableIfMissing: true,
+                schemaName: 'public'
             })
-
-            store.sync();
         }
 
         this.app.use(session({
