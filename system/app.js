@@ -137,7 +137,7 @@ module.exports = class App {
             const pg = require('pg');
             const pgSession = require('connect-pg-simple')(session);
 
-            const pgPoll = new pg.Pool({
+            const pgPool = new pg.Pool({
                 connectionString: process.env.DATABASE_URL,
                 ssl: {
                     require: true,
