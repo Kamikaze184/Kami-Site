@@ -140,7 +140,7 @@ module.exports = class App {
             store = new pgSession({
                 pool: new sessionPool({
                     connectionString: process.env.DATABASE_URL,
-                    ssl: false,
+                    ssl: process.env.deploy == "production",
                 }),
                 tableName: "session"
             })
