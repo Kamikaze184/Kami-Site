@@ -1,18 +1,10 @@
-const axios = require('axios')
-
 class urlShortService {
-    constructor() {
+    constructor(client) {
+        this.client = client
     }
 
-    async getInviteLink() {
-        const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            }
-        })
-
-        return res.data.botinfo.inviteLink
+    getInviteLink() {
+        return this.client.cache.getStatus().inviteLink
     }
 }
 

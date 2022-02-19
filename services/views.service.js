@@ -1,30 +1,16 @@
 const ss = require('string-similarity')
-const axios = require('axios')
 
 class viewsService {
-    constructor() {
+    constructor(client) {
+        this.client = client
     }
 
-    async getBotinfo() {
-        const res = await axios.get(`${process.env.apiUrl}/botinfo`, {
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            }
-        })
-
-        return res.data.botinfo
+    getBotinfo() {
+        return this.client.cache.getStatus()
     }
 
-    async getCommands() {
-        const res = await axios.get(`${process.env.apiUrl}/comandos`, {
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            }
-        })
-
-        return res.data
+    getCommands() {
+        return this.client.cache.getComandos()
     }
 
     tutorialSearchEngine(search, tutoriais) {
@@ -90,7 +76,7 @@ class viewsService {
             if (c[1].name.length > titleSize) {
                 titleSize = c[1].name.length
             }
-            if(c[1].description.length > descriptionSize){
+            if (c[1].description.length > descriptionSize) {
                 descriptionSize = c[1].description.length
             }
         }

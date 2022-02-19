@@ -6,18 +6,18 @@ module.exports = class views_controller {
         const tutoriais = require('../../public/assets/tutoriais/tutoriais');
 
         const viewsServices = require('../../services/views.service')
-        const services = new viewsServices()
+        const services = new viewsServices(client)
 
-        routes.get("/", async (req, res) => {
-            const botinfo = await services.getBotinfo()
+        routes.get("/", (req, res) => {
+            const botinfo = services.getBotinfo()
             res.render("index.ejs", {
                 botStatus: botinfo,
                 session: req.session
             });
         });
 
-        routes.get("/comandos", async (req, res) => {
-            const commands = new Map(Object.entries(await services.getCommands()))
+        routes.get("/comandos", (req, res) => {
+            const commands = new Map(Object.entries(services.getCommands()))
             const boxSize = services.getBoxSize(commands)
 
             res.render("comandos.ejs", {
@@ -27,7 +27,7 @@ module.exports = class views_controller {
             })
         });
 
-        routes.get("/tutoriais", async (req, res) => {
+        routes.get("/tutoriais", (req, res) => {
             if (req.query.search) {
                 const result = services.tutorialSearchEngine(req.query.search, tutoriais)
 
@@ -50,7 +50,7 @@ module.exports = class views_controller {
             }
         });
 
-        routes.get("/tutoriais/:tutorial", async (req, res) => {
+        routes.get("/tutoriais/:tutorial", (req, res) => {
             const tutorial = services.getTutorial(req.params.tutorial, tutoriais)
 
             res.render("tutorial.ejs", {

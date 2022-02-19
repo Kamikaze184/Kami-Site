@@ -17,8 +17,8 @@ module.exports = class urlShort_controller {
             }
         });
 
-        routes.get("/convite", async (req, res) => {
-            const inviteLink = await services.getInviteLink()
+        routes.get("/convite", (req, res) => {
+            const inviteLink = services.getInviteLink()
             res.redirect(inviteLink)
         })
 

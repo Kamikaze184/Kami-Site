@@ -7,6 +7,7 @@ module.exports = class App {
         this.setDiscordRest()
         this.setLog()
         this.setDB();
+        this.setCache()
         this.app = express()
         this.setMiddlewares();
         this.setSession();
@@ -95,6 +96,11 @@ module.exports = class App {
         this.log.start("DB")
     }
 
+    setCache(){
+        const _cache = require("./modules/cache/cache.js")
+        this.cache = new _cache(this)
+    }
+
     setMiddlewares() {
         const cookieParser = require("cookie-parser");
 
@@ -111,8 +117,19 @@ module.exports = class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
 
+        if (process.env.deploy === "production") {
+            this.app.use((req, res, next) => {
+                if (req.header("x-forwarded-proto") !== "https") {
+                    res.redirect(`https://${req.header("host")}${req.url}`)
+                }
+                else {
+                    next()
+                }
+            })
+        }
+
         this.app.use((req, res, next) => {
-            this.log.info(`${req.method} ${req.path} - ${req.ip}`)
+            this.log.info(`${req.method} ${req.path} - ${req.socket.localAddress}`)
             next()
         })
 
@@ -124,16 +141,7 @@ module.exports = class App {
         const CryptoJS = require("crypto-js")
 
         let store = undefined
-        if (process.env.NODE_ENV === "production") {
-            this.app.use((req, res, next) => {
-                if (req.header("x-forwarded-proto") !== "https") {
-                    res.redirect(`https://${req.header("host")}${req.url}`)
-                }
-                else {
-                    next()
-                }
-            })
-
+        if (process.env.deploy === "production") {
             const pg = require('pg');
             const pgSession = require('connect-pg-simple')(session);
 
