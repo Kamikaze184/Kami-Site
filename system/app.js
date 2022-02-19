@@ -156,7 +156,7 @@ module.exports = class App {
             store: store,
             secret: CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString(),
             saveUninitialized: true,
-            cookie: { maxAge: 1 * 60 * 60 * 24 },
+            cookie: { maxAge: 1000 * 60 * 60 * 24 },
             resave: false,
             proxy: true
         }));
