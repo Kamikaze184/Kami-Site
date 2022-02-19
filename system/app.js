@@ -81,9 +81,10 @@ module.exports = class App {
         }
 
         if (process.env.deploy == "production") {
+            conStr["ssl"] = true
             conStr["dialectOptions"] = {
                 ssl: {
-                    require: false,
+                    require: true,
                     rejectUnauthorized: false
                 }
             }
