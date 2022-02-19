@@ -36,25 +36,39 @@ module.exports = class cache {
     }
 
     async setStatus(status) {
-        status = JSON.stringify(status)
-        fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), status, { flag: "w" }, function (err) {
+        var configCache = new Map()
+
+        configCache.set("status", status)
+        configCache.set("comandos", this.getComandos())
+
+        configCache = Object.fromEntries(configCache)
+        configCache = JSON.stringify(configCache)
+
+        fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
             if (err) {
                 this.client.log.error(err, true)
             }
         })
 
-        this.client.db.query(`update info set status = '${status}'`).catch(err => this.client.log.error(err, true))
+        await this.client.db.query(`update info set status = '${status}'`).catch(err => this.client.log.error(err, true))
     }
 
     async setComandos(comandos) {
-        comandos = JSON.stringify(comandos)
-        fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), comandos, { flag: "w" }, function (err) {
+        var configCache = new Map()
+
+        configCache.set("status", this.getStatus())
+        configCache.set("comandos", comandos)
+
+        configCache = Object.fromEntries(configCache)
+        configCache = JSON.stringify(configCache)
+
+        fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
             if (err) {
                 this.client.log.error(err, true)
             }
         })
 
-        this.client.db.query(`update info set comandos = '${comandos}'`).catch(err => this.client.log.error(err, true))
+        await this.client.db.query(`update info set comandos = '${comandos}'`).catch(err => this.client.log.error(err, true))
     }
 
 }
