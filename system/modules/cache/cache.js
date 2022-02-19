@@ -47,7 +47,7 @@ module.exports = class cache {
             }
         })
 
-        await this.client.db.query(`update info set status = '${status}'`).catch(err => this.client.log.error(err, true))
+        await this.client.db.query(`update info set status = '${JSON.stringify(status)}'`).catch(err => this.client.log.error(err, true))
     }
 
     async setComandos(comandos) {
@@ -62,7 +62,7 @@ module.exports = class cache {
             }
         })
 
-        await this.client.db.query(`update info set comandos = '${comandos}'`).catch(err => this.client.log.error(err, true))
+        await this.client.db.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => this.client.log.error(err, true))
     }
 
 }
