@@ -1,7 +1,7 @@
 const glob = require('fast-glob');
 
 module.exports = class handleControllers {
-    constructor() {
+    constructor(client) {
         var controllers = glob.sync(["**/controllers/**/*.controller.js", "!node_modules", "!public", "!views"],)
 
         const paths = new Array();
@@ -9,9 +9,11 @@ module.exports = class handleControllers {
 
         controllers.forEach(c => {
             const controller = require(process.cwd() + "/" + c)
+            const router = new controller(client)
 
-            paths.push(controller.path);
-            routers.push(controller.router);
+
+            paths.push(router.path);
+            routers.push(router.router);
         })
 
         return {

@@ -1,8 +1,12 @@
-const { Router } = require('express');
-const routes = Router()
+module.exports = class api_geral_controller {
+    constructor(client) {
+        const { Router } = require('express');
+        const routes = Router()
 
-routes.get("/ping", (req, res) => {
-    res.status(200).end()
-})
+        routes.get("/ping", (req, res) => {
+            res.status(200).end()
+        })
 
-module.exports = { path: '/api/', router: routes }
+        return { path: '/api/', router: routes }
+    }
+}

@@ -86,7 +86,7 @@ class viewsService {
         let titleSize = 0
         let descriptionSize = 0
 
-        for (c of comandos) {
+        for (var c of comandos) {
             if (c[1].name.length > titleSize) {
                 titleSize = c[1].name.length
             }
