@@ -36,12 +36,9 @@ module.exports = class cache {
     }
 
     async setStatus(status) {
-        var configCache = new Map()
+        var configCache = require("./json/botinfo.json")
 
-        configCache.set("status", status)
-        configCache.set("comandos", this.getComandos())
-
-        configCache = Object.fromEntries(configCache)
+        configCache.status = status
         configCache = JSON.stringify(configCache)
 
         fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
@@ -54,12 +51,9 @@ module.exports = class cache {
     }
 
     async setComandos(comandos) {
-        var configCache = new Map()
+        var configCache = require("./json/botinfo.json")
 
-        configCache.set("status", this.getStatus())
-        configCache.set("comandos", comandos)
-
-        configCache = Object.fromEntries(configCache)
+        configCache.comandos = comandos
         configCache = JSON.stringify(configCache)
 
         fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
