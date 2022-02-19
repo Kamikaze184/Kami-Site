@@ -123,6 +123,7 @@ module.exports = class App {
         const session = require("express-session")
         const CryptoJS = require("crypto-js")
 
+        let store = undefined
         if (process.env.NODE_ENV === "production") {
             this.app.use((req, res, next) => {
                 if (req.header("x-forwarded-proto") !== "https") {
@@ -135,9 +136,9 @@ module.exports = class App {
 
             var SequelizeStore = require("connect-session-sequelize")(session.Store)
 
-            var store = new SequelizeStore({
+            store = new SequelizeStore({
                 db: this.db,
-                table: "session"
+                tableName: "session"
             })
 
             store.sync();
@@ -148,7 +149,8 @@ module.exports = class App {
             secret: CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString(),
             saveUninitialized: true,
             cookie: { maxAge: 1 * 60 * 60 * 24 },
-            resave: false
+            resave: false,
+            proxy: true
         }));
 
         this.log.start("Session")
