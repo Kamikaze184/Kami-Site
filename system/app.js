@@ -96,7 +96,7 @@ module.exports = class App {
         this.log.start("DB")
     }
 
-    setCache(){
+    setCache() {
         const _cache = require("./modules/cache/cache.js")
         this.cache = new _cache(this)
     }
@@ -159,17 +159,31 @@ module.exports = class App {
                 schemaName: 'public'
             })
         }
+        const unless = (path, middleware) => {
+            return (req, res, next) => {
+                if (path === req.path) {
+                    return next();
+                } else {
+                    return middleware(req, res, next);
+                }
+            };
+        };
 
-        this.app.use(session({
+
+        this.app.use(unless('/api/ping', session({
             store: store,
-            secret: /*CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString()*/ process.env.sessionSecret,
-            saveUninitialized: true,
+            secret: process.env.sessionSecret,
+            saveUninitialized: false,
             cookie: { maxAge: 1000 * 60 * 60 * 8 },
             resave: false,
             proxy: true,
             unset: "destroy",
-            rolling: true
-        }));
+            rolling: true,
+            genid: (req) => {
+                return CryptoJS.AES.encrypt(req.socket.localAddress, process.env.sessionSecret).toString()
+            }
+
+        })));
 
         this.log.start("Session")
     }
