@@ -162,11 +162,13 @@ module.exports = class App {
 
         this.app.use(session({
             store: store,
-            secret: CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString(),
+            secret: /*CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString()*/ process.env.sessionSecret,
             saveUninitialized: true,
-            cookie: { maxAge: 1000 * 60 * 60 * 24 },
+            cookie: { maxAge: 1000 * 60 * 60 * 8 },
             resave: false,
-            proxy: true
+            proxy: true,
+            unset: "destroy",
+            rolling: true
         }));
 
         this.log.start("Session")
