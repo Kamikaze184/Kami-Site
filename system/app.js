@@ -76,12 +76,11 @@ module.exports = class App {
             password: dbURI.split("@")[0].split(":")[1],
             host: dbURI.split("@")[1].split(":")[0],
             port: dbURI.split("@")[1].split(":")[1],
-            dialect: "postgres",
             logging: false,
+            dialect: "postgres",
         }
 
         if (process.env.deploy == "production") {
-            conStr["ssl"] = true
             conStr["dialectOptions"] = {
                 ssl: {
                     require: true,
@@ -135,20 +134,15 @@ module.exports = class App {
                 }
             })
 
-            const pgSession = require("connect-pg-simple")(session)
-            const sessionPool = require("pg").Pool
+            var SequelizeStore = require("connect-session-sequelize")(session.Store)
 
-            store = new pgSession({
-                pool: new sessionPool({
-                    connectionString: process.env.DATABASE_URL,
-                    ssl: process.env.deploy == "production",
-                }),
-                tableName: "session"
-            })
         }
 
         this.app.use(session({
-            store: store,
+            store: new SequelizeStore({
+                db: this.db,
+                table: "session"
+            }),
             secret: CryptoJS.AES.encrypt(Date.now().toString(), process.env.sessionSecret).toString(),
             saveUninitialized: true,
             cookie: { maxAge: 1 * 60 * 60 * 24 },
