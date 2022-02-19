@@ -7,7 +7,6 @@ module.exports = class api_geral_controller {
         const services = new geralServices(client)
 
         routes.get("/ping", (req, res) => {
-            req.session.destroy()
             res.status(200).end()
         })
 
