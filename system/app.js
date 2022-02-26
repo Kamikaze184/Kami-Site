@@ -12,6 +12,7 @@ module.exports = class App {
         this.setMiddlewares();
         this.setSession();
         this.setControllers();
+        this.setFunctions();
     }
 
     setDiscordRest() {
@@ -190,6 +191,11 @@ module.exports = class App {
         });
 
         this.log.start("Controllers")
+    }
+
+    setFunctions() {
+        const pingBot = require("./modules/functions/pingBot.js")
+        setInterval(() => { pingBot(this) }, 1000 * 60 * 5)
     }
 
     start() {
