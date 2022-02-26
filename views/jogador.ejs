@@ -29,24 +29,23 @@
                                 </h2>
                             </a>
                             <%}%>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="title">
-                        <h1>Fichas IRT</h1>
-                    </div>
-                    <div class="cardBody" id="cardScroll">
-                        <h2>Em desenvolvimento</h2>
-                        <!-- <%# for (var f of info.irt){%>
-                            <div class="item">
-                                <h2>
-                                    <%# f.nomerpg %>
-                                </h2>
-                                <h2>
-                                    <%# f.chid %>
-                                </h2>
+                            <a>
+                                <form class="novaFicha">
+                                    <input id="nomerpg" type="text" name="nomerpg" placeholder="Nome da ficha. Ex: RPG_Kami" maxlength="80">
+                                    <input id="id" type="hidden" name="id" value="<%= `${session.user.id}`%>">
+                                    <button id="criarFicha" type="button">Criar nova ficha</button>
+                                </form>
+                            </a>
+                            <div class="message">
+                                <div class="loading">
+                                    <div class="loadWheel"></div>
+                                </div>
+                                <div class="response">
+                                    <h2 class="responseTitle"></h2>
+                                    <p class="responseText"></p>
+                                    <button id="confirmMessage">Ok</button>
+                                </div>
                             </div>
-                            <%#}%> -->
                     </div>
                 </div>
                 <div class="card">
@@ -56,6 +55,7 @@
                     <div class="cardBody" id="cardScroll">
                         <h2>Em desenvolvimento</h2>
                     </div>
+   
                 </div>
                 <div class="card">
                     <div class="title">
@@ -71,6 +71,7 @@
             <div class="wave"></div>
             <div class="wave"></div>
         </div>
+        <script src="/scripts/buttonHandlerJogador.js"></script>
     </main>
     <footer>
         <%- include('./partials/footer.ejs', {}); %>

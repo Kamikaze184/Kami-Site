@@ -24,6 +24,7 @@
                         <button id="addAtb">Adicionar atributo</button>
                         <button id="delAtb">Remover atributo</button>
                         <button id="salvarFicha">Salvar alterações</button>
+                        <button id="renomearFicha">Renomear ficha</button>
                         <button id="apagarFicha">Apagar ficha</button>
                     </div>
                     <div class="addAtb">
@@ -63,6 +64,14 @@
                         <h3>Tem certeza que deseja apagar esta ficha?</h3>
                         <button id="apagarFichaConf">Apagar</button>
                         <button id="apagarFichaCanc">Cancelar</button>
+                    </div>
+                    <div class="renFicha">
+                        <form>
+                            <label for="novoNomeRpg">Novo nome para a ficha:</label>
+                            <input id="novoNomeRpg" type="text" name="novoNomeRpg" placeholder="Novo nome da ficha. Ex: RPG_Kami">
+                        </form>
+                        <button id="renFichaConf">Renomear</button>
+                        <button id="renFichaCanc">Cancelar</button>
                     </div>
                     <div class="message">
                         <div class="loading">
@@ -131,7 +140,7 @@
             <div class="wave"></div>
             <div class="wave"></div>
         </div>
-        <script src="/scripts/buttonHandler.js"></script>
+        <script src="/scripts/buttonHandlerFicha.js"></script>
     </main>
     <!-- <footer>
         <%# include('./partials/footer.ejs', {}); %>

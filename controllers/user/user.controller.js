@@ -19,10 +19,6 @@ module.exports = class user_controller {
             }
         })
 
-        // routes.get("/mestre", async (req, res) => {
-        //     res.status(200).send("<h1>Home</h1>")
-        // })
-
         routes.get("/jogador/ficha/:ficha", async (req, res) => {
             if (req.session.user) {
                 const ficha = await services.getFicha(req.session.user.id, req.params.ficha)

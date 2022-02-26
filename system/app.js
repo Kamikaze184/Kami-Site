@@ -129,7 +129,7 @@ module.exports = class App {
         }
 
         this.app.use((req, res, next) => {
-            this.log.info(`${req.method} ${req.path} - ${req.socket.localAddress}`)
+            this.log.info(`${req.method} ${req.path}`)
             next()
         })
 
@@ -159,31 +159,20 @@ module.exports = class App {
                 schemaName: 'public'
             })
         }
-        const unless = (path, middleware) => {
-            return (req, res, next) => {
-                if (path === req.path) {
-                    return next();
-                } else {
-                    return middleware(req, res, next);
-                }
-            };
-        };
 
-
-        this.app.use(unless('/api/ping', session({
+        this.app.use(session({
             store: store,
             secret: process.env.sessionSecret,
             saveUninitialized: false,
-            cookie: { maxAge: 1000 * 60 * 60 * 8 },
+            cookie: { maxAge: 1000 * 60 * 60 * 24 },
             resave: false,
             proxy: true,
             unset: "destroy",
             rolling: true,
             genid: (req) => {
-                return CryptoJS.AES.encrypt(req.socket.localAddress, process.env.sessionSecret).toString()
+                return CryptoJS.AES.encrypt(req.socket.localAddress + Date.now().toString(), process.env.sessionSecret).toString()
             }
-
-        })));
+        }));
 
         this.log.start("Session")
     }

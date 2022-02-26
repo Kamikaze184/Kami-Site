@@ -76,6 +76,28 @@ class fichaService {
         return extraBody
     }
 
+    async createFicha(body) {
+        const config = {
+            method: 'post',
+            url: `${process.env.botApiUrl}/ficha/create`,
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            },
+            data: {
+                "ficha": body.ficha
+            }
+        }
+
+        try {
+            const res = await axios(config)
+            return res
+        }
+        catch (err) {
+            return err.response
+        }
+    }
+
     async updateFicha(body) {
         const config = {
             method: 'patch',
@@ -89,6 +111,30 @@ class fichaService {
                 "nomerpg": body.nomerpg,
                 "tag": body.tag,
                 "ficha": body.ficha
+            }
+        }
+
+        try {
+            const res = await axios(config)
+            return res
+        }
+        catch (err) {
+            return err.response
+        }
+    }
+
+    async renameFicha(body) {
+        const config = {
+            method: 'patch',
+            url: `${process.env.botApiUrl}/ficha/rename`,
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            },
+            data: {
+                "id": body.id,
+                "nomerpg": body.nomerpg,
+                "novonomerpg": body.novonomerpg,
             }
         }
 
@@ -124,6 +170,7 @@ class fichaService {
             return err.response
         }
     }
+
 }
 
 module.exports = fichaService

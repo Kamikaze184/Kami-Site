@@ -23,6 +23,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 20px;
+    padding: 10px;
 }
 
 .controles {
@@ -419,6 +420,55 @@ input#addExtra.check, input#delExtra.check {
     background: var(--azul-claro);
 }
 
+.renFicha {
+    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 20rem;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+.renFicha form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 10px;
+}
+
+.renFicha input {
+    color: white;
+    width: 70%;
+    background: var(--cinza-azulado);
+    border: 3px solid var(--cinza-azulado);
+    border-radius: 5px;
+    resize: none;
+    text-align: justify;
+    padding: 5px;
+    margin: 3px;
+}
+
+.renFicha button {
+    color: white;
+    margin: 4px 10px 4px 10px;
+    border-radius: 10px;
+    border: 2px solid var(--cinza-azulado);
+    background: var(--azul-escuro);
+    padding: 6px;
+    box-shadow: rgba(0, 0, 0, 0.212) 0px 3px 5px 0px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 10em;
+}
+
+.renFicha button:hover {
+    background: var(--azul-claro);
+}
+
 .message {
     display: flex;
     flex-direction: row;
@@ -524,7 +574,7 @@ input#addExtra.check, input#delExtra.check {
         height: 25em;
     }
 
-    .status{
+    .status {
         width: 95vw;
         height: 25em;
     }

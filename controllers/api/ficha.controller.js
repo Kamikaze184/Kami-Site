@@ -76,10 +76,50 @@ module.exports = class api_ficha_controller {
             }
         })
 
+        routes.post("/create", async (req, res) => {
+            if (req.session.validation == process.env.validation) {
+                try {
+                    const response = await services.createFicha(req.body)
+                    if (response.status == 200) {
+                        res.status(200).send(response.data)
+                    }
+                    else {
+                        res.status(response.status).send(response.data)
+                    }
+                }
+                catch (err) {
+                    res.status(500).end()
+                }
+            }
+            else {
+                res.status(401).end()
+            }
+        })
+
         routes.patch("/update", async (req, res) => {
             if (req.session.validation == process.env.validation) {
                 try {
                     const response = await services.updateFicha(req.body)
+                    if (response.status == 200) {
+                        res.status(200).send(response.data)
+                    }
+                    else {
+                        res.status(response.status).send(response.data)
+                    }
+                }
+                catch (err) {
+                    res.status(500).end()
+                }
+            }
+            else {
+                res.status(401).end()
+            }
+        })
+
+        routes.patch("/rename", async (req, res) => {
+            if (req.session.validation == process.env.validation) {
+                try {
+                    const response = await services.renameFicha(req.body)
                     if (response.status == 200) {
                         res.status(200).send(response.data)
                     }

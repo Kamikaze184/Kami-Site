@@ -1,6 +1,7 @@
 const addAtbBox = document.querySelector(".addAtb");
 const delAtbBox = document.querySelector(".delAtb");
 const confApagarBox = document.querySelector(".confApagar");
+const renFichaBox = document.querySelector(".renFicha");
 const controles = document.querySelector(".controles");
 const loading = document.querySelector(".loading");
 const response = document.querySelector(".response");
@@ -12,6 +13,7 @@ const addAtb = document.querySelector("#addAtb");
 const delAtb = document.querySelector("#delAtb");
 const salvarFicha = document.querySelector("#salvarFicha");
 const apagarFicha = document.querySelector("#apagarFicha");
+const renFicha = document.querySelector("#renomearFicha");
 
 addAtb.addEventListener("click", () => {
     controles.style.display = "none";
@@ -63,6 +65,9 @@ addAtb.addEventListener("click", () => {
 
                     loading.style.display = "none";
                     response.style.display = "flex";
+                }
+                else if(xhr.readyState == 4 && xhr.status == 401) {
+                    window.location.replace("/auth/login");
                 }
                 else if (xhr.readyState == 4 && xhr.status == 500) {
                     if (trys >= 5) {
@@ -146,6 +151,9 @@ delAtb.addEventListener("click", () => {
 
                     loading.style.display = "none";
                     response.style.display = "flex";
+                }
+                else if(xhr.readyState == 4 && xhr.status == 401) {
+                    window.location.replace("/auth/login");
                 }
                 else if (xhr.readyState == 4 && xhr.status == 500) {
                     if (trys >= 5) {
@@ -277,6 +285,9 @@ salvarFicha.addEventListener("click", async () => {
                 loading.style.display = "none";
                 response.style.display = "flex";
             }
+            else if(xhr.readyState == 4 && xhr.status == 401) {
+                window.location.replace("/auth/login");
+            }
             else if (xhr.readyState == 4 && xhr.status == 500) {
                 if (trys >= 5) {
                     responseTitle.innerHTML = "Erro inesperado"
@@ -341,6 +352,9 @@ apagarFicha.addEventListener("click", async () => {
                 loading.style.display = "none";
                 response.style.display = "flex";
             }
+            else if(xhr.readyState == 4 && xhr.status == 401) {
+                window.location.replace("/auth/login");
+            }
             else if (xhr.readyState == 4 && xhr.status == 500) {
                 if (trys >= 5) {
                     responseTitle.innerHTML = "Erro inesperado"
@@ -376,4 +390,88 @@ apagarFicha.addEventListener("click", async () => {
     })
 
 
+})
+
+renFicha.addEventListener("click", () => {
+    controles.style.display = "none";
+    renFichaBox.style.display = "flex";
+
+    var trys = 0;
+    async function makeRequest() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("PATCH", "/api/ficha/rename", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({
+            id: document.querySelector("#id").value,
+            nomerpg: document.querySelector("#nomerpg").value,
+            novonomerpg: document.querySelector("#novoNomeRpg").value
+        }));
+        trys++
+
+        xhr.onreadystatechange = async function (e) {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                const apiResponse = JSON.parse(xhr.response);
+                loading.style.display = "none";
+                controles.style.display = "flex";
+                response.style.display = "flex";
+                responseTitle.innerHTML = "Ficha renomeada"
+                responseText.innerHTML = `Ficha renomeada com sucesso para "${apiResponse.novonomerpg}", clique em Ok para atualizar a página (alterações não salvas serão perdidas)`;
+
+                document.querySelector("#nomerpg").value = apiResponse.novonomerpg;
+
+                responseBtn.addEventListener("click", () => {
+                    window.location.replace(`/user/jogador/ficha/${apiResponse.novonomerpg}`);
+                })
+
+                response.style.display = "flex";
+            }
+            else if (xhr.readyState == 4 && xhr.status == 400) {
+                const apiResponse = JSON.parse(xhr.response);
+                responseTitle.innerHTML = apiResponse.title
+                responseText.innerHTML = apiResponse.text;
+
+                responseBtn.addEventListener("click", () => {
+                    response.style.display = "none";
+                    controles.style.display = "flex";
+                })
+
+                loading.style.display = "none";
+                response.style.display = "flex";
+            }
+            else if(xhr.readyState == 4 && xhr.status == 401) {
+                window.location.replace("/auth/login");
+            }
+            else if (xhr.readyState == 4 && xhr.status == 500) {
+                if (trys >= 5) {
+                    responseTitle.innerHTML = "Erro inesperado"
+                    responseText.innerHTML = "Ocorreu um erro inesperado, tente novamente em alguns instantes";
+
+                    responseBtn.addEventListener("click", () => {
+                        response.style.display = "none";
+                        controles.style.display = "flex";
+                    })
+
+                    loading.style.display = "none";
+                    response.style.display = "flex";
+                }
+                else {
+                    await setTimeout(async () => { await makeRequest(); }, 3500)
+                }
+            }
+        }
+    }
+
+    const confRenFicha = document.querySelector("#renFichaConf");
+    const cancRenFicha = document.querySelector("#renFichaCanc");
+    
+    confRenFicha.addEventListener("click", async () => {
+        renFichaBox.style.display = "none";
+        loading.style.display = "flex";
+        await makeRequest();
+    })
+
+    cancRenFicha.addEventListener("click", () => {
+        controles.style.display = "flex";
+        renFichaBox.style.display = "none";
+    })
 })
