@@ -135,6 +135,7 @@ class fichaService {
                 "id": body.id,
                 "nomerpg": body.nomerpg,
                 "novonomerpg": body.novonomerpg,
+                "tag": body.tag
             }
         }
 

@@ -404,7 +404,8 @@ renFicha.addEventListener("click", () => {
         xhr.send(JSON.stringify({
             id: document.querySelector("#id").value,
             nomerpg: document.querySelector("#nomerpg").value,
-            novonomerpg: document.querySelector("#novoNomeRpg").value
+            novonomerpg: document.querySelector("#novoNomeRpg").value,
+            tag: document.querySelector("#tag").value
         }));
         trys++
 
