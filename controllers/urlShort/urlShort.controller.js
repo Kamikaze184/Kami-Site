@@ -6,15 +6,20 @@ module.exports = class urlShort_controller {
         const urlShortService = require("../../services/urlShort.service")
         const services = new urlShortService(client)
 
-        routes.get("/termos/:lang", (req, res) => {
-            const lang = req.params.lang
+        routes.get("/termos", (req, res) => {
+            res.redirect("https://docs.google.com/document/d/1PneTS5LFyqqrMgpwht8nEHMg8H6BaszzoraWjsbR4k0")
+        });
 
-            if (lang == "pt") {
-                res.redirect(`https://docs.google.com/document/d/10nngrKxxgIjC03EPjsstSuxkGkY90zT-nIT7owWSX5s/edit?usp=sharing`)
-            }
-            else {
-                res.redirect(`https://docs.google.com/document/d/1eTWagnevvJqmFVKSrceCMdr-Y821Nhr7_lX8G6JvR6U/edit?usp=sharing`)
-            }
+        routes.get("/terms", (req, res) => {
+            res.redirect("https://docs.google.com/document/d/1mctX2GQQukx6Y0TMDXj-J1wYjDqOqbAhRwoqsJOYRaE")
+        });
+
+        routes.get("/privacidade", (req, res) => {
+            res.redirect("https://docs.google.com/document/d/1ei3UdKmaVShQuQ4OFvZm5sWTR4_5oyYerRP-OkneECM")
+        });
+
+        routes.get("/privacy", (req, res) => {
+            res.redirect("https://docs.google.com/document/d/1zu7o9mjeV1Mt2aLaJ7v6sVW0-CXuVwj8O13cVMtjCWs")
         });
 
         routes.get("/convite", (req, res) => {
@@ -22,6 +27,19 @@ module.exports = class urlShort_controller {
             res.redirect(inviteLink)
         })
 
-        return { path: '/short/', router: routes }
+        routes.get("/invite", (req, res) => {
+            const inviteLink = services.getInviteLink()
+            res.redirect(inviteLink)
+        })
+
+        routes.get("/suporte", (req, res) => {
+            res.redirect("https://discord.com/invite/9rqCkFB")
+        })
+
+        routes.get("/support", (req, res) => {
+            res.redirect("https://discord.com/invite/9rqCkFB")
+        })
+
+        return { path: '/', router: routes }
     }
 }
