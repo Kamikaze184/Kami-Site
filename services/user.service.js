@@ -2,7 +2,8 @@ const axios = require('axios')
 const resources = require('../public/assets/others/texts.json')
 
 class userService {
-    constructor() {
+    constructor(client) {
+        this.client = client
     }
 
     async getUser(id) {
@@ -49,9 +50,9 @@ class userService {
         const atbI1F = resources.atbs.atbsI1F
 
         for (var i in atbI1) {
-            if (ficha[atbI1[i]] != null && ficha[atbI1[i]] != "" && ficha[atbI1[i]] != " " && ficha[atbI1[i]] != "excluir" && ficha[atbI1[i]] != "delete" && ficha[atbI1[i]] != "-") {
+            if (ficha.atributos[atbI1[i]] != null && ficha.atributos[atbI1[i]] != "" && ficha.atributos[atbI1[i]] != " " && ficha.atributos[atbI1[i]] != "excluir" && ficha.atributos[atbI1[i]] != "delete" && ficha.atributos[atbI1[i]] != "-") {
                 htmlString += `<div class="atributo"><label class="atbILabel" for="${atbI1[i]}">${atbI1F[i]}:</label>`
-                htmlString += `<textarea class="atbIInput" id="${atbI1[i]}" cols="100" rows="5" maxlength="2048" name="${atbI1[i]}">${ficha[atbI1[i]]}</textarea></div>`
+                htmlString += `<textarea class="atbIInput" id="${atbI1[i]}" cols="100" rows="5" maxlength="2048" name="${atbI1[i]}">${ficha.atributos[atbI1[i]]}</textarea></div>`
             }
         }
 
@@ -65,9 +66,9 @@ class userService {
         const atbI2F = resources.atbs.atbsI2F
 
         for (var i in atbI2) {
-            if (ficha[atbI2[i]] != null && ficha[atbI2[i]] != "" && ficha[atbI2[i]] != " " && ficha[atbI2[i]] != "excluir" && ficha[atbI2[i]] != "delete" && ficha[atbI2[i]] != "-") {
+            if (ficha.atributos[atbI2[i]] != null && ficha.atributos[atbI2[i]] != "" && ficha.atributos[atbI2[i]] != " " && ficha.atributos[atbI2[i]] != "excluir" && ficha.atributos[atbI2[i]] != "delete" && ficha.atributos[atbI2[i]] != "-") {
                 htmlString += `<div class="atributo2"><label class="atbILabel" for="${atbI2[i]}">${atbI2F[i]}:</label>`
-                htmlString += `<textarea class="atbI2Input" id="${atbI2[i]}" cols="100" rows="8" maxlength="2048" name="${atbI2[i]}">${ficha[atbI2[i]]}</textarea> </div>`
+                htmlString += `<textarea class="atbI2Input" id="${atbI2[i]}" cols="100" rows="8" maxlength="2048" name="${atbI2[i]}">${ficha.atributos[atbI2[i]]}</textarea> </div>`
             }
         }
 
@@ -78,33 +79,33 @@ class userService {
     generateFormStatus(ficha) {
         var htmlString = `<form class="atbsI">`
 
-        const atbS = resources.atbs.atbsS
-        const atbSF = resources.atbs.atbsSF
+        const { atbsS, atbsSF, atbsI1, atbsI2 } = resources.atbs
 
-        for (var i in atbS) {
-            if (ficha[atbS[i]] != null && ficha[atbS[i]] != "" && ficha[atbS[i]] != " " && ficha[atbS[i]] != "excluir" && ficha[atbS[i]] != "delete" && ficha[atbS[i]] != "-") {
-                htmlString += `<div class="atributo"><label class="atbILabel" for="${atbS[i]}">${atbSF[i]}:</label>`
-                htmlString += `<textarea class="atbIInput" id="${atbS[i]}" cols="100" rows="5" maxlength="2048" name="${atbS[i]}">${ficha[atbS[i]]}</textarea></div>`
+        for (var atb of atbsS) {
+            if (ficha.atributos[atb] != null && ficha.atributos[atb] != "" && ficha.atributos[atb] != " " && ficha.atributos[atb] != "excluir" && ficha.atributos[atb] != "delete" && ficha.atributos[atb] != "-") {
+                htmlString += `<div class="atributo"><label class="atbILabel" for="${atb}">${atbsSF[atbsS.indexOf(atb)]}:</label>`
+                htmlString += `<textarea class="atbIInput" id="${atb}" cols="100" rows="5" maxlength="2048" name="${atb}">${ficha.atributos[atb]}</textarea></div>`
+
+                delete ficha.atributos[atb]
             }
         }
 
-        if (ficha["extras"] != null && ficha["extras"] != "" && ficha["extras"] != " " && ficha["extras"] != "excluir" && ficha["extras"] != "delete" && ficha["extras"] != "-") {
-            var atbExtras = ficha['extras']
+        for( var atb of atbsI1) {
+            if(ficha.atributos[atb]){
+                delete ficha.atributos[atb]
+            }
+        }
 
-            var atbs = atbExtras.split("|")
+        for( var atb of atbsI2) {
+            if(ficha.atributos[atb]){
+                delete ficha.atributos[atb]
+            }
+        }
 
-            for (var x in atbs) {
-                var atb = atbs[x].split(":")[0]
-                var val = atbs[x].split(":")[1]
-
-                try { atb = atb.replace(" ", "") } catch (err) { }
-                try { val = val.replace(/ /, '') } catch (err) { }
-
-
-                if (val != "excluir" && val != "delete" && val != "-" && val != "- " && val != "") {
-                    htmlString += `<div class="atributo"><label class="atbILabel" for="${atb}$extra$">${atb}:</label>`
-                    htmlString += `<textarea class="atbIInput" id="${atb}$extra$" cols="100" rows="5" maxlength="2048" name="${atb}">${val}</textarea></div>`
-                }
+        for (var atb of Object.keys(ficha.atributos)) {
+            if (atb.toLowerCase() != "imagem" && atb.toLowerCase() != "descricao") {
+                htmlString += `<div class="atributo"><label class="atbILabel" for="${atb}">${atb}:</label>`
+                htmlString += `<textarea class="atbIInput" id="${atb}" cols="100" rows="5" maxlength="2048" name="${atb}">${ficha.atributos[atb]}</textarea></div>`
             }
         }
 
@@ -113,13 +114,27 @@ class userService {
     }
 
     checkAtbs(ficha, local) {
-        const atbs = resources.atbs[local]
-        for (var i in atbs) {
-            if (ficha[atbs[i]] != null && ficha[atbs[i]] != "" && ficha[atbs[i]] != " " && ficha[atbs[i]] != "excluir" && ficha[atbs[i]] != "delete" && ficha[atbs[i]] != "-") {
-                return true
+        if (local != "atbsS") {
+            const atbs = resources.atbs[local]
+            for (var i in atbs) {
+                if (ficha.atributos[atbs[i]] != null && ficha.atributos[atbs[i]] != "" && ficha.atributos[atbs[i]] != " " && ficha.atributos[atbs[i]] != "excluir" && ficha.atributos[atbs[i]] != "delete" && ficha.atributos[atbs[i]] != "-") {
+                    return true
+                }
             }
+            return false
         }
-        return false
+        else {
+            const { atbsI1, atbsI2 } = resources.atbs
+
+            for (var atb of Object.keys(ficha.atributos)) {
+                if (ficha.atributos[atb] != null && ficha.atributos[atb] != "" && ficha.atributos[atb] != " " && ficha.atributos[atb] != "excluir" && ficha.atributos[atb] != "delete" && ficha.atributos[atb] != "-") {
+                    if (!atbsI1.includes(atb.toLowerCase()) && !atbsI2.includes(atb.toLowerCase() && atb.toLowerCase() != "imagem" && atb.toLowerCase() != "descricao")) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
     }
 }
 

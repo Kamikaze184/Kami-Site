@@ -37,7 +37,6 @@ addAtb.addEventListener("click", () => {
                 id: document.querySelector("#id").value,
                 nomerpg: document.querySelector("#nomerpg").value,
                 tag: document.querySelector("#tag").value,
-                extra: document.querySelector("#addExtra").checked
             }));
             trys++
 
@@ -66,7 +65,7 @@ addAtb.addEventListener("click", () => {
                     loading.style.display = "none";
                     response.style.display = "flex";
                 }
-                else if(xhr.readyState == 4 && xhr.status == 401) {
+                else if (xhr.readyState == 4 && xhr.status == 401) {
                     window.location.replace("/auth/login");
                 }
                 else if (xhr.readyState == 4 && xhr.status == 500) {
@@ -98,7 +97,6 @@ addAtb.addEventListener("click", () => {
 
         document.querySelector("#toAddAtb").value = "";
         document.querySelector("#valor").value = "";
-        document.querySelector("#addExtra").checked = false;
     });
 })
 
@@ -123,7 +121,6 @@ delAtb.addEventListener("click", () => {
                 id: document.querySelector("#id").value,
                 nomerpg: document.querySelector("#nomerpg").value,
                 tag: document.querySelector("#tag").value,
-                extra: document.querySelector("#delExtra").checked
             }));
             trys++
 
@@ -152,7 +149,7 @@ delAtb.addEventListener("click", () => {
                     loading.style.display = "none";
                     response.style.display = "flex";
                 }
-                else if(xhr.readyState == 4 && xhr.status == 401) {
+                else if (xhr.readyState == 4 && xhr.status == 401) {
                     window.location.replace("/auth/login");
                 }
                 else if (xhr.readyState == 4 && xhr.status == 500) {
@@ -183,7 +180,6 @@ delAtb.addEventListener("click", () => {
         delAtbBox.style.display = "none";
 
         document.querySelector("#toDelAtb").value = "";
-        document.querySelector("#delExtra").checked = false;
     });
 })
 
@@ -191,7 +187,7 @@ salvarFicha.addEventListener("click", async () => {
     controles.style.display = "none";
     loading.style.display = "flex";
 
-    const ficha = new Object({ id: document.querySelector("#id").value, nomerpg: document.querySelector("#nomerpg").value });
+    const ficha = new Object({ id: document.querySelector("#id").value, nomerpg: document.querySelector("#nomerpg").value, atributos: {} });
     const forms = new Array();
 
     try {
@@ -217,33 +213,19 @@ salvarFicha.addEventListener("click", async () => {
             const atb = div.getElementsByClassName("atbIInput").item(0).id;
             const valor = div.getElementsByClassName("atbIInput").item(0).value;
 
-            if (atb.includes("$extra$")) {
-                if (valor != "" && valor != "excluir" && valor != "-") {
-                    if (ficha["extras"]) {
-                        ficha["extras"] += `|${atb.replace("$extra$", "")}:${valor}`
-                    }
-                    else {
-                        ficha["extras"] = `${atb.replace("$extra$", "")}:${valor}`
-                    }
-                }
-            }
-            else {
-                if (valor != "" && valor != "excluir" && valor != "-") {
-                    ficha[atb] = valor;
-                }
-            }
+            ficha.atributos[atb] = valor;
         }
     }
 
     try {
         const desc = document.querySelector(".desc").getElementsByClassName("descInput").item(0).value;
-        ficha["descricao"] = desc;
+        ficha.atributos["descricao"] = desc;
     }
     catch { }
 
     try {
         const img = document.querySelector(".infImage").getElementsByClassName("atbIInput").item(0).value;
-        ficha["imagem"] = img;
+        ficha.atributos["imagem"] = img;
     }
     catch { }
 
@@ -285,7 +267,7 @@ salvarFicha.addEventListener("click", async () => {
                 loading.style.display = "none";
                 response.style.display = "flex";
             }
-            else if(xhr.readyState == 4 && xhr.status == 401) {
+            else if (xhr.readyState == 4 && xhr.status == 401) {
                 window.location.replace("/auth/login");
             }
             else if (xhr.readyState == 4 && xhr.status == 500) {
@@ -352,7 +334,7 @@ apagarFicha.addEventListener("click", async () => {
                 loading.style.display = "none";
                 response.style.display = "flex";
             }
-            else if(xhr.readyState == 4 && xhr.status == 401) {
+            else if (xhr.readyState == 4 && xhr.status == 401) {
                 window.location.replace("/auth/login");
             }
             else if (xhr.readyState == 4 && xhr.status == 500) {
@@ -439,7 +421,7 @@ renFicha.addEventListener("click", () => {
                 loading.style.display = "none";
                 response.style.display = "flex";
             }
-            else if(xhr.readyState == 4 && xhr.status == 401) {
+            else if (xhr.readyState == 4 && xhr.status == 401) {
                 window.location.replace("/auth/login");
             }
             else if (xhr.readyState == 4 && xhr.status == 500) {
@@ -464,7 +446,7 @@ renFicha.addEventListener("click", () => {
 
     const confRenFicha = document.querySelector("#renFichaConf");
     const cancRenFicha = document.querySelector("#renFichaCanc");
-    
+
     confRenFicha.addEventListener("click", async () => {
         renFichaBox.style.display = "none";
         loading.style.display = "flex";
