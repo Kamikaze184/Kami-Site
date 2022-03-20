@@ -26,6 +26,7 @@ module.exports = class user_controller {
                 res.render("ficha.ejs", {
                     session: req.session,
                     ficha: ficha,
+                    atributos: ficha.atributos,
                     services: services
                 });
             }
