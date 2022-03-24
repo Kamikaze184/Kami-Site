@@ -32,10 +32,6 @@
                             <label for="toAddAtb">Atributo para adicionar:</label>
                             <input id="toAddAtb" type="text" name="atb" placeholder="Nome do atributo. Ex: Destreza">
                             <input id="valor" type="text" name="valor" placeholder="Valor do atributo">
-                            <!-- <div class="checkExtra">
-                                <input class="check" type="checkbox" id="addExtra" name="extra" value="true">
-                                <label for="extra">Adicionar atributo como um Extra</label>
-                            </div> -->
                             <input id="nomerpg" type="hidden" name="nomerpg" value="<%= ficha.nomerpg %>">
                             <input id="id" type="hidden" name="id" value="<%= session.user.id %>">
                             <input id="tag" type="hidden" name="tag"
@@ -52,10 +48,6 @@
                             <input id="id" type="hidden" name="id" value="<%= session.user.id %>">
                             <input id="tag" type="hidden" name="tag"
                                 value="<%= session.user.username %>#<%=session.user.discriminator%>">
-                            <!-- <div class="checkExtra">
-                                <input class="check" type="checkbox" id="delExtra" name="extra" value="true">
-                                <label for="extra">Atributo é um Extra</label>
-                            </div> -->
                         </form>
                         <button id="delAtbConf">Remover</button>
                         <button id="delAtbCanc">Cancelar</button>
@@ -143,9 +135,9 @@
         </div>
         <script src="/scripts/buttonHandlerFicha.js"></script>
     </main>
-    <!-- <footer>
-        <%# include('./partials/footer.ejs', {}); %>
-    </footer> -->
+    <footer>
+        <%- include('./partials/betaFooter.ejs', {}); %>
+    </footer>
 </body>
 
 </html>

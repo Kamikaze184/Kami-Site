@@ -74,10 +74,10 @@ module.exports = class App {
         const dbURI = process.env.DATABASE_URL.replace("postgres://", "");
         const conStr = {
             database: dbURI.split("/")[1],
-            username: dbURI.split("@")[0].split(":")[0],
-            password: dbURI.split("@")[0].split(":")[1],
-            host: dbURI.split("@")[1].split(":")[0],
-            port: dbURI.split("@")[1].split(":")[1],
+            username: dbURI.split(/@(?!.*@)/g)[0].split(":")[0],
+            password: dbURI.split(/@(?!.*@)/g)[0].split(":")[1],
+            host: dbURI.split(/@(?!.*@)/g)[1].split(":")[0],
+            port: dbURI.split(/@(?!.*@)/g)[1].split(":")[1],
             logging: false,
             dialect: "postgres",
         }
