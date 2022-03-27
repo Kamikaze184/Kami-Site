@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 
 <head>
     <%- include('./partials/head.ejs') %>
@@ -23,7 +23,7 @@
                     </div>
                     <div class="cardBody" id="cardScroll">
                         <% for (var f of info.fichas){%>
-                            <a class="item" href="/user/jogador/ficha/<%= `${f}`%>">
+                            <a class="item" href="/jogador/ficha/<%= `${f}`%>">
                                 <h2>
                                     <%= f %>
                                 </h2>

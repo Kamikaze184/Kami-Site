@@ -19,11 +19,15 @@ footer {
 
 .timestamp h4 {
     display: inline-block;
+    margin-bottom: 5px;
 }
 
 footer a {
     color: white;
     text-decoration: none;
+    background-color: var(--cinza-azulado);
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px;
 }
 
 footer a:hover {

@@ -35,19 +35,19 @@ module.exports = class auth_controller {
             if (code) {
                 const userInfo = await services.getUserInfo(code)
 
-                if (userInfo.isBeta) {
+                // if (userInfo.isBeta) {
 
-                    const session = req.session;
-                    session.user = userInfo
-                    session.validation = process.env.validation
+                const session = req.session;
+                session.user = userInfo
+                session.validation = process.env.validation
 
-                    res.redirect("/")
-                }
-                else {
-                    res.render("beta.ejs", {
-                        session: req.session
-                    });
-                }
+                res.redirect("/")
+                // }
+                // else {
+                //     res.render("beta.ejs", {
+                //         session: req.session
+                //     });
+                // }
             }
             else {
                 res.redirect("/")

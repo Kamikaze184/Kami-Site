@@ -35,6 +35,6 @@ module.exports = class user_controller {
             }
         })
 
-        return { path: '/user/', router: routes }
+        return { path: '/', router: routes }
     }
 }
