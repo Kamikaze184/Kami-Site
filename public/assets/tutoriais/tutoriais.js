@@ -21,15 +21,12 @@ module.exports = new Map([
                 <br>
 
                 <h4>O atributo também como o nome sugere é o atributo que você quer que seja adicionado a sua ficha.</h4>
-                <p>Os atributos padrões do bot estão disponíveis no comando /ajuda selecionando a opção "Atributos".</p>
-                <br>
-                <p>Para adicionar um atributo que não está na lista de atributos padrões, você deve usar o "Extras". Mais detalhes de como usar no tutorial "Adicionando à sua ficha atributos personalizados".</p>
                 <br>
                 <p>Para adicionar vários atributos ao mesmo tempo, você deve utilizar o "Multi". Mais detalhes de como usar no tutorial "Adicionando vários atributos à sua ficha ao mesmo tempo".</p>
                 <br>
 
                 <h4>O valor é o que você quer que seja adicionando ao atributo, o valor pode ser um número, um texto e afins.</h4>
-                <p>Lembrando que existem limitações de tamanho dependendo do atributo. Mais sobre isto no tutorial "Resolvendo problemas com sua ficha".</p>
+                <p>Lembrando que existem limitações de tamanho dependendo do atributo.</p>
                 <br>
                 <h2>Sabendo disso, vamos criar uma ficha!</h2>
                 <br>
@@ -43,44 +40,6 @@ module.exports = new Map([
                 <br>
                 <img src="/assets/tutoriais/img/f-cF-conf.png">
                 <br>
-                `
-            },
-            {
-                link: "atb-personalizados",
-                title: "Adicionando à sua ficha atributos personalizados",
-                desc: "Aprendendo a usar o Extras do /ficha",
-                thumb: "/assets/tutoriais/img/f-cF-extras.png",
-                tags: ["ficha", "adicionar", "atributo", "personalizado", "extras", "custom"],
-                tutorial: `
-                <h2>Adicionar atributos personalizados não é tão complicado!</h2>
-
-                <br>
-                <h4>Você irá utilizar o /ficha com "extras" no local do atributo.</h4>
-                <br>
-                <img src="/assets/tutoriais/img/f-cF-extras.png">
-                <br>
-                <p>Com isso o BOT irá entender que você quer adicionar um atributo que não está na lista dos padrões e não irá parar o comando se não encontrar o mesmo.</p>
-                <br>
-                <h4>O valor do atributo personalizado é onde está a mágica dessa função.</h4>
-                <p>Para que o extras funcione corretamente você precisa seguir a formatação a seguir.<p>
-                <br>
-                <h4>O caracter : separa um atributo de um valor</h4>
-                <h4>Enquanto o caracter | separa um atributo de outro</h4>
-                <br>
-                <p>Exemplo: /ficha RPG_Kami extras meuAtb1:1 | meuAtb2:2</p>
-                <br>
-                <img src="/assets/tutoriais/img/f-cF-exExtras.png">
-                <br>
-                <p>Pronto, agora sua ficha estará com os atributos que você mesmo criou!</p>
-                <br>
-                <h2>Para excluir atributos personalizados da sua ficha siga estes passos</h2>
-                <br>
-                <h4>Primeiro, é importante lembrar que os atributos devem ser excluidos 1 de cada vez, tentar excluir vários atributos ao mesmo tempo não irá funcionar</h4>
-                <br>
-                <p>Exemplo: /ficha RPG_Kami extras meuAtb1:excluir</p> 
-                <br>
-                <img src="/assets/tutoriais/img/f-cF-exExcExtras.png">
-
                 `
             },
             {
@@ -103,8 +62,6 @@ module.exports = new Map([
                 <br>
                 <h4>O caracter : separa um atributo de um valor</h4>
                 <h4>Enquanto o caracter | separa um atributo de outro</h4>
-                <h4>É importante ressaltar que o Multi e o Extras não funcionam juntos</h4>
-                <p>O Multi adiciona somente atributos que já estão na lista padrão, enquanto o Extras adiciona atributos que não estão na lista padrão.</p>
                 <br>
                 <p>Exemplo: /ficha RPG_Kami multi nome: Kami BOT | sanidade: 10</p>
                 <br>
@@ -112,7 +69,6 @@ module.exports = new Map([
                 <br>
                 <p>Pronto, agora foram adicionados na sua ficha todos os atributos que você colocou ao mesmo tempo!</p>
                 <br>
-                <h4>O atributo Multi não pode ser usado para excluir diversos atributos de uma ficha ao mesmo tempo</h4>
                 `
             },
             {
@@ -135,7 +91,7 @@ module.exports = new Map([
                 <br>
                 <h4>Apps > Add imagem à ficha</h4>
                 <br>
-                <p>Clique com o botão direito sob uma mensagem que contenha uma imagem em anexo, passe o cursor sob "Apps" e clique em "Add imagem à ficha"</p>
+                <p>Clique com o botão direito em uma mensagem que contenha uma imagem em anexo, passe o cursor sobre "Apps" e clique em "Add imagem à ficha"</p>
                 <br>
                 <img src="/assets/tutoriais/img/f-cF-exImg2.png">
                 <br>
@@ -152,10 +108,6 @@ module.exports = new Map([
                 <p>Exemplo: /ficha RPG_Kami nome excluir</p>
                 <br>
                 <img src="/assets/tutoriais/img/f-cF-exAtbExcluir.png">
-                <br>
-                <h4>Se você quiser ver os atributos que já estão no BOT prontos para serem usados é só utilizar o comando /ajuda e selecionar a opção "Atributos"</h4>
-                <br>
-                <img src="/assets/tutoriais/img/f-cF-exAtbAjuda.png">
                 <br>
                 `
             }

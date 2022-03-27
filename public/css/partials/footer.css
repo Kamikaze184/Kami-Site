@@ -12,7 +12,6 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border-top: 2px solid var(--cinza-azulado); */
     height: 60px;
     color: white;
     z-index: 5;
@@ -20,4 +19,18 @@ footer {
 
 .timestamp h4 {
     display: inline-block;
+    margin-bottom: 5px;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    background-color: var(--cinza-azulado);
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px;
+}
+
+footer a:hover {
+    color: var(--azul-claro);
+    transition: 0.3s;
 }
