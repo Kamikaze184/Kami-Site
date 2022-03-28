@@ -9,27 +9,12 @@ module.exports = class api_ficha_controller {
         routes.post("/atb/add", async (req, res) => {
             if (req.session.validation == process.env.validation) {
                 try {
-                    if (!req.body.extra) {
-                        const response = await services.sendAtb(req.body)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
-                    }
-                    else if (req.body.extra) {
-                        const extraBody = services.prepareExtra(req.body)
-                        const response = await services.sendAtb(extraBody)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
+                    const response = await services.sendAtb(req.body)
+                    if (response.status == 200) {
+                        res.status(200).send(response.data)
                     }
                     else {
-                        res.status(400).json({ message: `Atributo inválido`, atb: req.body.atb })
+                        res.status(response.status).send(response.data)
                     }
                 }
                 catch (err) {
@@ -44,27 +29,12 @@ module.exports = class api_ficha_controller {
         routes.delete("/atb/remove", async (req, res) => {
             if (req.session.validation == process.env.validation) {
                 try {
-                    if (!req.body.extra) {
-                        const response = await services.removeAtb(req.body)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
-                    }
-                    else if (req.body.extra) {
-                        const extraBody = services.prepareExtraRemove(req.body)
-                        const response = await services.removeAtb(extraBody)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
+                    const response = await services.removeAtb(req.body)
+                    if (response.status == 200) {
+                        res.status(200).send(response.data)
                     }
                     else {
-                        res.status(400).json({ message: `Atributo inválido`, atb: req.body.atb })
+                        res.status(response.status).send(response.data)
                     }
                 }
                 catch (err) {

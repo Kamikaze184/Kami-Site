@@ -1,7 +1,27 @@
 const axios = require('axios')
 
 class fichaService {
-    constructor() {
+    constructor(client) {
+        this.client = client
+    }
+
+    async getFicha(id, nomerpg) {
+        const config = {
+            method: 'get',
+            url: `${process.env.botApiUrl}/ficha`,
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            },
+            data: {
+                "id": id,
+                "nomerpg": nomerpg
+            }
+        }
+
+        const res = await axios(config)
+
+        return res.data
     }
 
     async sendAtb(body) {
