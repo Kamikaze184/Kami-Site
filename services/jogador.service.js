@@ -1,7 +1,7 @@
 const axios = require('axios')
 const resources = require('../public/assets/others/texts.json')
 
-class userService {
+class jogadorService {
     constructor(client) {
         this.client = client
     }
@@ -138,4 +138,4 @@ class userService {
     }
 }
 
-module.exports = userService
+module.exports = jogadorService

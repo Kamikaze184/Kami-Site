@@ -11,7 +11,6 @@ module.exports = class handleControllers {
             const controller = require(process.cwd() + "/" + c)
             const router = new controller(client)
 
-
             paths.push(router.path);
             routers.push(router.router);
         })
