@@ -24,6 +24,31 @@ class fichaService {
         return res.data
     }
 
+    async getFichaWithPassword(body) {
+        const config = {
+            method: 'get',
+            url: `${process.env.botApiUrl}/ficha/password`,
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            },
+            data: {
+                "id": body.id,
+                "nomerpg": body.nomerpg,
+                "senha": body.senha
+            }
+        }
+
+        try {
+            const res = await axios(config)
+            return res
+        }
+        catch (err) {
+            return err.response
+        }
+
+    }
+
     async sendAtb(body) {
         const config = {
             method: 'put',
@@ -50,16 +75,6 @@ class fichaService {
         }
     }
 
-    prepareExtra(body) {
-        const extraBody = {
-            ...body,
-            atb: "extras",
-            valor: `${body.atb}:${body.valor}`
-        }
-
-        return extraBody
-    }
-
     async removeAtb(body) {
         const config = {
             method: 'delete',
@@ -84,16 +99,6 @@ class fichaService {
         catch (err) {
             return err.response
         }
-    }
-
-    prepareExtraRemove(body) {
-        const extraBody = {
-            ...body,
-            atb: "extras",
-            valor: `${body.atb}:excluir`
-        }
-
-        return extraBody
     }
 
     async createFicha(body) {
@@ -190,6 +195,15 @@ class fichaService {
         catch (err) {
             return err.response
         }
+    }
+
+    generateFichaHTML(ficha) {
+        const jogadorServices = require("./jogador.service")
+        const service = new jogadorServices(this.client)
+
+        const inf = service.generateFormInf(ficha)
+        const inf2 = service.generateFormInf2(ficha)
+        const status = service.generateFormStatus(ficha)
     }
 
 }

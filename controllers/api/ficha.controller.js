@@ -126,6 +126,23 @@ module.exports = class api_ficha_controller {
             }
         })
 
+        routes.post("/password", async (req, res) => {
+            try {
+                const response = await services.getFichaWithPassword(req.body)
+
+                if (response.status === 200) {
+                    const fichaHTML = services.generateFichaHTML(response.data)
+                    res.status(200).send(fichaHTML)
+                }
+                else {
+                    res.status(response.status).send(response.data)
+                }
+            }
+            catch (err) {
+                res.status(500).end()
+            }
+        })
+
         return { path: '/api/ficha/', router: routes }
     }
 }
