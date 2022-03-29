@@ -13,8 +13,8 @@ main {
     background-color: var(--azul-escuro);
     border: 2px solid var(--cinza-azulado);
     border-radius: 10px;
-    width: 30%;
-    padding: 10px;
+    width: fit-content;
+    padding: 10px 2em 10px 2em;
 }
 
 .getAccess h2{
