@@ -41,18 +41,17 @@ class fichaService {
         }
 
 
-        const res = await axios(config)
-
-        if (res.status === 200) {
+        try {
+            const res = await axios(config)
             return {
                 status: 200,
                 data: res.data
             }
         }
-        else {
+        catch (err) {
             return {
-                status: res.status,
-                data: res.data
+                status: err.response.status,
+                data: err.response.data
             }
         }
     }

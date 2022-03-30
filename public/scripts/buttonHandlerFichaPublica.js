@@ -1,6 +1,17 @@
+const loading = document.querySelector('.loading');
+
+const accessBox = document.querySelector(".getAccess");
 const visualizar = document.querySelector("#visualizar");
 
+const errBox = document.querySelector(".errorMessage");
+const errTitle = document.querySelector("#title");
+const errText = document.querySelector("#text");
+const errButton = document.querySelector("#ok");
+
 visualizar.addEventListener("click", async () => {
+    loading.style.display = "flex";
+    accessBox.style.display = "none";
+
     var trys = 0
     async function makeRequest() {
         try {
@@ -25,22 +36,29 @@ visualizar.addEventListener("click", async () => {
             else if (xhr.readyState == 4 && xhr.status == 400) {
                 const apiResponse = JSON.parse(xhr.response);
 
-                console.log(apiResponse)
+                loading.style.display = "none";
 
+                errBox.style.display = "flex";
+                errTitle.innerHTML = apiResponse.title;
+                errText.innerHTML = apiResponse.text;
+
+                errButton.addEventListener("click", () => {
+                    errBox.style.display = "none";
+                    accessBox.style.display = "flex";
+                })
             }
             else if (xhr.readyState == 4 && xhr.status == 500) {
-                if (trys >= 1) {
-                    return
-                    // responseTitle.innerHTML = "Erro inesperado"
-                    // responseText.innerHTML = "Ocorreu um erro inesperado, tente novamente em alguns instantes";
+                if (trys >= 5) {
+                    loading.style.display = "none";
 
-                    // responseBtn.addEventListener("click", () => {
-                    //     response.style.display = "none";
-                    //     controles.style.display = "flex";
-                    // })
+                    errBox.style.display = "flex";
+                    errTitle.innerHTML = "Erro inesperado";
+                    errText.innerHTML = "Ocorreu um erro inesperado, tente novamente em alguns instantes";
 
-                    // loading.style.display = "none";
-                    // response.style.display = "flex";
+                    errButton.addEventListener("click", () => {
+                        errBox.style.display = "none";
+                        accessBox.style.display = "flex";
+                    })
                 }
                 else {
                     await setTimeout(async () => { await makeRequest(); }, 3500)

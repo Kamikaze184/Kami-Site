@@ -1,6 +1,6 @@
 {
   "name": "kami-site",
-  "version": "3.6.4-beta",
+  "version": "3.6.5-beta",
   "description": "Site para o BOT para Discord Kami",
   "main": "index.js",
   "scripts": {

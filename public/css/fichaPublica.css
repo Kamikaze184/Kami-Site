@@ -28,7 +28,7 @@ main {
     flex-wrap: wrap;
 }
 
-.getAccess {
+.controles {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -41,13 +41,28 @@ main {
     padding: 10px 2em 10px 2em;
 }
 
-.getAccess h2{
-    color: white;
-    text-align: center;
-    margin-bottom: 5px;
+.getAccess {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+}
+.errorMessage {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
 }
 
-.getAccess input{
+.getAccess h2, .getAccess p, .errorMessage h2, .errorMessage p {
+    color: white;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.getAccess input {
     color: white;
     background: var(--cinza-azulado);
     border: 3px solid var(--cinza-azulado);
@@ -58,7 +73,7 @@ main {
     margin: 3px;
 }
 
-.getAccess button{
+.getAccess button, .errorMessage button {
     color: white;
     margin: 4px 10px 4px 10px;
     border-radius: 10px;
@@ -71,16 +86,10 @@ main {
     width: 10em;
 }
 
-.getAccess button:hover {
+.getAccess button:hover, .errorMessage button:hover {
     border: 2px solid var(--cinza-azulado);
     background: var(--azul-claro);
     transition: 0.3s;
-}
-
-.getAccess p {
-    color: white;
-    text-align: center;
-    margin-top: 5px;
 }
 
 .getAccess a {
@@ -94,4 +103,29 @@ main {
 .getAccess a:hover {
     color: var(--azul-claro);
     transition: 0.3s;
+}
+
+.loadWheel {
+    border: 10px solid var(--cinza-azulado);
+    border-top: 10px solid white;
+    border-radius: 50%;
+    width: 3em;
+    height: 3em;
+    animation: spin 2s linear infinite;
+}
+
+.loading {
+    display: none;
+    border: 2px solid var(--cinza-azulado);
+    border-radius: 50%;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
