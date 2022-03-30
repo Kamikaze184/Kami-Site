@@ -9,27 +9,12 @@ module.exports = class api_ficha_controller {
         routes.post("/atb/add", async (req, res) => {
             if (req.session.validation == process.env.validation) {
                 try {
-                    if (!req.body.extra) {
-                        const response = await services.sendAtb(req.body)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
-                    }
-                    else if (req.body.extra) {
-                        const extraBody = services.prepareExtra(req.body)
-                        const response = await services.sendAtb(extraBody)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
+                    const response = await services.sendAtb(req.body)
+                    if (response.status == 200) {
+                        res.status(200).send(response.data)
                     }
                     else {
-                        res.status(400).json({ message: `Atributo inválido`, atb: req.body.atb })
+                        res.status(response.status).send(response.data)
                     }
                 }
                 catch (err) {
@@ -44,27 +29,12 @@ module.exports = class api_ficha_controller {
         routes.delete("/atb/remove", async (req, res) => {
             if (req.session.validation == process.env.validation) {
                 try {
-                    if (!req.body.extra) {
-                        const response = await services.removeAtb(req.body)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
-                    }
-                    else if (req.body.extra) {
-                        const extraBody = services.prepareExtraRemove(req.body)
-                        const response = await services.removeAtb(extraBody)
-                        if (response.status == 200) {
-                            res.status(200).send(response.data)
-                        }
-                        else {
-                            res.status(response.status).send(response.data)
-                        }
+                    const response = await services.removeAtb(req.body)
+                    if (response.status == 200) {
+                        res.status(200).send(response.data)
                     }
                     else {
-                        res.status(400).json({ message: `Atributo inválido`, atb: req.body.atb })
+                        res.status(response.status).send(response.data)
                     }
                 }
                 catch (err) {
@@ -153,6 +123,27 @@ module.exports = class api_ficha_controller {
             }
             else {
                 res.status(401).end()
+            }
+        })
+
+        routes.post("/password", async (req, res) => {
+            try {
+                const response = await services.getFichaWithPassword(req.body)
+
+                if (response.status === 200) {
+                    req.session.access = {
+                         [`${req.body.id}${req.body.nomerpg}`]: req.body.senha
+                    }
+                    req.session.cookie.maxAge = 1000 * 60 * 60 * 12
+
+                    res.status(200).json({id: req.body.id, nomerpg: req.body.nomerpg})
+                }
+                else {
+                    res.status(response.status).send(response.data)
+                }
+            }
+            catch (err) {
+                res.status(500).end()
             }
         })
 

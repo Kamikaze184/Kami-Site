@@ -1,10 +1,10 @@
-module.exports = class user_controller {
+module.exports = class jogador_controller {
     constructor(client) {
         const { Router } = require('express');
         const routes = Router()
 
-        const userService = require("../../services/user.service")
-        const services = new userService(client)
+        const jogadorService = require("../../services/jogador.service")
+        const services = new jogadorService(client)
 
         routes.get("/jogador", async (req, res) => {
             if (req.session.user) {

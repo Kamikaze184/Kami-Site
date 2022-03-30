@@ -1,7 +1,59 @@
 const axios = require('axios')
+const crypto = require('crypto-js')
 
 class fichaService {
-    constructor() {
+    constructor(client) {
+        this.client = client
+    }
+
+    async getFicha(id, nomerpg) {
+        const config = {
+            method: 'get',
+            url: `${process.env.botApiUrl}/ficha`,
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            },
+            data: {
+                "id": id,
+                "nomerpg": nomerpg
+            }
+        }
+
+        const res = await axios(config)
+
+        return res.data
+    }
+
+    async getFichaWithPassword(body) {
+        const config = {
+            method: 'get',
+            url: `${process.env.botApiUrl}/ficha/password`,
+            headers: {
+                "Authorization": process.env.apiToken,
+                "Content-Type": "application/json"
+            },
+            data: {
+                "id": body.id,
+                "nomerpg": body.nomerpg,
+                "senha": body.senha
+            }
+        }
+
+
+        try {
+            const res = await axios(config)
+            return {
+                status: 200,
+                data: res.data
+            }
+        }
+        catch (err) {
+            return {
+                status: err.response.status,
+                data: err.response.data
+            }
+        }
     }
 
     async sendAtb(body) {
@@ -30,16 +82,6 @@ class fichaService {
         }
     }
 
-    prepareExtra(body) {
-        const extraBody = {
-            ...body,
-            atb: "extras",
-            valor: `${body.atb}:${body.valor}`
-        }
-
-        return extraBody
-    }
-
     async removeAtb(body) {
         const config = {
             method: 'delete',
@@ -64,16 +106,6 @@ class fichaService {
         catch (err) {
             return err.response
         }
-    }
-
-    prepareExtraRemove(body) {
-        const extraBody = {
-            ...body,
-            atb: "extras",
-            valor: `${body.atb}:excluir`
-        }
-
-        return extraBody
     }
 
     async createFicha(body) {

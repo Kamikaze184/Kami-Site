@@ -1,6 +1,8 @@
 const fs = require("fs")
 const path = require("path")
 
+const fichas = new Map()
+
 module.exports = class cache {
     constructor(client) {
         this.client = client
@@ -65,4 +67,11 @@ module.exports = class cache {
         await this.client.db.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => this.client.log.error(err, true))
     }
 
+    getFichaPublica(key) {
+        return fichas.get(key)
+    }
+
+    setFichaPublica(key, ficha) {
+        fichas.set(key, ficha)
+    }
 }
