@@ -13,28 +13,40 @@
         <%- include('./partials/nav.ejs', {session: session}) %>
     </header>
     <main>
-        <div class="getAccess">
-            <h2>Insira a senha da ficha "<%= nomerpg %>"</h2>
-            <form>
-                <input id="id" type="hidden" name="id" value="<%= id %>">
-                <input id="nomerpg" type="hidden" name="nomerpg" value="<%= nomerpg %>">
-                <input id="senha" type="password" name="senha" placeholder="Senha" required>
-            </form>
-            <div class="controles">
-                <button id="visualizar">Visualizar Ficha</button>
-                <a href="/auth/login/"><button>Fazer Login</button></a>
+        <% if (ficha) { %>
+            <div class="info">
+                <h1>Ficha: <%= ficha.nomerpg %>
+                </h1>
+                <p>Criada por: <%= ficha.tag %>
+                </p>
             </div>
-        </div>
-        <div class="ficha"></div>
-        <div class="ocean">
-            <div class="wave"></div>
-            <div class="wave"></div>
-        </div>
+            <div class="ficha">
+                <%- include('./partials/formFicha.ejs', {ficha: ficha, atributos: atributos, services: jogadorServices})
+                    %>
+            </div>
+            <script src="/scripts/disableTextareas.js"></script>
+            <% } else { %>
+                <div class="getAccess">
+                    <h2>Insira a senha da ficha "<%= nomerpg %>"</h2>
+                    <form>
+                        <input id="id" type="hidden" name="id" value="<%= id %>">
+                        <input id="nomerpg" type="hidden" name="nomerpg" value="<%= nomerpg %>">
+                        <input id="senha" type="password" name="senha" placeholder="Senha" required>
+                    </form>
+                    <button id="visualizar">Visualizar Ficha</button>
+                    <p>A ficha é sua? Faça login <a href="/auth/login">clicando aqui!</a></p>
+                </div>
+                <script src="/scripts/buttonHandlerFichaPublica.js"></script>
+                <% } %>
+
+                    <div class="ocean">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
     </main>
     <footer>
         <%- include('./partials/betaFooter.ejs', {}); %>
     </footer>
-    <script src="/scripts/buttonHandlerFichaPublica.js"></script>
 </body>
 
 </html>

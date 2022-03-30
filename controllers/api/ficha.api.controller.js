@@ -131,8 +131,12 @@ module.exports = class api_ficha_controller {
                 const response = await services.getFichaWithPassword(req.body)
 
                 if (response.status === 200) {
-                    const fichaHTML = services.generateFichaHTML(response.data)
-                    res.status(200).send(fichaHTML)
+                    req.session.access = {
+                         [`${req.body.id}${req.body.nomerpg}`]: req.body.senha
+                    }
+                    req.session.cookie.maxAge = 1000 * 60 * 60 * 12
+
+                    res.status(200).json({id: req.body.id, nomerpg: req.body.nomerpg})
                 }
                 else {
                     res.status(response.status).send(response.data)

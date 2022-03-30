@@ -1,4 +1,5 @@
 const axios = require('axios')
+const crypto = require('crypto-js')
 
 class fichaService {
     constructor(client) {
@@ -39,14 +40,21 @@ class fichaService {
             }
         }
 
-        try {
-            const res = await axios(config)
-            return res
-        }
-        catch (err) {
-            return err.response
-        }
 
+        const res = await axios(config)
+
+        if (res.status === 200) {
+            return {
+                status: 200,
+                data: res.data
+            }
+        }
+        else {
+            return {
+                status: res.status,
+                data: res.data
+            }
+        }
     }
 
     async sendAtb(body) {
@@ -195,15 +203,6 @@ class fichaService {
         catch (err) {
             return err.response
         }
-    }
-
-    generateFichaHTML(ficha) {
-        const jogadorServices = require("./jogador.service")
-        const service = new jogadorServices(this.client)
-
-        const inf = service.generateFormInf(ficha)
-        const inf2 = service.generateFormInf2(ficha)
-        const status = service.generateFormStatus(ficha)
     }
 
 }
