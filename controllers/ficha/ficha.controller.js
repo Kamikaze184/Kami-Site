@@ -19,7 +19,7 @@ module.exports = class ficha_controller {
                 try {
                     const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
 
-                    const infoPreview = {
+                    const previewInfo = {
                         id: req.params.id,
                         nomerpg: req.params.nomerpg,
                         tag: ficha.tag,
@@ -34,7 +34,7 @@ module.exports = class ficha_controller {
                             ficha: ficha,
                             atributos: ficha.atributos,
                             services: jogadorServices,
-                            infoPreview: infoPreview,
+                            previewInfo: previewInfo,
                         });
                     }
                     else {
@@ -56,7 +56,7 @@ module.exports = class ficha_controller {
                 if (accessKey) {
                     const response = await services.getFichaWithPassword({ id: req.params.id, nomerpg: req.params.nomerpg, senha: accessKey })
 
-                    const infoPreview = {
+                    const previewInfo = {
                         id: req.params.id,
                         nomerpg: req.params.nomerpg,
                         tag: response.data.ficha.tag,
@@ -74,7 +74,7 @@ module.exports = class ficha_controller {
                             jogadorServices: jogadorServices,
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
-                            infoPreview: infoPreview,
+                            previewInfo: previewInfo,
                         })
                     }
                     else {
@@ -87,7 +87,7 @@ module.exports = class ficha_controller {
                     const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
 
                     if (ficha) {
-                        const infoPreview = {
+                        const previewInfo = {
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
                             tag: ficha.tag,
@@ -102,7 +102,7 @@ module.exports = class ficha_controller {
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
                             ficha: null,
-                            infoPreview: infoPreview,
+                            previewInfo: previewInfo,
                         });
                     }
                     else {
