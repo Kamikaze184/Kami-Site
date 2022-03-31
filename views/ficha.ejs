@@ -10,7 +10,7 @@
 
 <body>
     <header>
-        <%- include('./partials/nav.ejs', {session: session}) %>
+        <%- include('./partials/nav.ejs', {session: session, redirect: `/jogador/ficha/${ficha.nomerpg}`}) %>
     </header>
     <main>
         <div class="flex">

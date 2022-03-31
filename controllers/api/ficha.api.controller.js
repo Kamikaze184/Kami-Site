@@ -127,7 +127,7 @@ module.exports = class api_ficha_controller {
         })
 
         routes.post("/password", async (req, res) => {
-            if (req.headers.authorization == process.env.validation) {
+            if (req.session.validation == process.env.validation) {
                 try {
                     const response = await services.getFichaWithPassword(req.body)
 

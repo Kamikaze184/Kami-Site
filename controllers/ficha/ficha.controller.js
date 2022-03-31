@@ -10,7 +10,6 @@ module.exports = class ficha_controller {
         const jogadorServices = new jogadorService(client)
 
         routes.get("/:id/:nomerpg", async (req, res) => {
-
             let userid = 0
             if (req.session.user) {
                 userid = req.session.user.id
@@ -24,7 +23,7 @@ module.exports = class ficha_controller {
                             session: req.session,
                             ficha: ficha,
                             atributos: ficha.atributos,
-                            services: jogadorServices
+                            services: jogadorServices,
                         });
                     }
                     else {
@@ -38,6 +37,8 @@ module.exports = class ficha_controller {
                 }
             }
             else {
+                req.session.validation = process.env.validation
+
                 let accessKey
                 try { accessKey = req.session.access[`${req.params.id}${req.params.nomerpg}`] } catch (err) { accessKey = null }
 
@@ -51,6 +52,8 @@ module.exports = class ficha_controller {
                             ficha: response.data.ficha,
                             atributos: response.data.ficha.atributos,
                             jogadorServices: jogadorServices,
+                            id: req.params.id,
+                            nomerpg: req.params.nomerpg,
                         })
                     }
                     else {

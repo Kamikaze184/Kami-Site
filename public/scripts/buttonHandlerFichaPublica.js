@@ -18,7 +18,6 @@ visualizar.addEventListener("click", async () => {
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "/api/ficha/password", true);
             xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("Authorization", process.env.validation);
             xhr.send(JSON.stringify({
                 id: document.querySelector("#id").value,
                 nomerpg: document.querySelector("#nomerpg").value,
