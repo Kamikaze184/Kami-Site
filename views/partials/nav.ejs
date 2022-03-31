@@ -14,10 +14,9 @@
             <% if(session.user){%>
                 <%- include('./userDrop.ejs', {session: session})%>
                     <% } else {%>
-                        <a class="linkItem" href="/auth/login">Login</a>
+                        <a class="linkItem" href="/auth/login?redirect=<%= redirect %> ">Login</a>
                         <% } %>
             <img src='/assets/img/menu.png' alt='botão menu' class='menuBtn' id="mobile-menu-btn"></img>
-
         </div>
     </nav>
     <%- include("./mobileNav.ejs")  %> 
