@@ -1,0 +1,28 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&&display=swap" rel="stylesheet">
+
+<title>Kami - Ficha de personagem</title>
+<meta name="title" content="Kami - Ficha de personagem">
+<meta name="description" content="<%= `Ficha " ${ficha.nomerpg}". Criada por: ${ficha.tag}` %>">
+
+<meta property="og:title" content="Kami - Ficha de personagem" />
+<meta property="og:description" content="<%= `Ficha " ${ficha.nomerpg}". Criada por: ${ficha.tag}` %>"/>
+
+<% if(ficha.atributos.imagem){%>
+    <meta property="og:image" content="<%= ficha.atributos.imagem %>" />
+    <%}else{%>
+        <meta property="og:image"
+            content="https://cdn.discordapp.com/attachments/737416028857958480/911108906997153802/logo.png" />
+        <%}%>
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content="https://kamibot.vercel.app/ficha/<%= `${ficha.id}/${ficha.nomerpg}` %>">
+            <meta name="theme-color" content="#0082FF">
+
+            <link type="application/json+oembed" href="/others/preview.json" />
+
+            <link rel="stylesheet" href="/css/partials/footer.css" />
+            <link rel="stylesheet" href="/css/partials/nav.css" />
+            <link rel="stylesheet" href="/css/partials/mobileNav.css" />
+            <link rel="stylesheet" href="/css/global.css">

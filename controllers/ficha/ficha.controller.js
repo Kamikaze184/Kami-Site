@@ -18,12 +18,23 @@ module.exports = class ficha_controller {
             if (userid == req.params.id) {
                 try {
                     const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
+
+                    const infoPreview = {
+                        id: req.params.id,
+                        nomerpg: req.params.nomerpg,
+                        tag: ficha.tag,
+                        atributos: {
+                            imagem: ficha.imagem ? ficha.imagem : undefined,
+                        }
+                    }
+
                     if (ficha) {
                         res.render("ficha.ejs", {
                             session: req.session,
                             ficha: ficha,
                             atributos: ficha.atributos,
                             services: jogadorServices,
+                            infoPreview: infoPreview,
                         });
                     }
                     else {
@@ -45,6 +56,15 @@ module.exports = class ficha_controller {
                 if (accessKey) {
                     const response = await services.getFichaWithPassword({ id: req.params.id, nomerpg: req.params.nomerpg, senha: accessKey })
 
+                    const infoPreview = {
+                        id: req.params.id,
+                        nomerpg: req.params.nomerpg,
+                        tag: response.data.ficha.tag,
+                        atributos: {
+                            imagem: response.data.ficha.imagem ? response.data.ficha.imagem : undefined,
+                        }
+                    }
+
                     if (response.status == 200) {
                         res.render("fichaPublica.ejs", {
                             session: req.session,
@@ -54,6 +74,7 @@ module.exports = class ficha_controller {
                             jogadorServices: jogadorServices,
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
+                            infoPreview: infoPreview,
                         })
                     }
                     else {
@@ -66,12 +87,22 @@ module.exports = class ficha_controller {
                     const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
 
                     if (ficha) {
+                        const infoPreview = {
+                            id: req.params.id,
+                            nomerpg: req.params.nomerpg,
+                            tag: ficha.tag,
+                            atributos: {
+                                imagem: ficha.imagem ? ficha.imagem : undefined,
+                            }
+                        }
+
                         res.render("fichaPublica.ejs", {
                             session: req.session,
                             services: services,
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
-                            ficha: null
+                            ficha: null,
+                            infoPreview: infoPreview,
                         });
                     }
                     else {

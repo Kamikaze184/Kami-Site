@@ -2,7 +2,7 @@
 <html lang="pt-br">
 
 <head>
-    <%- include('./partials/head.ejs') %>
+    <%- include('./partials/headFicha.ejs', {ficha: previewInfo}) %>
         <link rel="stylesheet" href="/css/global.css">
         <link rel="stylesheet" href="/css/fichaPublica.css">
         <link rel="stylesheet" href="/css/partials/formFicha.css">
@@ -38,7 +38,8 @@
                             <input id="senha" type="password" name="senha" placeholder="Senha" required>
                         </form>
                         <button id="visualizar">Visualizar Ficha</button>
-                        <p>A ficha é sua? Faça login <a href="/auth/login?redirect=/ficha/<%= id %>/<%= nomerpg %>">clicando aqui!</a></p>
+                        <p>A ficha é sua? Faça login <a
+                                href="/auth/login?redirect=/ficha/<%= id %>/<%= nomerpg %>">clicando aqui!</a></p>
                     </div>
                     <div class="errorMessage">
                         <h2 id="title"></h2>
