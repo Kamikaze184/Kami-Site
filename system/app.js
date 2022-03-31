@@ -130,6 +130,15 @@ module.exports = class App {
         }
 
         this.app.use((req, res, next) => {
+            if (req.path.search("Roboto-Regular.ttf") != -1) {
+                res.status(404).end()
+            }
+            else {
+                next()
+            }
+        })
+
+        this.app.use((req, res, next) => {
             this.log.info(`${req.method} ${req.path}`)
             next()
         })
