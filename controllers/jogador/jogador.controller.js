@@ -6,7 +6,7 @@ module.exports = class jogador_controller {
         const jogadorService = require("../../services/jogador.service")
         const services = new jogadorService(client)
 
-        routes.get("/jogador", async (req, res) => {
+        routes.get("/", async (req, res) => {
             if (req.session.user) {
                 const info = await services.getUser(req.session.user.id)
                 res.render("jogador.ejs", {
@@ -15,11 +15,11 @@ module.exports = class jogador_controller {
                 });
             }
             else {
-                res.redirect("/auth/login")
+                res.redirect("/auth/login?redirect=/jogador")
             }
         })
 
-        routes.get("/jogador/ficha/:ficha", async (req, res) => {
+        routes.get("/ficha/:ficha", async (req, res) => {
             if (req.session.user) {
                 const ficha = await services.getFicha(req.session.user.id, req.params.ficha)
 
@@ -31,10 +31,10 @@ module.exports = class jogador_controller {
                 });
             }
             else {
-                res.redirect("/auth/login")
+                res.redirect("/auth/login?redirect=/jogador/ficha/" + req.params.ficha)
             }
         })
 
-        return { path: '/', router: routes }
+        return { path: '/jogador/', router: routes }
     }
 }

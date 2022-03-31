@@ -7,6 +7,10 @@ module.exports = class auth_controller {
         const services = new authServices(client)
 
         routes.get("/login", (req, res) => {
+            if (req.query.redirect) {
+                res.cookie('redirect', req.query.redirect, { maxAge: 1000 * 60 * 10 })
+            }
+
             if (process.env.deploy == "development") {
                 const session = req.session
                 session.user = {
@@ -17,7 +21,8 @@ module.exports = class auth_controller {
                     avatarURL: 'https://cdn.discordapp.com/avatars/252868463150759961/347aa6655964484ff3f10e74c1170c1c.png?size=128',
                 }
                 session.validation = process.env.validation
-                res.redirect('/')
+
+                res.redirect(req.query.redirect || '/')
             }
             else if (process.env.deploy == "production") {
                 res.redirect(`${process.env.oauthUri}`)
@@ -41,7 +46,9 @@ module.exports = class auth_controller {
                 session.user = userInfo
                 session.validation = process.env.validation
 
-                res.redirect("/")
+                res.redirect(req.cookies.redirect || '/')
+                res.clearCookie('redirect')
+
                 // }
                 // else {
                 //     res.render("beta.ejs", {

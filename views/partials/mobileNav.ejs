@@ -22,7 +22,7 @@
                     <li><a class="mobileLinkItem" href="/auth/logout">Sair</a></li>
                 </div>
                 <% } else {%>
-                    <li><a class="mobileLinkItem" href="/auth/login">Login</a></li>
+                    <li><a class="mobileLinkItem" href="/auth/login?redirect=<%= redirect %> ">Login</a></li>
                     <% } %>
         </ul>
     </div>
