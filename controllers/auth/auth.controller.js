@@ -46,8 +46,10 @@ module.exports = class auth_controller {
                 session.user = userInfo
                 session.validation = process.env.validation
 
-                res.redirect(req.cookies.redirect || '/')
+                const redirect = req.cookies.redirect || '/'
+
                 res.clearCookie('redirect')
+                res.redirect(redirect)
 
                 // }
                 // else {
