@@ -10,7 +10,7 @@
 
 <body>
     <header>
-        <%- include('./partials/nav.ejs', {session: session}) %>
+        <%- include('./partials/nav.ejs', {session: session, redirect: `/ficha/${id}/${nomerpg}`}) %>
     </header>
     <main>
         <% if (ficha) { %>
