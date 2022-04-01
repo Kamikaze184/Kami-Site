@@ -13,7 +13,7 @@ visualizar.addEventListener("click", async () => {
     async function makeRequest() {
         try {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/ficha/password", true);
+            xhr.open("POST", "/api/ficha/password", true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(JSON.stringify({
                 id: document.querySelector("#id").value,
