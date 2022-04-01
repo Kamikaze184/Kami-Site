@@ -9,14 +9,11 @@ const errText = document.querySelector("#text");
 const errButton = document.querySelector("#ok");
 
 visualizar.addEventListener("click", async () => {
-    loading.style.display = "flex";
-    accessBox.style.display = "none";
-
     var trys = 0
     async function makeRequest() {
         try {
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/api/ficha/password", true);
+            xhr.open("GET", "/api/ficha/password", true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(JSON.stringify({
                 id: document.querySelector("#id").value,
@@ -65,7 +62,12 @@ visualizar.addEventListener("click", async () => {
                 }
             }
         }
-
     }
-    await makeRequest();
+
+    if (document.querySelector("#senha").value.length > 0) {
+        loading.style.display = "flex";
+        accessBox.style.display = "none";
+
+        await makeRequest();
+    }
 })

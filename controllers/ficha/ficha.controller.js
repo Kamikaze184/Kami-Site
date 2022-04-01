@@ -19,16 +19,19 @@ module.exports = class ficha_controller {
                 try {
                     const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
 
-                    const previewInfo = {
-                        id: req.params.id,
-                        nomerpg: req.params.nomerpg,
-                        tag: ficha.tag,
-                        atributos: {
-                            imagem: ficha.atributos.imagem ? ficha.atributos.imagem : undefined,
-                        }
-                    }
+                    let previewInfo = undefined
+        
 
                     if (ficha) {
+                        previewInfo = {
+                            id: req.params.id,
+                            nomerpg: req.params.nomerpg,
+                            tag: ficha.tag,
+                            atributos: {
+                                imagem: ficha.atributos.imagem ? ficha.atributos.imagem : undefined,
+                            }
+                        }
+
                         res.render("ficha.ejs", {
                             session: req.session,
                             ficha: ficha,
@@ -56,16 +59,18 @@ module.exports = class ficha_controller {
                 if (accessKey) {
                     const response = await services.getFichaWithPassword({ id: req.params.id, nomerpg: req.params.nomerpg, senha: accessKey })
 
-                    const previewInfo = {
-                        id: req.params.id,
-                        nomerpg: req.params.nomerpg,
-                        tag: response.data.ficha.tag,
-                        atributos: {
-                            imagem: response.data.ficha.atributos.imagem ? response.data.ficha.atributos.imagem : undefined,
-                        }
-                    }
+                    let previewInfo = undefined
 
                     if (response.status == 200) {
+                        previewInfo = {
+                            id: req.params.id,
+                            nomerpg: req.params.nomerpg,
+                            tag: response.data.ficha.tag,
+                            atributos: {
+                                imagem: response.data.ficha.atributos.imagem ? response.data.ficha.atributos.imagem : undefined,
+                            }
+                        }
+
                         res.render("fichaPublica.ejs", {
                             session: req.session,
                             services: services,
@@ -86,8 +91,10 @@ module.exports = class ficha_controller {
                 else {
                     const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
 
+                    let previewInfo = undefined
+
                     if (ficha) {
-                        const previewInfo = {
+                        previewInfo = {
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
                             tag: ficha.tag,

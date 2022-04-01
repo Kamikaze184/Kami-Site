@@ -2,7 +2,11 @@
 <html lang="pt-br">
 
 <head>
+    <% if(previewInfo){ %> 
     <%- include('./partials/headFicha.ejs', {ficha: previewInfo}) %>
+    <% }else{ %>
+    <%- include('./partials/head.ejs') %>
+    <% } %>
         <link rel="stylesheet" href="/css/global.css">
         <link rel="stylesheet" href="/css/fichaPublica.css">
         <link rel="stylesheet" href="/css/partials/formFicha.css">
