@@ -2,6 +2,8 @@ const addAtbBox = document.querySelector(".addAtb");
 const delAtbBox = document.querySelector(".delAtb");
 const confApagarBox = document.querySelector(".confApagar");
 const renFichaBox = document.querySelector(".renFicha");
+const shareBox = document.querySelector(".share");
+const icons = document.querySelector(".icons");
 const controles = document.querySelector(".controles");
 const loading = document.querySelector(".loading");
 const response = document.querySelector(".response");
@@ -14,9 +16,11 @@ const delAtb = document.querySelector("#delAtb");
 const salvarFicha = document.querySelector("#salvarFicha");
 const apagarFicha = document.querySelector("#apagarFicha");
 const renFicha = document.querySelector("#renomearFicha");
+const share = document.querySelector("#share");
 
 addAtb.addEventListener("click", () => {
     controles.style.display = "none";
+    icons.style.display = "none";
     addAtbBox.style.display = "flex";
 
     const addAtbConf = document.querySelector("#addAtbConf");
@@ -44,6 +48,7 @@ addAtb.addEventListener("click", () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     loading.style.display = "none";
                     controles.style.display = "flex";
+                    icons.style.display = "flex";
                     response.style.display = "flex";
                     responseTitle.innerHTML = "Atributo adicionado";
                     responseText.innerHTML = "Atributo adicionado com sucesso, clique em Ok para atualizar a página (alterações não salvas serão perdidas)";
@@ -60,6 +65,7 @@ addAtb.addEventListener("click", () => {
                     responseBtn.addEventListener("click", () => {
                         response.style.display = "none";
                         controles.style.display = "flex";
+                        icons.style.display = "flex";
                     })
 
                     loading.style.display = "none";
@@ -76,6 +82,7 @@ addAtb.addEventListener("click", () => {
                         responseBtn.addEventListener("click", () => {
                             response.style.display = "none";
                             controles.style.display = "flex";
+                            icons.style.display = "flex";
                         })
 
                         loading.style.display = "none";
@@ -93,6 +100,7 @@ addAtb.addEventListener("click", () => {
 
     addAtbCanc.addEventListener("click", () => {
         controles.style.display = "flex";
+        icons.style.display = "flex";
         addAtbBox.style.display = "none";
 
         document.querySelector("#toAddAtb").value = "";
@@ -102,6 +110,7 @@ addAtb.addEventListener("click", () => {
 
 delAtb.addEventListener("click", () => {
     controles.style.display = "none";
+    icons.style.display = "none";
     delAtbBox.style.display = "flex";
 
     const delAtbConf = document.querySelector("#delAtbConf");
@@ -128,6 +137,7 @@ delAtb.addEventListener("click", () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     loading.style.display = "none";
                     controles.style.display = "flex";
+                    icons.style.display = "flex";
                     response.style.display = "flex";
                     responseTitle.innerHTML = "Atributo removido";
                     responseText.innerHTML = "Atributo removido com sucesso, clique em Ok para atualizar a página (alterações não salvas serão perdidas)";
@@ -144,6 +154,7 @@ delAtb.addEventListener("click", () => {
                     responseBtn.addEventListener("click", () => {
                         response.style.display = "none";
                         controles.style.display = "flex";
+                        icons.style.display = "flex";
                     })
 
                     loading.style.display = "none";
@@ -160,6 +171,7 @@ delAtb.addEventListener("click", () => {
                         responseBtn.addEventListener("click", () => {
                             response.style.display = "none";
                             controles.style.display = "flex";
+                            icons.style.display = "flex";
                         })
 
                         loading.style.display = "none";
@@ -177,6 +189,7 @@ delAtb.addEventListener("click", () => {
 
     delAtbCanc.addEventListener("click", () => {
         controles.style.display = "flex";
+        icons.style.display = "flex";
         delAtbBox.style.display = "none";
 
         document.querySelector("#toDelAtb").value = "";
@@ -185,6 +198,7 @@ delAtb.addEventListener("click", () => {
 
 salvarFicha.addEventListener("click", async () => {
     controles.style.display = "none";
+    icons.style.display = "none";
     loading.style.display = "flex";
 
     const ficha = new Object({ id: document.querySelector("#id").value, nomerpg: document.querySelector("#nomerpg").value, atributos: {} });
@@ -246,6 +260,7 @@ salvarFicha.addEventListener("click", async () => {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 loading.style.display = "none";
                 controles.style.display = "flex";
+                icons.style.display = "flex";
                 response.style.display = "flex";
                 responseTitle.innerHTML = "Ficha salva";
                 responseText.innerHTML = "Ficha salva com sucesso, clique em Ok para atualizar a página (alterações não salvas serão perdidas)";
@@ -262,6 +277,7 @@ salvarFicha.addEventListener("click", async () => {
                 responseBtn.addEventListener("click", () => {
                     response.style.display = "none";
                     controles.style.display = "flex";
+                    icons.style.display = "flex";
                 })
 
                 loading.style.display = "none";
@@ -278,6 +294,7 @@ salvarFicha.addEventListener("click", async () => {
                     responseBtn.addEventListener("click", () => {
                         response.style.display = "none";
                         controles.style.display = "flex";
+                        icons.style.display = "flex";
                     })
 
                     loading.style.display = "none";
@@ -295,6 +312,7 @@ salvarFicha.addEventListener("click", async () => {
 
 apagarFicha.addEventListener("click", async () => {
     controles.style.display = "none";
+    icons.style.display = "none";
     confApagarBox.style.display = "flex";
 
     var trys = 0;
@@ -313,6 +331,7 @@ apagarFicha.addEventListener("click", async () => {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 loading.style.display = "none";
                 controles.style.display = "flex";
+                icons.style.display = "flex";
                 response.style.display = "flex";
                 responseTitle.innerHTML = "Ficha apagada";
                 responseText.innerHTML = "Ficha apagada com sucesso, clique em Ok para voltar à página do jogador";
@@ -329,6 +348,7 @@ apagarFicha.addEventListener("click", async () => {
                 responseBtn.addEventListener("click", () => {
                     response.style.display = "none";
                     controles.style.display = "flex";
+                    icons.style.display = "flex";
                 })
 
                 loading.style.display = "none";
@@ -345,6 +365,7 @@ apagarFicha.addEventListener("click", async () => {
                     responseBtn.addEventListener("click", () => {
                         response.style.display = "none";
                         controles.style.display = "flex";
+                        icons.style.display = "flex";
                     })
 
                     loading.style.display = "none";
@@ -369,6 +390,7 @@ apagarFicha.addEventListener("click", async () => {
     cancApagar.addEventListener("click", () => {
         confApagarBox.style.display = "none";
         controles.style.display = "flex";
+        icons.style.display = "flex";
     })
 
 
@@ -376,6 +398,7 @@ apagarFicha.addEventListener("click", async () => {
 
 renFicha.addEventListener("click", () => {
     controles.style.display = "none";
+    icons.style.display = "none";
     renFichaBox.style.display = "flex";
 
     var trys = 0;
@@ -396,6 +419,7 @@ renFicha.addEventListener("click", () => {
                 const apiResponse = JSON.parse(xhr.response);
                 loading.style.display = "none";
                 controles.style.display = "flex";
+                icons.style.display = "flex";
                 response.style.display = "flex";
                 responseTitle.innerHTML = "Ficha renomeada"
                 responseText.innerHTML = `Ficha renomeada com sucesso para "${apiResponse.novonomerpg}", clique em Ok para atualizar a página (alterações não salvas serão perdidas)`;
@@ -416,6 +440,7 @@ renFicha.addEventListener("click", () => {
                 responseBtn.addEventListener("click", () => {
                     response.style.display = "none";
                     controles.style.display = "flex";
+                    icons.style.display = "flex";
                 })
 
                 loading.style.display = "none";
@@ -432,6 +457,7 @@ renFicha.addEventListener("click", () => {
                     responseBtn.addEventListener("click", () => {
                         response.style.display = "none";
                         controles.style.display = "flex";
+                        icons.style.display = "flex";
                     })
 
                     loading.style.display = "none";
@@ -455,6 +481,51 @@ renFicha.addEventListener("click", () => {
 
     cancRenFicha.addEventListener("click", () => {
         controles.style.display = "flex";
+        icons.style.display = "flex";
         renFichaBox.style.display = "none";
+    })
+})
+
+share.addEventListener("click", () => {
+    controles.style.display = "none";
+    icons.style.display = "none";
+    shareBox.style.display = "flex";
+
+    const verSenha = document.querySelector("#shareSenha");
+    const copyLink = document.querySelector("#shareCopy");
+    const voltar = document.querySelector("#shareBack");
+
+    verSenha.addEventListener("click", () => {
+        let senha = document.querySelector("#sharePassword")
+
+        if (senha.getAttribute("type") == "password") {
+            senha.setAttribute("type", "text");
+            verSenha.innerHTML = "Ocultar senha"
+        }
+        else {
+            senha.setAttribute("type", "password");
+            verSenha.innerHTML = "Ver senha"
+        }
+    })
+
+    copyLink.addEventListener("click", () => {
+        const link = document.querySelector("#shareLink").value
+        const senha = document.querySelector("#sharePassword").value
+
+        navigator.clipboard.writeText(`Visualize a ficha "${document.querySelector("#nomerpg").value}" criada pelo usuário ${document.querySelector("#tag").value}\nLink: ${link}\nSenha: ${senha}`);
+
+        alert("Link copiado para a área de transferência");
+    })
+
+    voltar.addEventListener("click", () => {
+        controles.style.display = "flex";
+        icons.style.display = "flex";
+        shareBox.style.display = "none";
+
+        let senha = document.querySelector("#sharePassword")
+        if (senha.getAttribute("type") == "text") {
+            senha.setAttribute("type", "password");
+            verSenha.innerHTML = "Ver senha"
+        }
     })
 })
