@@ -486,33 +486,45 @@ renFicha.addEventListener("click", () => {
     })
 })
 
-share.addEventListener("click", () => {
+share.addEventListener("click", async () => {
     controles.style.display = "none";
     icons.style.display = "none";
     shareBox.style.display = "flex";
 
     const verSenha = document.querySelector("#shareSenha");
-    const copyLink = document.querySelector("#shareCopy");
+    const copyLinkPass = document.querySelector("#shareCopy");
     const voltar = document.querySelector("#shareBack");
+    const senha = document.querySelector("#sharePassword")
+    const link = document.querySelector("#shareLink")
+    const copyLink = document.querySelector("#copyLink")
+    const copyPassword = document.querySelector("#copyPassword")
 
-    verSenha.addEventListener("click", () => {
-        let senha = document.querySelector("#sharePassword")
-
-        if (senha.getAttribute("type") == "password") {
-            senha.setAttribute("type", "text");
-            verSenha.innerHTML = "Ocultar senha"
-        }
-        else {
-            senha.setAttribute("type", "password");
-            verSenha.innerHTML = "Ver senha"
-        }
+    copyLink.addEventListener("click", async () => {
+        navigator.clipboard.writeText(link.value);
+        alert("Link copiado para a área de transferência");
     })
 
-    copyLink.addEventListener("click", () => {
-        const link = document.querySelector("#shareLink").value
-        const senha = document.querySelector("#sharePassword").value
+    copyPassword.addEventListener("click", async () => {
+        navigator.clipboard.writeText(senha.value);
+        alert("Senha copiada para a área de transferência");
+    })
 
-        navigator.clipboard.writeText(`Visualize a ficha "${document.querySelector("#nomerpg").value}" criada pelo usuário ${document.querySelector("#tag").value}\nLink: ${link}\nSenha: ${senha}`);
+    var x = 1;
+    verSenha.addEventListener("click", () => {
+        if (x % 2 == 0) {
+            senha.setAttribute("type", "password");
+            verSenha.innerHTML = "Ver senha";
+        }
+        else {
+            senha.setAttribute("type", "text");
+            verSenha.innerHTML = "Ocultar senha";
+        }
+        x++;
+    })
+
+    copyLinkPass.addEventListener("click", () => {
+
+        navigator.clipboard.writeText(`Visualize a ficha "${document.querySelector("#nomerpg").value}" criada pelo usuário ${document.querySelector("#tag").value}\nLink: ${link.value}\nSenha: ${senha.value}`);
 
         alert("Link copiado para a área de transferência");
     })

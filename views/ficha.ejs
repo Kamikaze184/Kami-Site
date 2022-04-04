@@ -77,10 +77,10 @@
                     <div class="share">
                         <h2>Compartilhe sua ficha utilizando o link abaixo</h2>
                         <label for="shareLink">Link:</label>
-                        <input id="shareLink" type="text"
-                            value="https://kamisite.herokuapp.com/ficha/<%= ficha.id %>/<%= ficha.nomerpg%>" disabled>
+                        <span id="copyLink"><input id="shareLink" type="text"
+                            value="https://kamisite.herokuapp.com/ficha/<%= ficha.id %>/<%= ficha.nomerpg%>" disabled></span>
                         <label for="sharePassword">Senha de acesso:</label>
-                        <input id="sharePassword" type="password" value="<%= ficha.senha %>" disabled>
+                        <span id="copyPassword"><input id="sharePassword" type="password" value="<%= ficha.senha %>" disabled></span>
                         <div class="shareControles">
                             <button id="shareSenha">Ver senha</button>
                             <button id="shareCopy">Copiar link</button>

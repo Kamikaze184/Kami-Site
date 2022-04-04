@@ -355,7 +355,7 @@ input#addExtra.check, input#delExtra.check {
 
 .share input {
     color: white;
-    width: 80%;
+    width: 100%;
     background: var(--cinza-azulado);
     border: 3px solid var(--cinza-azulado);
     border-radius: 5px;
@@ -364,6 +364,7 @@ input#addExtra.check, input#delExtra.check {
     padding: 5px;
     margin: 3px;
     overflow-x: scroll;
+    cursor: pointer;
 }
 
 .shareControles {
@@ -389,6 +390,15 @@ input#addExtra.check, input#delExtra.check {
 
 .share button:hover{
     background: var(--azul-claro);
+}
+
+.share span {
+    width: 80%;
+    cursor: pointer;
+}
+
+.share input:hover {
+    color: var(--azul-claro);
 }
 
 .icons{
