@@ -21,7 +21,6 @@ module.exports = class ficha_controller {
 
                     let previewInfo = undefined
         
-
                     if (ficha) {
                         previewInfo = {
                             id: req.params.id,
