@@ -336,7 +336,7 @@ apagarFicha.addEventListener("click", async () => {
                 responseTitle.innerHTML = "Ficha apagada";
                 responseText.innerHTML = "Ficha apagada com sucesso, clique em Ok para voltar à página do jogador";
                 responseBtn.addEventListener("click", () => {
-                    window.location.href = "/user/jogador"
+                    window.location.href = "/jogador"
                 })
                 response.style.display = "flex";
             }
@@ -427,7 +427,7 @@ renFicha.addEventListener("click", () => {
                 document.querySelector("#nomerpg").value = apiResponse.novonomerpg;
 
                 responseBtn.addEventListener("click", () => {
-                    window.location.replace(`/user/jogador/ficha/${apiResponse.novonomerpg}`);
+                    window.location.replace(`/jogador/ficha/${apiResponse.novonomerpg}`);
                 })
 
                 response.style.display = "flex";
