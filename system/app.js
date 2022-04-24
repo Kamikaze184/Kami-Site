@@ -131,7 +131,7 @@ module.exports = class App {
 
         this.app.use((req, res, next) => {
             if (req.path.search("Roboto-Regular.ttf") != -1) {
-                res.status(404).end()
+                res.sendFile(path.join(__dirname, "..", "public", "assets", "fonts", "Roboto-Regular.ttf"))
             }
             else {
                 next()

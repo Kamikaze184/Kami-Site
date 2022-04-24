@@ -1,5 +1,5 @@
 main {
-    margin-bottom: 70px;
+    margin-bottom: 100px;
 }
 
 .flex {
@@ -26,7 +26,7 @@ main {
     background-color: var(--azul-escuro);
     border: 3px solid var(--cinza-azulado);
     margin-top: 20px;
-    width: 15em;
+    width: 17em;
     height: 4em;
     border-radius: 10px;
 }

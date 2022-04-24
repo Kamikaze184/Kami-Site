@@ -7,6 +7,10 @@
     --cinza-claro-2: rgb(74, 80, 85);
 }
 
+* {
+    transition: 0.3s;
+}
+
 body {
     background-color: var(--cinza-azulado);
     background-size: cover;

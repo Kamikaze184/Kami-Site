@@ -29,23 +29,22 @@
                                 </h2>
                             </a>
                             <%}%>
-                            <a>
                                 <form class="novaFicha">
-                                    <input id="nomerpg" type="text" name="nomerpg" placeholder="Nome da ficha. Ex: RPG_Kami" maxlength="80">
+                                    <input id="nomerpg" type="text" name="nomerpg"
+                                        placeholder="Nome da ficha. Ex: RPG_Kami" maxlength="80">
                                     <input id="id" type="hidden" name="id" value="<%= `${session.user.id}`%>">
                                     <button id="criarFicha" type="button">Criar nova ficha</button>
                                 </form>
-                            </a>
-                            <div class="message">
-                                <div class="loading">
-                                    <div class="loadWheel"></div>
+                                <div class="message">
+                                    <div class="loading">
+                                        <div class="loadWheel"></div>
+                                    </div>
+                                    <div class="response">
+                                        <h2 class="responseTitle"></h2>
+                                        <p class="responseText"></p>
+                                        <button id="confirmMessage">Ok</button>
+                                    </div>
                                 </div>
-                                <div class="response">
-                                    <h2 class="responseTitle"></h2>
-                                    <p class="responseText"></p>
-                                    <button id="confirmMessage">Ok</button>
-                                </div>
-                            </div>
                     </div>
                 </div>
                 <div class="card">
@@ -55,7 +54,7 @@
                     <div class="cardBody" id="cardScroll">
                         <h2>Em desenvolvimento</h2>
                     </div>
-   
+
                 </div>
                 <div class="card">
                     <div class="title">

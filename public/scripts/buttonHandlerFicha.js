@@ -18,6 +18,8 @@ const apagarFicha = document.querySelector("#apagarFicha");
 const renFicha = document.querySelector("#renomearFicha");
 const share = document.querySelector("#share");
 
+let unsaved = false;
+
 addAtb.addEventListener("click", () => {
     controles.style.display = "none";
     icons.style.display = "none";
@@ -258,6 +260,7 @@ salvarFicha.addEventListener("click", async () => {
 
         xhr.onreadystatechange = async function (e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                unsaved = false;
                 loading.style.display = "none";
                 controles.style.display = "flex";
                 icons.style.display = "flex";
@@ -329,6 +332,7 @@ apagarFicha.addEventListener("click", async () => {
 
         xhr.onreadystatechange = async function (e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                unsaved = false;
                 loading.style.display = "none";
                 controles.style.display = "flex";
                 icons.style.display = "flex";
@@ -541,3 +545,16 @@ share.addEventListener("click", async () => {
         }
     })
 })
+
+const input = document.querySelectorAll("textarea");
+input.forEach(input => {
+    input.addEventListener("change", () => {
+        unsaved = true;
+    });
+});
+
+const unloadPage = () => {
+    return unsaved ? "Você tem alterações não salvas, deseja realmente sair?" : null;
+};
+
+window.onbeforeunload = unloadPage;
