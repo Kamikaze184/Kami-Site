@@ -7,6 +7,15 @@
     --cinza-claro-2: rgb(74, 80, 85);
 }
 
+@font-face {
+    font-family: 'Azonix';
+    src: url('/assets/fonts/AzonixRegular.woff2') format('woff2'),
+        url('/assets/fonts/AzonixRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     transition: 0.3s;
 }

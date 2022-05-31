@@ -57,11 +57,6 @@ nav .links {
 
 }
 
-@font-face {
-  font-family: "Azonix";
-  src: url("/fonts/Azonix.otf"),
-}
-
 .logo p {
   font-family: 'Azonix', sans-serif;
   margin-left: 10px;

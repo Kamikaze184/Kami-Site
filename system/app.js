@@ -114,7 +114,6 @@ module.exports = class App {
         this.app.use(express.static("public/assets/tutoriais"))
         this.app.use(express.static("public/assets/img/"))
 
-        this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
 
