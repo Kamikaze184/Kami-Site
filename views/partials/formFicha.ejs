@@ -2,7 +2,7 @@
     <div class="inf1">
         <% if(ficha.atributos == null){ficha.atributos = new Object()} %>
         <div class="infImage" <%- ficha.atributos.imagem ? `style="display: flex;" ` : "" %>>
-            <%- ficha.atributos.imagem ? `<img class="avatar" src="${ficha.atributos.imagem}"><textarea
+            <%- ficha.atributos.imagem ? `<img class="avatar" src="${ficha.atributos.imagem}" alt="Imagem da ficha ${ficha.nomerpg}"><textarea
                     class="atbIInput" id="imagem" cols="15" rows="3" maxlength="4096"
                     name="imagem">${ficha.atributos.imagem}</textarea>` : null%>
         </div>

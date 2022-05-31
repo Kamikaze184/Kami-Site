@@ -26,7 +26,7 @@
                 <form role="search" id="form" class="search">
                     <input class="searchTerm" type="search" id="query" name="search" placeholder="<%= query ? "" : "Quer ajuda com o quê?"%>" value="<%= query ? query : "" %>"
                         aria-label="Procure um tutorial.">
-                    <button class="searchButton"><img src="../assets/img/search.svg" class="searchBtn"></button>
+                    <button class="searchButton"><img src="../assets/img/search.svg" class="searchBtn" alt="Botão de pesquisa"></button>
                 </form>
             </div>
 
@@ -42,7 +42,7 @@
                                 <h3 id="tutorialName">
                                     <%= c.tutorial.title %>
                                 </h3>
-                                <img src="<%= c.tutorial.thumb %>">
+                                <img src="<%= c.tutorial.thumb %>" alt="Thumbnail do tutorial <%= c.tutorial.title%>">
                                 <p id="tutorialDesc">
                                     <%= c.tutorial.desc %>
                                 </p>
@@ -71,7 +71,7 @@
                                 <h3 id="tutorialName">
                                     <%= t.title %>
                                 </h3>
-                                <img src="<%= t.thumb %>">
+                                <img src="<%= t.thumb %>" alt="Thumbnail do tutorial <%= c.title%>">
                                 <p id="tutorialDesc">
                                     <%= t.desc %>
                                 </p>
@@ -82,8 +82,6 @@
                 <%} %>
         </section>
         <% } %>
-        
-
         <div class="ocean">
             <div class="wave"></div>
             <div class="wave"></div>

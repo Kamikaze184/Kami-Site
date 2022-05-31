@@ -1,10 +1,11 @@
 {
   "name": "kami-site",
-  "version": "3.6.21-beta",
+  "version": "3.6.23-beta",
   "description": "Site para o BOT para Discord Kami",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "startBot": "cd.. && cd Kami && node index.js --full",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kamikaze_184",
@@ -15,6 +16,7 @@
     "colors": "^1.4.0",
     "connect-pg-simple": "^7.0.0",
     "cookie-parser": "^1.4.6",
+    "cookies": "^0.8.0",
     "crypto-js": "^4.1.1",
     "discord-api-types": "^0.27.2",
     "discord-oauth2": "^2.9.0",

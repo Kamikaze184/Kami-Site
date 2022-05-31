@@ -1,5 +1,5 @@
 main {
-    margin-bottom: 70px;
+    margin-bottom: 100px;
 }
 
 .flex {
@@ -58,8 +58,6 @@ main {
     background: var(--azul-claro);
     transition: 0.3s;
 }
-
-
 
 .flex2 {
     display: flex;
@@ -271,7 +269,6 @@ input#addExtra.check, input#delExtra.check {
     max-width: 20rem;
     align-items: center;
     justify-content: center;
-    /* margin: 10px; */
 }
 
 .loadWheel {
@@ -419,7 +416,6 @@ input#addExtra.check, input#delExtra.check {
 }
 
 @media (max-width: 850px) {
-
     main {
         justify-content: center;
     }
@@ -427,5 +423,4 @@ input#addExtra.check, input#delExtra.check {
     .topBox {
         margin: 2em;
     }
-
 }
