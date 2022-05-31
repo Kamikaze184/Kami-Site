@@ -11,11 +11,11 @@ Este projeto é um site criado para realizar a apresentação do BOT e ensinar a
 > ## O site em questão pode ser encontrado **[Clicando aqui](https://kamisite.herokuapp.com)**
 &nbsp;
 # Projetos relacionados
-- ## **[Kami](https://github.com/Kamikaze184/Kami)** 
+- ## **[Kami](https://github.com/alanfilho184/Kami)** 
   Projeto do BOT em si.
 &nbsp;
-> ## Adicione o Kami ao seu servidor **[Clicando aqui](https://discord.com/api/oauth2/authorize?client_id=716053210179043409&permissions=388160&scope=bot%20applications.commands)**
+> ## Adicione o Kami ao seu servidor **[Clicando aqui](https://kamisite.herokuapp.com/convite)**
 &nbsp;
 
 # Achou algum bug? tem alguma sugestão?
-### Abra uma issue **[clicando aqui](https://github.com/Kamikaze184/Kami-Site/issues)**, ela será respondida o mais rápido possível!
+### Abra uma issue **[clicando aqui](https://github.com/alanfilho184/Kami-Site/issues)**, ela será respondida o mais rápido possível!
