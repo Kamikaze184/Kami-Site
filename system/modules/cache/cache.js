@@ -144,7 +144,7 @@ module.exports = class cache {
     }
 
     isBeta(id) {
-        if (beta.get(id)) {
+        if (beta.has(id)) {
             return true
         }
         else {
