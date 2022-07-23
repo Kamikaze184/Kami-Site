@@ -12,7 +12,7 @@ module.exports = class App {
         this.setMiddlewares();
         this.setSession();
         this.setControllers();
-        this.setFunctions();
+        // this.setFunctions();
         this.setWebSocket();
     }
 
