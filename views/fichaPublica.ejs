@@ -21,14 +21,17 @@
             <div class="info">
                 <h1>Ficha: <%= ficha.nomerpg %>
                 </h1>
-                <p>Criada por: <%= ficha.tag %>
+                <p>Criada por: <%= ficha.id %>
                 </p>
+                <input id="id" type="hidden" name="id" value="<%= ficha.id %>">
+                <input id="nomerpg" type="hidden" name="nomerpg" value="<%= ficha.nomerpg %>">
             </div>
             <div class="ficha">
                 <%- include('./partials/formFicha.ejs', {ficha: ficha, atributos: atributos, services: jogadorServices})
                     %>
             </div>
             <script src="/scripts/disableTextareas.js"></script>
+            <script type="module" src="/scripts/updateFichaPublica.js"></script>
             <% } else { %>
                 <div class="controles">
                     <div class="loading">

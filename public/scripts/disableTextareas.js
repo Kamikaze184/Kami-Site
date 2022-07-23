@@ -8,5 +8,5 @@ atributo2.forEach(atributo => {
     atributo.querySelector("textarea").disabled = true
 })
 
-document.querySelector("#imagem").disabled = true
-document.querySelector("#descricao").disabled = true
+try { document.querySelector("#imagem").disabled = true } catch (err) { }
+try { document.querySelector("#descricao").disabled = true } catch (err) { }

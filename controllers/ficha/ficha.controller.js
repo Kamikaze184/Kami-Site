@@ -25,7 +25,6 @@ module.exports = class ficha_controller {
                         previewInfo = {
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
-                            tag: ficha.tag,
                             atributos: {
                                 imagem: ficha.atributos.imagem ? ficha.atributos.imagem : undefined,
                             }
@@ -64,7 +63,6 @@ module.exports = class ficha_controller {
                         previewInfo = {
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
-                            tag: response.data.ficha.tag,
                             atributos: {
                                 imagem: response.data.ficha.atributos.imagem ? response.data.ficha.atributos.imagem : undefined,
                             }
@@ -96,7 +94,6 @@ module.exports = class ficha_controller {
                         previewInfo = {
                             id: req.params.id,
                             nomerpg: req.params.nomerpg,
-                            tag: ficha.tag,
                             atributos: {
                                 imagem: ficha.atributos.imagem ? ficha.atributos.imagem : undefined,
                             }

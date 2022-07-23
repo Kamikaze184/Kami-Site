@@ -5,7 +5,8 @@ const DiscordOauth2 = require("discord-oauth2");
 const oauth = new DiscordOauth2();
 
 class authService {
-    constructor() {
+    constructor(client) {
+        this.client = client
     }
 
     async getUserInfo(code) {
@@ -25,21 +26,7 @@ class authService {
         const response = await axios.post('https://discordapp.com/api/oauth2/token', params, { headers })
         const userInfo = await oauth.getUser(response.data.access_token)
 
-        const config = {
-            method: 'get',
-            url: `${process.env.botApiUrl}/beta`,
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            },
-            data: {
-                "id": userInfo.id,
-            }
-        }
-
-        const res = await axios(config)
-
-        userInfo.isBeta = res.data.isBeta
+        userInfo.isBeta = this.client.cache.getBeta(userInfo.id)
         userInfo.avatarURL = `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
 
         return userInfo

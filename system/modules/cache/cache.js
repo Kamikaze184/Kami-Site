@@ -1,7 +1,11 @@
 const fs = require("fs")
 const path = require("path")
+const toMs = require("milliseconds-parser")()
+const LRU = require("kami-lru-cache").kami_cache
+const { QueryTypes } = require('sequelize');
 
-const fichas = new Map()
+const fichas = new LRU({ maxAge: toMs.parse("2 horas"), updateAgeOnGet: true })
+const beta = new Set()
 
 module.exports = class cache {
     constructor(client) {
@@ -27,6 +31,45 @@ module.exports = class cache {
 
             })
             .catch(err => this.client.log.error(err, true))
+
+        this.client.dbBot.query(`select id from beta`)
+            .then(result => {
+                result[0].forEach(betaUser => {
+                    beta.add(betaUser.id)
+                })
+                this.client.log.start("Usuários da beta setados")
+            })
+            .catch(err => this.client.log.error(err, true))
+
+        this.client.dbBot.query("select id, nomerpg from fichas")
+            .then(result => {
+                const fichasUsers = new Object()
+                let usuarios = new Array()
+
+
+                for (var x of result[0]) {
+                    usuarios.push(x.id)
+                }
+
+                usuarios.forEach(u => {
+                    let fichasUser = new Array()
+                    for (var x of result[0]) {
+                        if (x.id == u) {
+                            fichasUser.push(x.nomerpg == null ? "undefined" : x.nomerpg)
+                        }
+                    }
+                    fichasUsers[u] = fichasUser
+                })
+
+                fs.writeFileSync(path.join(__dirname, "json", 'nomeFichas.json'), JSON.stringify(fichasUsers), { flag: "w" }, function (err) {
+                    if (err) {
+                        this.client.log.error(err, true)
+                    }
+                })
+
+                this.client.log.start("Cache de nome das fichas")
+            })
+            .catch(err => { this.client.log.error(err, true) })
     }
 
     getStatus() {
@@ -35,6 +78,31 @@ module.exports = class cache {
 
     getComandos() {
         return require("./json/botinfo.json").comandos
+    }
+
+    async getFicha(id, nomerpg, force = false) {
+        var ficha = fichas.get(id + nomerpg)
+
+        if (ficha && !force) { return ficha } else {
+            var r = await this.client.dbBot.query(`select * from fichas where id = :id and nomerpg = :nomerpg`, {
+                replacements: { id: id, nomerpg: nomerpg },
+            })
+
+            if (r[0][0]) { fichas.set(id + nomerpg, r[0][0]) }
+            return r[0][0]
+        }
+    }
+
+    getFichasUser(id) {
+        var result = fs.readFileSync(path.join(__dirname, "json", `nomeFichas.json`), "utf-8")
+        result = JSON.parse(result)
+
+        if (result[id] == undefined) {
+            return new Array()
+        }
+        else {
+            return result[id]
+        }
     }
 
     async setStatus(status) {
@@ -74,4 +142,185 @@ module.exports = class cache {
     setFichaPublica(key, ficha) {
         fichas.set(key, ficha)
     }
+
+    isBeta(id) {
+        if (beta.get(id)) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    refreshBeta() {
+        this.client.dbBot.query(`select id from beta`)
+            .then(result => {
+                result[0].forEach(betaUser => {
+                    beta.add(betaUser.id)
+                })
+                this.client.log.info("Usuários da beta setados")
+            })
+            .catch(err => this.client.log.error(err, true))
+    }
+
+    async updateFicha(id, nomerpg, data, config) {
+        config = {
+            ...config,
+            query: config.query || "update"
+        }
+
+        if (config.query == "insert") {
+            var atributos = {
+                ...data
+            }
+
+            const atbTest = Object.entries(atributos)
+
+            atbTest.forEach((e) => {
+                e[1] = e[1].replaceAll(" ", "").toLowerCase()
+                if (e[1] == null || e[1] == undefined || e[1] === "" || e[1] === " " || e[1] == "undefined" || e[1] == "null" || e[1] == "excluir" || e[1] == "delete" || e[1] == "-") {
+                    delete atributos[e[0]]
+                }
+            })
+
+            const senha = this.client.utils.gerarSenha()
+            const lastuse = this.client.utils.getPostgresTime()
+
+            await this.client.dbBot.query(`insert into fichas (id, nomerpg, senha, lastuse, atributos) values (:id, :nomerpg, :senha, :lastuse, :atributos)`, {
+                replacements: {
+                    id: id,
+                    nomerpg: nomerpg,
+                    senha: senha,
+                    lastuse: lastuse,
+                    atributos: JSON.stringify(atributos)
+                },
+                type: QueryTypes.INSERT
+            })
+
+            fichas.set(`${id}${nomerpg}`, { id: id, nomerpg: nomerpg, senha: senha, lastuse: lastuse, atributos: atributos })
+            this.updateFichasUser(id, nomerpg)
+
+            return { id: id, nomerpg: nomerpg, senha: senha, lastuse: lastuse, atributos: atributos }
+        }
+        else if (config.query == "update") {
+            config = {
+                ...config,
+                resetarSenha: config.resetarSenha || false,
+                oldData: config.oldData || await this.getFicha(id, nomerpg),
+            }
+
+            if(!config.oldData.atributos) {
+                config.oldData.atributos = {}
+            }
+
+            if (Object.entries(config.oldData.atributos).length == 0) {
+                var oldData = await this.client.dbBot.query("select * from fichas where id = :id and nomerpg = :nomerpg", {
+                    replacements: {
+                        id: id,
+                        nomerpg: nomerpg
+                    }
+                })
+
+                config.oldData = oldData[0][0]
+            }
+
+            if (config.resetarSenha) {
+                const lastuse = this.client.utils.getPostgresTime()
+
+                await this.client.dbBot.query(`update fichas set senha = :senha, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
+                    replacements: {
+                        id: id,
+                        nomerpg: nomerpg,
+                        senha: config.resetarSenha,
+                        lastuse: lastuse
+                    },
+                    type: QueryTypes.UPDATE
+                })
+
+                fichas.set(`${id}${nomerpg}`, { id: id, nomerpg: nomerpg, senha: config.resetarSenha, lastuse: lastuse, atributos: config.oldData.atributos })
+                this.updateFichasUser(id, nomerpg)
+
+                return { id: id, nomerpg: nomerpg, senha: config.resetarSenha, lastuse: lastuse, atributos: config.oldData.atributos }
+            }
+            else {
+                var atributos = {
+                    ...config.oldData.atributos,
+                    ...data
+                }
+
+                const atbTest = Object.entries(atributos)
+
+                atbTest.forEach((e) => {
+                    try { e[1] = e[1].replaceAll(" ", "").toLowerCase() } catch (err) { }
+                    if (e[1] == null || e[1] == undefined || e[1] === "" || e[1] == "undefined" || e[1] == "null" || e[1] == "excluir" || e[1] == "delete" || e[1] == "-") {
+                        delete atributos[e[0]]
+                    }
+                })
+
+                const lastuse = this.client.utils.getPostgresTime()
+
+                await this.client.dbBot.query(`update fichas set atributos = :atributos, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
+                    replacements: {
+                        id: id,
+                        nomerpg: nomerpg,
+                        lastuse: lastuse,
+                        atributos: JSON.stringify(atributos)
+                    },
+                    type: QueryTypes.UPDATE
+                })
+
+                fichas.set(id + nomerpg, { id: id, nomerpg: nomerpg, senha: config.oldData.senha, lastuse: lastuse, atributos: atributos })
+
+                return { id: id, nomerpg: nomerpg, senha: config.oldData.senha, lastuse: lastuse, atributos: atributos }
+            }
+        }
+    }
+
+    updateFichasUser(id, nomerpg) {
+        let uInfo = this.getFichasUser(id)
+
+        if (!uInfo) {
+            uInfo = new Array()
+        }
+
+        if (!uInfo.includes(nomerpg)) { uInfo.push(nomerpg) }
+        let nomeFichasCache = require("./json/nomeFichas.json")
+
+        nomeFichasCache[id] = uInfo
+        nomeFichasCache = JSON.stringify(nomeFichasCache)
+
+        fs.writeFileSync(path.join(__dirname, "json", `nomeFichas.json`), nomeFichasCache, function (err) {
+            if (err) {
+                this.client.log.error(err, true)
+            }
+        })
+    }
+
+    deleteFicha(id, nomerpg) {
+        fichas.delete(id + nomerpg)
+        this.deleteFichaUser(id, nomerpg)
+    }
+
+    deleteFichaUser(id, nomerpg) {
+        let uInfo = this.getFichasUser(id)
+        let newUInfo = new Array()
+
+        uInfo.forEach((f) => {
+            if (f !== nomerpg) {
+                newUInfo.push(f)
+            }
+        })
+
+        let nomeFichasCache = require("./json/nomeFichas.json")
+
+        nomeFichasCache[id] = newUInfo
+        nomeFichasCache = JSON.stringify(nomeFichasCache)
+
+        fs.writeFileSync(path.join(__dirname, "json", `nomeFichas.json`), nomeFichasCache, function (err) {
+            if (err) {
+                this.client.log.error(err, true)
+            }
+        })
+    }
+
 }
