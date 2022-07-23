@@ -3,6 +3,11 @@ module.exports = class api_geral_controller {
         const { Router } = require('express');
         const routes = Router()
 
+        const cors = require('cors')
+        const corsConfig = {
+            origin: process.env.corsAllow.split(",")
+        }
+
         const geralServices = require('../../services/geral.api.service')
         const services = new geralServices(client)
 
@@ -10,7 +15,7 @@ module.exports = class api_geral_controller {
             res.status(200).end()
         })
 
-        routes.post("/status", async (req, res) => {
+        routes.post("/status", cors(corsConfig), async (req, res) => {
             if (req.headers.authorization === process.env.apiToken) {
                 try {
                     await services.setStatus(req.body)
@@ -26,7 +31,7 @@ module.exports = class api_geral_controller {
             }
         })
 
-        routes.post("/comandos", async (req, res) => {
+        routes.post("/comandos", cors(corsConfig), async (req, res) => {
             if (req.headers.authorization === process.env.apiToken) {
                 try {
                     await services.setComandos(req.body)

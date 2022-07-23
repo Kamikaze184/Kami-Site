@@ -4,15 +4,16 @@ const time = require("luxon").DateTime
 
 module.exports = class App {
     constructor() {
-        this.setDiscordRest()
-        this.setLog()
+        this.setDiscordRest();
+        this.setLog();
         this.setDB();
-        this.setCache()
-        this.app = express()
+        this.setCache();
+        this.app = express();
         this.setMiddlewares();
         this.setSession();
         this.setControllers();
         this.setFunctions();
+        this.setWebSocket();
     }
 
     setDiscordRest() {
@@ -71,33 +72,42 @@ module.exports = class App {
     setDB() {
         const { Sequelize } = require("sequelize");
 
-        const dbURI = process.env.DATABASE_URL.replace("postgres://", "");
-        const conStr = {
-            database: dbURI.split("/")[1],
-            username: dbURI.split(/@(?!.*@)/g)[0].split(":")[0],
-            password: dbURI.split(/@(?!.*@)/g)[0].split(":")[1],
-            host: dbURI.split(/@(?!.*@)/g)[1].split(":")[0],
-            port: dbURI.split(/@(?!.*@)/g)[1].split(":")[1],
-            logging: false,
-            dialect: "postgres",
-        }
+        function conStr(DATABASE_URL) {
+            const dbURI = DATABASE_URL.replace("postgres://", "");
+            const conStr = {
+                database: dbURI.split("/")[1],
+                username: dbURI.split(/@(?!.*@)/g)[0].split(":")[0],
+                password: dbURI.split(/@(?!.*@)/g)[0].split(":")[1],
+                host: dbURI.split(/@(?!.*@)/g)[1].split(":")[0],
+                port: dbURI.split(/@(?!.*@)/g)[1].split(":")[1],
+                logging: false,
+                dialect: "postgres",
+            }
 
-        if (process.env.deploy == "production") {
-            conStr["dialectOptions"] = {
-                ssl: {
-                    require: true,
-                    rejectUnauthorized: false
+            if (process.env.deploy == "production") {
+                conStr["dialectOptions"] = {
+                    ssl: {
+                        require: true,
+                        rejectUnauthorized: false
+                    }
                 }
             }
+
+            return conStr
         }
 
-        const db = new Sequelize(conStr);
+        const db = new Sequelize(conStr(process.env.DATABASE_URL));
+        const dbBot = new Sequelize(conStr(process.env.BOT_DATABASE_URL))
 
         this.db = db
+        this.dbBot = dbBot
         this.log.start("DB")
     }
 
     setCache() {
+        const _utils = require("./modules/utils.js")
+        this.utils = new _utils(this)
+
         const _cache = require("./modules/cache/cache.js")
         this.cache = new _cache(this)
     }
@@ -202,8 +212,32 @@ module.exports = class App {
     }
 
     setFunctions() {
-        const pingBot = require("./modules/functions/pingBot.js")
-        setInterval(() => { pingBot(this) }, 1000 * 60 * 5)
+        if (process.env.deploy == "production") {
+            const pingBot = require("./modules/functions/pingBot.js")
+            setInterval(() => { pingBot(this) }, 1000 * 60 * 5)
+        }
+    }
+
+    setWebSocket() {
+        const { io } = require("socket.io-client")
+        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "https://kamikaze184bot.herokuapp.com/"
+
+        const socket = new io(connUrl, {
+            reconnectionDelayMax: 5000,
+            query: {
+                main: true
+            },
+            auth: {
+                api_key: process.env.apiToken
+            },
+        })
+
+        const servicesGeral = require("../services/geral.api.service")
+        const services = new servicesGeral(this)
+
+        socket.on("update", (data) => {
+            services[data.action](data)
+        })
     }
 
     start() {

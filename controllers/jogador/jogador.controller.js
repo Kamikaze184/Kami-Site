@@ -23,12 +23,17 @@ module.exports = class jogador_controller {
             if (req.session.user) {
                 const ficha = await services.getFicha(req.session.user.id, req.params.ficha)
 
-                res.render("ficha.ejs", {
-                    session: req.session,
-                    ficha: ficha,
-                    atributos: ficha.atributos,
-                    services: services
-                });
+                if (!ficha) {
+                    res.redirect("/jogador")
+                }
+                else {
+                    res.render("ficha.ejs", {
+                        session: req.session,
+                        ficha: ficha,
+                        atributos: ficha.atributos,
+                        services: services
+                    });
+                }
             }
             else {
                 res.redirect("/auth/login?redirect=/jogador/ficha/" + req.params.ficha)

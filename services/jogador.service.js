@@ -1,4 +1,3 @@
-const axios = require('axios')
 const resources = require('../public/assets/others/texts.json')
 
 class jogadorService {
@@ -6,41 +5,14 @@ class jogadorService {
         this.client = client
     }
 
-    async getUser(id) {
-        const config = {
-            method: 'get',
-            url: `${process.env.botApiUrl}/user`,
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            },
-            data: {
-                "id": id
-            }
-        }
-
-        const res = await axios(config)
-
-        return res.data
+    getUser(id) {
+        const fichas = this.client.cache.getFichasUser(id)
+        return { fichas: fichas }
     }
 
     async getFicha(id, nomerpg) {
-        const config = {
-            method: 'get',
-            url: `${process.env.botApiUrl}/ficha`,
-            headers: {
-                "Authorization": process.env.apiToken,
-                "Content-Type": "application/json"
-            },
-            data: {
-                "id": id,
-                "nomerpg": nomerpg
-            }
-        }
-
-        const res = await axios(config)
-
-        return res.data
+        const ficha = await this.client.cache.getFicha(id, nomerpg)
+        return ficha
     }
 
     generateFormInf(ficha) {
@@ -90,14 +62,14 @@ class jogadorService {
             }
         }
 
-        for( var atb of atbsI1) {
-            if(ficha.atributos[atb]){
+        for (var atb of atbsI1) {
+            if (ficha.atributos[atb]) {
                 delete ficha.atributos[atb]
             }
         }
 
-        for( var atb of atbsI2) {
-            if(ficha.atributos[atb]){
+        for (var atb of atbsI2) {
+            if (ficha.atributos[atb]) {
                 delete ficha.atributos[atb]
             }
         }
@@ -128,7 +100,7 @@ class jogadorService {
 
             for (var atb of Object.keys(ficha.atributos)) {
                 if (ficha.atributos[atb] != null && ficha.atributos[atb] != "" && ficha.atributos[atb] != " " && ficha.atributos[atb] != "excluir" && ficha.atributos[atb] != "delete" && ficha.atributos[atb] != "-") {
-                    if (!atbsI1.includes(atb.toLowerCase()) && !atbsI2.includes(atb.toLowerCase() && atb.toLowerCase() != "imagem" && atb.toLowerCase() != "descricao")) {
+                    if (!atbsI1.includes(atb.toLowerCase().trim()) && !atbsI2.includes(atb.toLowerCase().trim()) && atb.toLowerCase().trim() != "imagem" && atb.toLowerCase().trim() != "descricao") {
                         return true
                     }
                 }

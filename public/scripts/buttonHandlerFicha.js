@@ -20,6 +20,34 @@ const share = document.querySelector("#share");
 
 let unsaved = false;
 
+import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+const connUrl = document.location.href.startsWith("http://localhost") ? "http://localhost:3005/" : "https://kamikaze184bot.herokuapp.com/"
+
+const socket = io(connUrl, {
+    reconnectionDelayMax: 10000,
+    query: {
+        id: document.querySelector('#id').value,
+        page: "ficha",
+        nomerpg: document.querySelector("#nomerpg").value
+    }
+})
+
+setInterval(() => {
+    socket.emit("alive")
+}, 10000)
+
+socket.on("updateFichaBot", () => {
+    window.location.reload()
+})
+
+socket.on("deleteFichaBot", () => {
+    window.location.href = "/jogador"
+})
+
+socket.on("renameFichaBot", (novonomerpg) => {
+    window.location.href = `/jogador/ficha/${novonomerpg}`
+})
+
 addAtb.addEventListener("click", () => {
     controles.style.display = "none";
     icons.style.display = "none";
@@ -48,6 +76,11 @@ addAtb.addEventListener("click", () => {
 
             xhr.onreadystatechange = async function (e) {
                 if (xhr.readyState == 4 && xhr.status == 200) {
+                    socket.emit("updateFichaSite", {
+                        id: document.querySelector("#id").value,
+                        nomerpg: document.querySelector("#nomerpg").value,
+                    })
+
                     loading.style.display = "none";
                     controles.style.display = "flex";
                     icons.style.display = "flex";
@@ -137,6 +170,11 @@ delAtb.addEventListener("click", () => {
 
             xhr.onreadystatechange = async function (e) {
                 if (xhr.readyState == 4 && xhr.status == 200) {
+                    socket.emit("updateFichaSite", {
+                        id: document.querySelector("#id").value,
+                        nomerpg: document.querySelector("#nomerpg").value,
+                    })
+
                     loading.style.display = "none";
                     controles.style.display = "flex";
                     icons.style.display = "flex";
@@ -260,6 +298,11 @@ salvarFicha.addEventListener("click", async () => {
 
         xhr.onreadystatechange = async function (e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                socket.emit("updateFichaSite", {
+                    id: document.querySelector("#id").value,
+                    nomerpg: document.querySelector("#nomerpg").value,
+                })
+
                 unsaved = false;
                 loading.style.display = "none";
                 controles.style.display = "flex";
@@ -332,6 +375,7 @@ apagarFicha.addEventListener("click", async () => {
 
         xhr.onreadystatechange = async function (e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                socket.emit("deleteFichaSite", { id: document.querySelector("#id").value, nomerpg: document.querySelector("#nomerpg").value })
                 unsaved = false;
                 loading.style.display = "none";
                 controles.style.display = "flex";
@@ -420,6 +464,7 @@ renFicha.addEventListener("click", () => {
 
         xhr.onreadystatechange = async function (e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                socket.emit("renameFichaSite", { id: document.querySelector("#id").value, nomerpg: document.querySelector("#nomerpg").value, novonomerpg: document.querySelector("#novoNomeRpg").value })
                 const apiResponse = JSON.parse(xhr.response);
                 loading.style.display = "none";
                 controles.style.display = "flex";
