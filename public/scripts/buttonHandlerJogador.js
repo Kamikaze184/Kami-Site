@@ -10,7 +10,9 @@ const itens = document.querySelectorAll('.item');
 const criarFicha = document.querySelector('#criarFicha');
 
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
-const socket = io("http://localhost:3005", {
+const connUrl = document.location.href.startsWith("http://localhost") ? "http://localhost:3005/" : "https://kamikaze184bot.herokuapp.com/"
+
+const socket = io(connUrl, {
     reconnectionDelayMax: 10000,
     query: {
         id: document.querySelector('#id').value,

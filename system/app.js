@@ -220,7 +220,9 @@ module.exports = class App {
 
     setWebSocket() {
         const { io } = require("socket.io-client")
-        const socket = new io("http://localhost:3005/", {
+        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "https://kamikaze184bot.herokuapp.com/"
+
+        const socket = new io(connUrl, {
             reconnectionDelayMax: 5000,
             query: {
                 main: true
