@@ -12,7 +12,7 @@ module.exports = class App {
         this.setMiddlewares();
         this.setSession();
         this.setControllers();
-        // this.setFunctions();
+        this.setFunctions();
         this.setWebSocket();
     }
 
@@ -40,30 +40,30 @@ module.exports = class App {
                 this.log.error(err, true)
             })
 
-            process.on("SIGTERM", async (signal) => {
-                const axios = require("axios")
-                const config = {
-                    method: 'post',
-                    url: `${process.env.botApiUrl}/log`,
-                    headers: {
-                        "Authorization": process.env.apiToken,
-                        "Content-Type": "application/json"
-                    },
-                    data: {
-                        "content": `Log KamiSite - ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}`,
-                        "log": this.log.logString(),
-                    }
-                }
+            // process.on("SIGTERM", async (signal) => {
+            //     const axios = require("axios")
+            //     const config = {
+            //         method: 'post',
+            //         url: `${process.env.botApiUrl}/log`,
+            //         headers: {
+            //             "Authorization": process.env.apiToken,
+            //             "Content-Type": "application/json"
+            //         },
+            //         data: {
+            //             "content": `Log KamiSite - ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}`,
+            //             "log": this.log.logString(),
+            //         }
+            //     }
 
-                try {
-                    const res = await axios(config)
-                    process.exit(0)
-                }
-                catch (err) {
-                    console.log(err)
-                    process.exit(1)
-                }
-            })
+            //     try {
+            //         const res = await axios(config)
+            //         process.exit(0)
+            //     }
+            //     catch (err) {
+            //         console.log(err)
+            //         process.exit(1)
+            //     }
+            // })
         }
 
         this.log.start("Logs")
