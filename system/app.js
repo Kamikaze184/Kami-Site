@@ -127,16 +127,16 @@ module.exports = class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
 
-        if (process.env.deploy === "production") {
-            this.app.use((req, res, next) => {
-                if (req.header("x-forwarded-proto") !== "https") {
-                    res.redirect(`https://${req.header("host")}${req.url}`)
-                }
-                else {
-                    next()
-                }
-            })
-        }
+        // if (process.env.deploy === "production") {
+        //     this.app.use((req, res, next) => {
+        //         if (req.header("x-forwarded-proto") !== "https") {
+        //             res.redirect(`https://${req.header("host")}${req.url}`)
+        //         }
+        //         else {
+        //             next()
+        //         }
+        //     })
+        // }
 
         this.app.use((req, res, next) => {
             if (req.path.search("Roboto-Regular.ttf") != -1) {
@@ -220,7 +220,7 @@ module.exports = class App {
 
     setWebSocket() {
         const { io } = require("socket.io-client")
-        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "https://bot.kamiapp.com.br/"
+        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "http://vps41321.publiccloud.com.br:3005"
 
         const socket = new io(connUrl, {
             reconnectionDelayMax: 5000,
@@ -241,7 +241,7 @@ module.exports = class App {
     }
 
     start() {
-        this.app.listen(process.env.PORT, function () {
+        this.app.listen(process.env.PORT, process.env.host, function () {
             console.log(`[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| INICIADO ] - Servidor iniciado na porta ${process.env.PORT}`.green.bold)
         });
     }

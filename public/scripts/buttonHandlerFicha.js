@@ -21,7 +21,7 @@ const share = document.querySelector("#share");
 let unsaved = false;
 
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
-const connUrl = document.location.href.startsWith("http://localhost") ? "http://localhost:3005/" : "https://bot.kamiapp.com.br/"
+const connUrl = document.location.href.startsWith("http://localhost") ? "http://localhost:3005/" : "http://vps41321.publiccloud.com.br:3005"
 
 const socket = io(connUrl, {
     reconnectionDelayMax: 10000,
