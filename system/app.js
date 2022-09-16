@@ -220,7 +220,7 @@ module.exports = class App {
 
     setWebSocket() {
         const { io } = require("socket.io-client")
-        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "http://vps41321.publiccloud.com.br"
+        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "https://bot.kamiapp.com.br/"
 
         const socket = new io(connUrl, {
             reconnectionDelayMax: 5000,
