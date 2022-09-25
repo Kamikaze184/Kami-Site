@@ -1,12 +1,10 @@
 {
   "name": "kami-site",
-  "version": "4.0.9-beta",
+  "version": "4.0.10-beta",
   "description": "Site para o BOT para Discord Kami",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "startBot": "cd.. && cd Kami && node index.js --full",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Kamikaze_184",
   "license": "CC BY-NC-ND 4.0",
@@ -38,9 +36,5 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
-  },
-  "engines": {
-    "node": ">=16.13.2",
-    "npm": ">=8.1.2"
   }
 }
