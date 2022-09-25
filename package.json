@@ -1,16 +1,15 @@
 {
   "name": "kami-site",
-  "version": "4.0.1-beta",
+  "version": "4.0.10-beta",
   "description": "Site para o BOT para Discord Kami",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "startBot": "cd.. && cd Kami && node index.js --full",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Kamikaze_184",
   "license": "CC BY-NC-ND 4.0",
   "dependencies": {
+    "@alanfilho184/kami-lru-cache": "^1.2.0",
     "@discordjs/rest": "^0.3.0",
     "axios": "^0.24.0",
     "colors": "^1.4.0",
@@ -26,7 +25,6 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "fast-glob": "^3.2.7",
-    "kami-lru-cache": "github:alanfilho184/Kami-LRU-Cache",
     "lodash": "^4.17.21",
     "luxon": "^2.3.0",
     "milliseconds-parser": "^1.0.2",
@@ -38,9 +36,5 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
-  },
-  "engines": {
-    "node": ">=16.13.2",
-    "npm": ">=8.1.2"
   }
 }

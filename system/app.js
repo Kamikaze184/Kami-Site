@@ -40,30 +40,30 @@ module.exports = class App {
                 this.log.error(err, true)
             })
 
-            process.on("SIGTERM", async (signal) => {
-                const axios = require("axios")
-                const config = {
-                    method: 'post',
-                    url: `${process.env.botApiUrl}/log`,
-                    headers: {
-                        "Authorization": process.env.apiToken,
-                        "Content-Type": "application/json"
-                    },
-                    data: {
-                        "content": `Log KamiSite - ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}`,
-                        "log": this.log.logString(),
-                    }
-                }
+            // process.on("SIGTERM", async (signal) => {
+            //     const axios = require("axios")
+            //     const config = {
+            //         method: 'post',
+            //         url: `${process.env.botApiUrl}/log`,
+            //         headers: {
+            //             "Authorization": process.env.apiToken,
+            //             "Content-Type": "application/json"
+            //         },
+            //         data: {
+            //             "content": `Log KamiSite - ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}`,
+            //             "log": this.log.logString(),
+            //         }
+            //     }
 
-                try {
-                    const res = await axios(config)
-                    process.exit(0)
-                }
-                catch (err) {
-                    console.log(err)
-                    process.exit(1)
-                }
-            })
+            //     try {
+            //         const res = await axios(config)
+            //         process.exit(0)
+            //     }
+            //     catch (err) {
+            //         console.log(err)
+            //         process.exit(1)
+            //     }
+            // })
         }
 
         this.log.start("Logs")
@@ -127,16 +127,16 @@ module.exports = class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
 
-        if (process.env.deploy === "production") {
-            this.app.use((req, res, next) => {
-                if (req.header("x-forwarded-proto") !== "https") {
-                    res.redirect(`https://${req.header("host")}${req.url}`)
-                }
-                else {
-                    next()
-                }
-            })
-        }
+        // if (process.env.deploy === "production") {
+        //     this.app.use((req, res, next) => {
+        //         if (req.header("x-forwarded-proto") !== "https") {
+        //             res.redirect(`https://${req.header("host")}${req.url}`)
+        //         }
+        //         else {
+        //             next()
+        //         }
+        //     })
+        // }
 
         this.app.use((req, res, next) => {
             if (req.path.search("Roboto-Regular.ttf") != -1) {
@@ -220,7 +220,7 @@ module.exports = class App {
 
     setWebSocket() {
         const { io } = require("socket.io-client")
-        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "https://kamikaze184bot.herokuapp.com/"
+        const connUrl = process.env.deploy == "development" ? "http://localhost:3005/" : "https://bot.kamiapp.com.br/"
 
         const socket = new io(connUrl, {
             reconnectionDelayMax: 5000,
@@ -241,7 +241,7 @@ module.exports = class App {
     }
 
     start() {
-        this.app.listen(process.env.PORT, function () {
+        this.app.listen(process.env.PORT, process.env.host, function () {
             console.log(`[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| INICIADO ] - Servidor iniciado na porta ${process.env.PORT}`.green.bold)
         });
     }

@@ -26,7 +26,7 @@ class authService {
         const response = await axios.post('https://discordapp.com/api/oauth2/token', params, { headers })
         const userInfo = await oauth.getUser(response.data.access_token)
 
-        userInfo.isBeta = this.client.cache.getBeta(userInfo.id)
+        userInfo.isBeta = this.client.cache.isBeta(userInfo.id)
         userInfo.avatarURL = `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
 
         return userInfo

@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const toMs = require("milliseconds-parser")()
-const LRU = require("kami-lru-cache").kami_cache
+const LRU = require("@alanfilho184/kami-lru-cache").kami_cache
 const { QueryTypes } = require('sequelize');
 
 const fichas = new LRU({ maxAge: toMs.parse("2 horas"), updateAgeOnGet: true })
@@ -144,7 +144,7 @@ module.exports = class cache {
     }
 
     isBeta(id) {
-        if (beta.get(id)) {
+        if (beta.has(id)) {
             return true
         }
         else {
