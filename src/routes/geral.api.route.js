@@ -1,4 +1,3 @@
-const prisma = require("../config/database")
 const { Router } = require('express');
 const routes = Router()
 
@@ -7,8 +6,12 @@ const corsConfig = {
     origin: process.env.corsAllow.split(",")
 }
 
-const geralServices = require('../../services/geral.api.service')
-const services = new geralServices(prisma)
+const logger = require("../modules/logger")
+
+const geralServices = require('../services/geral.api.service')
+
+const { json } = require('express');
+routes.use(json)
 
 routes.get("/ping", (req, res) => {
     res.status(200).end()
@@ -17,12 +20,12 @@ routes.get("/ping", (req, res) => {
 routes.post("/status", cors(corsConfig), async (req, res) => {
     if (req.headers.authorization === process.env.apiToken) {
         try {
-            await services.setStatus(req.body)
+            await geralServices.setStatus(req.body)
             res.status(200).end()
         }
         catch (err) {
             res.status(500).end()
-            console.error(err, true)
+            logger.error(err, true)
         }
     }
     else {
@@ -33,12 +36,12 @@ routes.post("/status", cors(corsConfig), async (req, res) => {
 routes.post("/comandos", cors(corsConfig), async (req, res) => {
     if (req.headers.authorization === process.env.apiToken) {
         try {
-            await services.setComandos(req.body)
+            await geralServices.setComandos(req.body)
             res.status(200).end()
         }
         catch (err) {
             res.status(500).end()
-            console.error(err, true)
+            logger.error(err, true)
         }
     }
     else {

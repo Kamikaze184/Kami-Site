@@ -8,6 +8,8 @@ const fichas = new LRU({ maxAge: toMs.parse("2 horas"), updateAgeOnGet: true })
 const beta = new Set()
 
 const db = require("../../config/database")
+const logger = require("../logger")
+const utils = require("../functions/utils")
 
 class Cache {
     constructor() {
@@ -23,23 +25,23 @@ class Cache {
 
                 fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, { flag: "w" }, function (err) {
                     if (err) {
-                        this.client.log.error(err, true)
+                        logger.error(err, true)
                     }
                 })
 
-                this.client.log.start("Cache do botinfo")
+                logger.start("Cache do botinfo")
 
             })
-            .catch(err => this.client.log.error(err, true))
+            .catch(err => logger.error(err, true))
 
         db.bot.query(`select id from beta`)
             .then(result => {
                 result[0].forEach(betaUser => {
                     beta.add(betaUser.id)
                 })
-                this.client.log.start("Usuários da beta setados")
+                logger.start("Usuários da beta setados")
             })
-            .catch(err => this.client.log.error(err, true))
+            .catch(err => logger.error(err, true))
 
         db.bot.query("select id, nomerpg from fichas")
             .then(result => {
@@ -63,13 +65,13 @@ class Cache {
 
                 fs.writeFileSync(path.join(__dirname, "json", 'nomeFichas.json'), JSON.stringify(fichasUsers), { flag: "w" }, function (err) {
                     if (err) {
-                        this.client.log.error(err, true)
+                        logger.error(err, true)
                     }
                 })
 
-                this.client.log.start("Cache de nome das fichas")
+                logger.start("Cache de nome das fichas")
             })
-            .catch(err => { this.client.log.error(err, true) })
+            .catch(err => { logger.error(err, true) })
     }
 
     getStatus() {
@@ -113,11 +115,11 @@ class Cache {
 
         fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
             if (err) {
-                this.client.log.error(err, true)
+                logger.error(err, true)
             }
         })
 
-        await db.site.query(`update info set status = '${JSON.stringify(status)}'`).catch(err => this.client.log.error(err, true))
+        await db.site.query(`update info set status = '${JSON.stringify(status)}'`).catch(err => logger.error(err, true))
     }
 
     async setComandos(comandos) {
@@ -128,11 +130,11 @@ class Cache {
 
         fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
             if (err) {
-                this.client.log.error(err, true)
+                logger.error(err, true)
             }
         })
 
-        await db.site.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => this.client.log.error(err, true))
+        await db.site.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => logger.error(err, true))
     }
 
     getFichaPublica(key) {
@@ -158,9 +160,9 @@ class Cache {
                 result[0].forEach(betaUser => {
                     beta.add(betaUser.id)
                 })
-                this.client.log.info("Usuários da beta setados")
+                logger.info("Usuários da beta setados")
             })
-            .catch(err => this.client.log.error(err, true))
+            .catch(err => logger.error(err, true))
     }
 
     async updateFicha(id, nomerpg, data, config) {
@@ -183,8 +185,8 @@ class Cache {
                 }
             })
 
-            const senha = this.client.utils.gerarSenha()
-            const lastuse = this.client.utils.getPostgresTime()
+            const senha = utils.gerarSenha()
+            const lastuse = utils.getPostgresTime()
 
             await db.bot.query(`insert into fichas (id, nomerpg, senha, lastuse, atributos) values (:id, :nomerpg, :senha, :lastuse, :atributos)`, {
                 replacements: {
@@ -225,7 +227,7 @@ class Cache {
             }
 
             if (config.resetarSenha) {
-                const lastuse = this.client.utils.getPostgresTime()
+                const lastuse = utils.getPostgresTime()
 
                 await db.bot.query(`update fichas set senha = :senha, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
                     replacements: {
@@ -257,7 +259,7 @@ class Cache {
                     }
                 })
 
-                const lastuse = this.client.utils.getPostgresTime()
+                const lastuse = utils.getPostgresTime()
 
                 await db.bot.query(`update fichas set atributos = :atributos, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
                     replacements: {
@@ -291,7 +293,7 @@ class Cache {
 
         fs.writeFileSync(path.join(__dirname, "json", `nomeFichas.json`), nomeFichasCache, function (err) {
             if (err) {
-                this.client.log.error(err, true)
+                logger.error(err, true)
             }
         })
     }
@@ -318,7 +320,7 @@ class Cache {
 
         fs.writeFileSync(path.join(__dirname, "json", `nomeFichas.json`), nomeFichasCache, function (err) {
             if (err) {
-                this.client.log.error(err, true)
+                logger.error(err, true)
             }
         })
     }

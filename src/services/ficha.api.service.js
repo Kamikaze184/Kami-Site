@@ -1,17 +1,16 @@
-const crypto = require('crypto-js')
+const cache = require("../modules/cache/cache")
+const utils = require("../modules/functions/utils")
+const logger = require("../modules/logger")
+const db = require("../config/database")
 
-class fichaService {
-    constructor(client) {
-        this.client = client
-    }
-
+module.exports = {
     async getFicha(id, nomerpg) {
-        const ficha = await this.client.cache.getFicha(id, nomerpg)
+        const ficha = await cache.getFicha(id, nomerpg)
         return ficha
-    }
+    },
 
     async getFichaWithPassword(body) {
-        const ficha = await this.client.cache.getFicha(body.id, body.nomerpg)
+        const ficha = await cache.getFicha(body.id, body.nomerpg)
 
         if (ficha.senha == body.senha) {
             return {
@@ -28,10 +27,10 @@ class fichaService {
                 }
             }
         }
-    }
+    },
 
     async updateFicha(body) {
-        const fichaBot = await this.client.cache.getFicha(body.id, body.nomerpg)
+        const fichaBot = await cache.getFicha(body.id, body.nomerpg)
         var fichaSite = body.ficha
         fichaSite.senha = fichaBot.senha
 
@@ -65,7 +64,7 @@ class fichaService {
             }
 
             try {
-                await this.client.cache.updateFicha(body.id, body.nomerpg, data, { query: "update", oldData: fichaBot })
+                await cache.updateFicha(body.id, body.nomerpg, data, { query: "update", oldData: fichaBot })
 
                 return {
                     status: 200,
@@ -90,17 +89,17 @@ class fichaService {
                 }
             }
         }
-    }
+    },
 
     async updateAtbFicha(body) {
-        const atributos = this.client.utils.returnAtb()
+        const atributos = utils.returnAtb()
 
         var nomerpg = body.nomerpg
         var atb = body.atb
         var valor = body.valor
 
         try {
-            atb = this.client.utils.matchAtb(atb, atributos)
+            atb = utils.matchAtb(atb, atributos)
         }
         catch (err) { }
 
@@ -162,14 +161,14 @@ class fichaService {
         try { nomerpg = nomerpg.replace("'", '') } catch { }
 
         try {
-            await this.client.cache.updateFicha(body.id, nomerpg, { [atb]: valor }, { query: "update" })
+            await cache.updateFicha(body.id, nomerpg, { [atb]: valor }, { query: "update" })
 
             return {
                 status: 200,
             }
         }
         catch (err) {
-            this.client.log.error(err, true)
+            logger.error(err, true)
             return {
                 status: 500,
                 data: {
@@ -178,10 +177,10 @@ class fichaService {
                 }
             }
         }
-    }
+    },
 
     async removeAtbFicha(body) {
-        const atributos = this.client.utils.returnAtb()
+        const atributos = utils.returnAtb()
 
         var nomerpg = body.nomerpg
         var atb = body.atb
@@ -189,12 +188,12 @@ class fichaService {
         try { nomerpg = nomerpg.replace("'", '') } catch { }
 
         try {
-            atb = this.client.utils.matchAtb(atb, atributos)
+            atb = utils.matchAtb(atb, atributos)
         }
         catch (err) { }
 
         try {
-            const ficha = await this.client.cache.getFicha(body.id, nomerpg)
+            const ficha = await cache.getFicha(body.id, nomerpg)
 
             let atbE = false
             try {
@@ -205,7 +204,7 @@ class fichaService {
             }
 
             if (atbE) {
-                await this.client.cache.updateFicha(body.id, nomerpg, { [atb]: null }, { query: "update" })
+                await cache.updateFicha(body.id, nomerpg, { [atb]: null }, { query: "update" })
 
                 return {
                     status: 200,
@@ -222,7 +221,7 @@ class fichaService {
             }
         }
         catch (err) {
-            this.client.log.error(err, true)
+            logger.error(err, true)
             return {
                 status: 500,
                 data: {
@@ -231,10 +230,10 @@ class fichaService {
                 }
             }
         }
-    }
+    },
 
     async createFicha(body) {
-        const fichasUser = await this.client.cache.getFichasUser(body.ficha.id)
+        const fichasUser = await cache.getFichasUser(body.ficha.id)
 
         var nomerpg = body.ficha.nomerpg
         try { nomerpg = nomerpg.replace("'", '') } catch { }
@@ -267,13 +266,13 @@ class fichaService {
             }
         }
         else {
-            const senha = this.client.utils.gerarSenha()
+            const senha = utils.gerarSenha()
 
             try {
-                await this.client.dbBot.query(`insert into fichas (id, nomerpg, senha) values ('${body.ficha.id}', '${nomerpg}', '${senha}')`)
+                await db.bot.query(`insert into fichas (id, nomerpg, senha) values ('${body.ficha.id}', '${nomerpg}', '${senha}')`)
             }
             catch (err) {
-                this.client.log.error(err, true)
+                logger.error(err, true)
 
                 return {
                     status: 500,
@@ -284,16 +283,16 @@ class fichaService {
                 }
             }
 
-            try { this.client.cache.updateFichasUser(body.ficha.id, nomerpg) } catch (err) { this.client.log.error(err, true) }
+            try { cache.updateFichasUser(body.ficha.id, nomerpg) } catch (err) { logger.error(err, true) }
 
             return {
                 status: 200,
             }
         }
-    }
+    },
 
     async renameFicha(body) {
-        const fichasUser = await this.client.cache.getFichasUser(body.id)
+        const fichasUser = await cache.getFichasUser(body.id)
 
         var nomerpg = body.novonomerpg
         try { nomerpg = nomerpg.replace("'", '') } catch { }
@@ -327,10 +326,10 @@ class fichaService {
         }
         else {
             try {
-                await this.client.dbBot.query(`update fichas set nomerpg = '${nomerpg}' where id = '${body.id}' and nomerpg = '${body.nomerpg}'`)
+                await db.bot.query(`update fichas set nomerpg = '${nomerpg}' where id = '${body.id}' and nomerpg = '${body.nomerpg}'`)
             }
             catch (err) {
-                this.client.log.error(err, true)
+                logger.error(err, true)
                 return {
                     status: 500,
                     data: {
@@ -341,11 +340,11 @@ class fichaService {
             }
 
             try {
-                this.client.cache.deleteFichaUser(body.id, body.nomerpg)
-                this.client.cache.updateFichasUser(body.id, nomerpg)
+                cache.deleteFichaUser(body.id, body.nomerpg)
+                cache.updateFichasUser(body.id, nomerpg)
 
             }
-            catch (err) { this.client.log.error(err, true) }
+            catch (err) { logger.error(err, true) }
 
             return {
                 status: 200,
@@ -354,14 +353,14 @@ class fichaService {
                 }
             }
         }
-    }
+    },
 
     async deleteFicha(body) {
         try {
-            await this.client.dbBot.query(`delete from fichas where id = '${body.id}' and nomerpg = '${body.nomerpg}'`)
+            await db.bot.query(`delete from fichas where id = '${body.id}' and nomerpg = '${body.nomerpg}'`)
         }
         catch (err) {
-            this.client.log.error(err, true)
+            logger.error(err, true)
             return {
                 status: 500,
                 data: {
@@ -371,13 +370,11 @@ class fichaService {
             }
         }
 
-        await this.client.cache.deleteFicha(body.id, body.nomerpg)
-        await this.client.cache.deleteFichaUser(body.id, body.nomerpg)
+        await cache.deleteFicha(body.id, body.nomerpg)
+        await cache.deleteFichaUser(body.id, body.nomerpg)
 
         return {
             status: 200
         }
     }
 }
-
-module.exports = fichaService

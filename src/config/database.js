@@ -24,8 +24,8 @@ function conStr(DATABASE_URL) {
     return conStr
 }
 
-const site = Sequelize(conStr(process.env.DATABASE_URL))
-const bot = Sequelize(conStr(process.env.BOT.DATABASE_URL))
+const site = new Sequelize(conStr(process.env.DATABASE_URL))
+const bot = new Sequelize(conStr(process.env.BOT_DATABASE_URL))
 
 module.exports = {
     site,

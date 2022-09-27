@@ -1,17 +1,14 @@
 const ss = require('string-similarity')
+const cache = require("../modules/cache/cache")
 
-class viewsService {
-    constructor(client) {
-        this.client = client
-    }
-
+module.exports = {
     getBotinfo() {
-        return this.client.cache.getStatus()
-    }
+        return cache.getStatus()
+    },
 
     getCommands() {
-        return this.client.cache.getComandos()
-    }
+        return cache.getComandos()
+    },
 
     tutorialSearchEngine(search, tutoriais) {
         const find = new Array()
@@ -53,7 +50,7 @@ class viewsService {
         var queryFind = find.length > 0
 
         return { find: find, queryFind: queryFind, tutoriais: tutoriais }
-    }
+    },
 
     getTutorial(param, tutoriais) {
         let tutorial
@@ -66,7 +63,7 @@ class viewsService {
         })
 
         return tutorial
-    }
+    },
 
     getBoxSize(comandos) {
         let titleSize = 0
@@ -86,7 +83,4 @@ class viewsService {
             height: ((descriptionSize) * 0.10606) + "em"
         }
     }
-
 }
-
-module.exports = viewsService

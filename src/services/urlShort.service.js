@@ -1,11 +1,7 @@
-class urlShortService {
-    constructor(client) {
-        this.client = client
-    }
+const cache = require("../modules/cache/cache")
 
+module.exports = {
     getInviteLink() {
-        return this.client.cache.getStatus().inviteLink
+        return cache.getStatus().inviteLink
     }
 }
-
-module.exports = urlShortService

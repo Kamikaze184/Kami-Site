@@ -1,9 +1,8 @@
-const prisma = require("../config/database")
 const { Router } = require('express');
 const routes = Router()
+const crypto = require("crypto-js")
 
 const authServices = require('../services/auth.service')
-const services = new authServices(prisma)
 
 routes.get("/login", (req, res) => {
     if (req.query.redirect) {
@@ -11,7 +10,7 @@ routes.get("/login", (req, res) => {
     }
 
     if (process.env.deploy == "development") {
-        const session = req.session
+        const session = new Object()
         session.user = {
             id: '252868463150759961',
             username: 'Kamikaze_184',
@@ -21,6 +20,9 @@ routes.get("/login", (req, res) => {
         }
         session.validation = process.env.validation
 
+        const sessionToken = crypto.AES.encrypt(JSON.stringify(session), process.env.sessionSecret).toString()
+
+        res.cookie('session', sessionToken, { maxAge: 1000 * 60 * 60 * 24 * 7 })
         res.redirect(req.query.redirect || '/')
     }
     else if (process.env.deploy == "production") {
@@ -37,13 +39,16 @@ routes.get("/callback", async (req, res) => {
     const code = req.query.code
 
     if (code) {
-        const userInfo = await services.getUserInfo(code)
+        const userInfo = await authServices.getUserInfo(code)
 
         // if (userInfo.isBeta) {
 
         const session = req.session;
         session.user = userInfo
         session.validation = process.env.validation
+
+        const sessionToken = crypto.AES.encrypt(JSON.stringify(session), process.env.sessionSecret)
+        res.cookie('session', sessionToken, { maxAge: 1000 * 60 * 60 * 24 * 7 })
 
         const redirect = req.cookies.redirect || '/'
 

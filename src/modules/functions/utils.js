@@ -1,19 +1,15 @@
 const CryptoJS = require("crypto-js");
 const time = require("luxon").DateTime
 
-module.exports = class Utils {
-    constructor(client) {
-        this.client = client
-    }
-
+module.exports = {
     gerarSenha() {
         const senha = CryptoJS.AES.encrypt(Date.now().toString(), process.env.fKey)
         return senha.toString().slice(33, 43)
-    }
+    },
 
     getPostgresTime(){
         return time.now().setZone('America/Sao_Paulo').toSQL({ includeZone: true });
-    }
+    },
 
     matchAtb(atributo, atributos, customBase) {
         var base = 0.295
@@ -41,7 +37,7 @@ module.exports = class Utils {
         else {
             return atributo
         }
-    }
+    },
 
     returnAtb() {
         return ["nome", "altura", "idade", "peso", "profissao", "competencias", "equipamentos", "constituicao", "disposicao", "forca", "destreza", "sorte", "acrobacia",

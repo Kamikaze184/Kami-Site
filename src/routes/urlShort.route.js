@@ -1,9 +1,7 @@
-const prisma = require("../config/database")
 const { Router } = require('express');
 const routes = Router()
 
-const urlShortService = require("../services/urlShort.service")
-const services = new urlShortService(prisma)
+const urlShortServices = require("../services/urlShort.service")
 
 routes.get("/termos", (req, res) => {
     res.redirect("https://docs.google.com/document/d/1PneTS5LFyqqrMgpwht8nEHMg8H6BaszzoraWjsbR4k0")
@@ -22,12 +20,12 @@ routes.get("/privacy", (req, res) => {
 });
 
 routes.get("/convite", (req, res) => {
-    const inviteLink = services.getInviteLink()
+    const inviteLink = urlShortServices.getInviteLink()
     res.redirect(inviteLink)
 })
 
 routes.get("/invite", (req, res) => {
-    const inviteLink = services.getInviteLink()
+    const inviteLink = urlShortServices.getInviteLink()
     res.redirect(inviteLink)
 })
 

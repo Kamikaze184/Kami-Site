@@ -1,12 +1,9 @@
-const prisma = require("../config/database")
 const { Router } = require('express');
 const routes = Router()
 
 const fichaServices = require('../services/ficha.api.service')
-const services = new fichaServices(prisma)
 
-const jogadorService = require("../services/jogador.service")
-const jogadorServices = new jogadorService(prisma)
+const jogadorServices = require("../services/jogador.service")
 
 routes.get("/:id/:nomerpg", async (req, res) => {
     let userid = 0
@@ -16,7 +13,7 @@ routes.get("/:id/:nomerpg", async (req, res) => {
 
     if (userid == req.params.id) {
         try {
-            const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
+            const ficha = await fichaServices.getFicha(req.params.id, req.params.nomerpg)
 
             let previewInfo = undefined
 
@@ -54,7 +51,7 @@ routes.get("/:id/:nomerpg", async (req, res) => {
         try { accessKey = req.session.access[`${req.params.id}${req.params.nomerpg}`] } catch (err) { accessKey = null }
 
         if (accessKey) {
-            const response = await services.getFichaWithPassword({ id: req.params.id, nomerpg: req.params.nomerpg, senha: accessKey })
+            const response = await fichaServices.getFichaWithPassword({ id: req.params.id, nomerpg: req.params.nomerpg, senha: accessKey })
 
             let previewInfo = undefined
 
@@ -85,7 +82,7 @@ routes.get("/:id/:nomerpg", async (req, res) => {
             }
         }
         else {
-            const ficha = await services.getFicha(req.params.id, req.params.nomerpg)
+            const ficha = await fichaServices.getFicha(req.params.id, req.params.nomerpg)
 
             let previewInfo = undefined
 

@@ -1,4 +1,6 @@
+const logger = require("../modules/logger")
+
 module.exports = (req, res, next) => {
-    console.info(`${req.method} ${req.path}`)
+    logger.info(`${req.method} ${req.path}`)
     next()
 }

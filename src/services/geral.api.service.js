@@ -1,33 +1,29 @@
-class geralService {
-    constructor(client) {
-        this.client = client
-    }
+const cache = require("../modules/cache/cache")
 
+module.exports = {
     async setStatus(body) {
-        await this.client.cache.setStatus(body)
-    }
+        await cache.setStatus(body)
+    },
 
     async setComandos(body) {
-        await this.client.cache.setComandos(body)
-    }
+        await cache.setComandos(body)
+    },
 
     createFichaBot(body) {
-        this.client.cache.updateFichasUser(body.id, body.nomerpg)
-    }
+        cache.updateFichasUser(body.id, body.nomerpg)
+    },
 
     deleteFichaBot(body) {
-        this.client.cache.deleteFichaUser(body.id, body.nomerpg)
-    }
+        cache.deleteFichaUser(body.id, body.nomerpg)
+    },
 
     updateFichaBot(body){
-        this.client.cache.getFicha(body.id, body.nomerpg, true)
-    }
+        cache.getFicha(body.id, body.nomerpg, true)
+    },
 
     renameFichaBot(body){
-        this.client.cache.deleteFichaUser(body.id, body.nomerpg)
-        this.client.cache.updateFichasUser(body.id, body.novonomerpg)
-        this.client.cache.getFicha(body.id, body.novonomerpg, true)
+        cache.deleteFichaUser(body.id, body.nomerpg)
+        cache.updateFichasUser(body.id, body.novonomerpg)
+        cache.getFicha(body.id, body.novonomerpg, true)
     }
 }
-
-module.exports = geralService

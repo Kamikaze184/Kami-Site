@@ -1,13 +1,11 @@
-const prisma = require("../config/database")
 const { Router } = require('express');
 const routes = Router()
 
-const jogadorService = require("../services/jogador.service")
-const services = new jogadorService(prisma)
+const jogadorServices = require("../services/jogador.service")
 
 routes.get("/", async (req, res) => {
     if (req.session.user) {
-        const info = await services.getUser(req.session.user.id)
+        const info = await jogadorServices.getUser(req.session.user.id)
         res.render("jogador.ejs", {
             session: req.session,
             info: info
@@ -20,7 +18,7 @@ routes.get("/", async (req, res) => {
 
 routes.get("/ficha/:ficha", async (req, res) => {
     if (req.session.user) {
-        const ficha = await services.getFicha(req.session.user.id, req.params.ficha)
+        const ficha = await jogadorServices.getFicha(req.session.user.id, req.params.ficha)
 
         if (!ficha) {
             res.redirect("/jogador")
@@ -30,7 +28,7 @@ routes.get("/ficha/:ficha", async (req, res) => {
                 session: req.session,
                 ficha: ficha,
                 atributos: ficha.atributos,
-                services: services
+                services: jogadorServices
             });
         }
     }

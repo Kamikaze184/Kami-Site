@@ -1,19 +1,16 @@
 const resources = require('../public/assets/others/texts.json')
+const cache = require("../modules/cache/cache")
 
-class jogadorService {
-    constructor(client) {
-        this.client = client
-    }
-
+module.exports = {
     getUser(id) {
-        const fichas = this.client.cache.getFichasUser(id)
+        const fichas = cache.getFichasUser(id)
         return { fichas: fichas }
-    }
+    },
 
     async getFicha(id, nomerpg) {
-        const ficha = await this.client.cache.getFicha(id, nomerpg)
+        const ficha = await cache.getFicha(id, nomerpg)
         return ficha
-    }
+    },
 
     generateFormInf(ficha) {
         var htmlString = `<form class="atbsI">`
@@ -30,7 +27,7 @@ class jogadorService {
 
         htmlString += `</form>`
         return htmlString
-    }
+    },
 
     generateFormInf2(ficha) {
         var htmlString = `<form class="atbsI2">`
@@ -46,7 +43,7 @@ class jogadorService {
 
         htmlString += `</form>`
         return htmlString
-    }
+    },
 
     generateFormStatus(ficha) {
         var htmlString = `<form class="atbsI">`
@@ -83,7 +80,7 @@ class jogadorService {
 
         htmlString += `</form>`
         return htmlString
-    }
+    },
 
     checkAtbs(ficha, local) {
         if (local != "atbsS") {
@@ -107,7 +104,5 @@ class jogadorService {
             }
             return false
         }
-    }
+    },
 }
-
-module.exports = jogadorService

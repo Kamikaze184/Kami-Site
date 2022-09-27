@@ -2,13 +2,12 @@ const time = require("luxon").DateTime
 const { inspect } = require('util')
 var logTxt = `Log - ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}\n`
 
-
 module.exports = class logger {
     constructor(rest) {
         this.rest = rest
     }
 
-    async send(msg) {
+    static async send(msg) {
         const res = await this.rest.post(
             this.rest.routes.webhook(process.env.webhookId, process.env.webhookToken),
             {
@@ -20,7 +19,7 @@ module.exports = class logger {
         return res
     }
 
-    info(msg, ds) {
+    static info(msg, ds) {
         if (typeof msg === 'string') {
             logTxt += `[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| INFO ] - ${msg}\n`
 
@@ -53,7 +52,7 @@ module.exports = class logger {
         }
     }
 
-    start(msg, ds) {
+    static start(msg, ds) {
         logTxt += `[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| INICIADO ] - ${msg}\n`
         console.log(`[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| INICIADO ] - ${msg}`.cyan)
         if (ds === true) {
@@ -71,7 +70,7 @@ module.exports = class logger {
         }
     }
 
-    warn(msg, ds) {
+    static warn(msg, ds) {
         if (typeof msg === 'string') {
             logTxt += `[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| AVISO ] - ${msg}\n`
             console.log(`[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| AVISO ] - ${msg}`.yellow)
@@ -103,7 +102,7 @@ module.exports = class logger {
         }
     }
 
-    error(msg, ds) {
+    static error(msg, ds) {
         if (typeof msg === 'string') {
             logTxt += `[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| ERRO ] - ${msg}\n`
             console.log(`[ ${time.now().setZone('America/Sao_Paulo').toFormat("dd/MM/y | HH:mm:ss ")}| ERRO ] - ${msg}`.red)
@@ -141,7 +140,7 @@ module.exports = class logger {
         }
     }
 
-    logString(){
+    static logString(){
         return logTxt
     }
 }
