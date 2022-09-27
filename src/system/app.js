@@ -18,7 +18,7 @@ module.exports = class App {
 
     setDiscordRest() {
         const { REST } = require("@discordjs/rest");
-        const { Routes } = require("discord-api-types/v9");
+        const { Routes } = require("discord-api-types/v10");
 
         const rest = new REST({ version: "10" }).setToken(process.env.botToken);
 
@@ -27,7 +27,7 @@ module.exports = class App {
     }
 
     setLog() {
-        const log = require("./modules/logs.js")
+        const log = require("../modules/logs/logs.js")
         this.log = new log(this.rest)
 
 
@@ -105,7 +105,7 @@ module.exports = class App {
     }
 
     setCache() {
-        const _utils = require("./modules/utils.js")
+        const _utils = require("../modules/functions/utils.js")
         this.utils = new _utils(this)
 
         const _cache = require("./modules/cache/cache.js")
@@ -213,7 +213,7 @@ module.exports = class App {
 
     setFunctions() {
         if (process.env.deploy == "production") {
-            const pingBot = require("./modules/functions/pingBot.js")
+            const pingBot = require("../modules/functions/pingBot.js")
             setInterval(() => { pingBot(this) }, 1000 * 60 * 5)
         }
     }

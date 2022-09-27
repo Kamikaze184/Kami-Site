@@ -7,11 +7,11 @@ const { QueryTypes } = require('sequelize');
 const fichas = new LRU({ maxAge: toMs.parse("2 horas"), updateAgeOnGet: true })
 const beta = new Set()
 
-module.exports = class cache {
-    constructor(client) {
-        this.client = client
+const db = require("../../config/database")
 
-        this.client.db.query("select * from info")
+class Cache {
+    constructor() {
+        db.site.query("select * from info")
             .then(result => {
                 var configCache = new Map()
 
@@ -32,7 +32,7 @@ module.exports = class cache {
             })
             .catch(err => this.client.log.error(err, true))
 
-        this.client.dbBot.query(`select id from beta`)
+        db.bot.query(`select id from beta`)
             .then(result => {
                 result[0].forEach(betaUser => {
                     beta.add(betaUser.id)
@@ -41,7 +41,7 @@ module.exports = class cache {
             })
             .catch(err => this.client.log.error(err, true))
 
-        this.client.dbBot.query("select id, nomerpg from fichas")
+        db.bot.query("select id, nomerpg from fichas")
             .then(result => {
                 const fichasUsers = new Object()
                 let usuarios = new Array()
@@ -84,7 +84,7 @@ module.exports = class cache {
         var ficha = fichas.get(id + nomerpg)
 
         if (ficha && !force) { return ficha } else {
-            var r = await this.client.dbBot.query(`select * from fichas where id = :id and nomerpg = :nomerpg`, {
+            var r = await db.bot.query(`select * from fichas where id = :id and nomerpg = :nomerpg`, {
                 replacements: { id: id, nomerpg: nomerpg },
             })
 
@@ -117,7 +117,7 @@ module.exports = class cache {
             }
         })
 
-        await this.client.db.query(`update info set status = '${JSON.stringify(status)}'`).catch(err => this.client.log.error(err, true))
+        await db.site.query(`update info set status = '${JSON.stringify(status)}'`).catch(err => this.client.log.error(err, true))
     }
 
     async setComandos(comandos) {
@@ -132,7 +132,7 @@ module.exports = class cache {
             }
         })
 
-        await this.client.db.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => this.client.log.error(err, true))
+        await db.site.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => this.client.log.error(err, true))
     }
 
     getFichaPublica(key) {
@@ -153,7 +153,7 @@ module.exports = class cache {
     }
 
     refreshBeta() {
-        this.client.dbBot.query(`select id from beta`)
+        db.bot.query(`select id from beta`)
             .then(result => {
                 result[0].forEach(betaUser => {
                     beta.add(betaUser.id)
@@ -186,7 +186,7 @@ module.exports = class cache {
             const senha = this.client.utils.gerarSenha()
             const lastuse = this.client.utils.getPostgresTime()
 
-            await this.client.dbBot.query(`insert into fichas (id, nomerpg, senha, lastuse, atributos) values (:id, :nomerpg, :senha, :lastuse, :atributos)`, {
+            await db.bot.query(`insert into fichas (id, nomerpg, senha, lastuse, atributos) values (:id, :nomerpg, :senha, :lastuse, :atributos)`, {
                 replacements: {
                     id: id,
                     nomerpg: nomerpg,
@@ -214,7 +214,7 @@ module.exports = class cache {
             }
 
             if (Object.entries(config.oldData.atributos).length == 0) {
-                var oldData = await this.client.dbBot.query("select * from fichas where id = :id and nomerpg = :nomerpg", {
+                var oldData = await db.bot.query("select * from fichas where id = :id and nomerpg = :nomerpg", {
                     replacements: {
                         id: id,
                         nomerpg: nomerpg
@@ -227,7 +227,7 @@ module.exports = class cache {
             if (config.resetarSenha) {
                 const lastuse = this.client.utils.getPostgresTime()
 
-                await this.client.dbBot.query(`update fichas set senha = :senha, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
+                await db.bot.query(`update fichas set senha = :senha, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
                     replacements: {
                         id: id,
                         nomerpg: nomerpg,
@@ -259,7 +259,7 @@ module.exports = class cache {
 
                 const lastuse = this.client.utils.getPostgresTime()
 
-                await this.client.dbBot.query(`update fichas set atributos = :atributos, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
+                await db.bot.query(`update fichas set atributos = :atributos, lastuse = :lastuse where id = :id and nomerpg = :nomerpg`, {
                     replacements: {
                         id: id,
                         nomerpg: nomerpg,
@@ -324,3 +324,7 @@ module.exports = class cache {
     }
 
 }
+
+const cache = new Cache()
+
+module.exports = cache
