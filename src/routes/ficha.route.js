@@ -1,7 +1,7 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const routes = Router()
 
-const fichaServices = require('../services/ficha.api.service')
+const fichaServices = require("../services/ficha.api.service")
 
 const jogadorServices = require("../services/jogador.service")
 
@@ -45,7 +45,7 @@ routes.get("/:id/:nomerpg", async (req, res) => {
         }
     }
     else {
-        req.session.validation = process.env.validation
+        req.session.validation = process.env.VALIDATION
 
         let accessKey
         try { accessKey = req.session.access[`${req.params.id}${req.params.nomerpg}`] } catch (err) { accessKey = null }

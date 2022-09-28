@@ -1,17 +1,17 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const routes = Router()
 
 const logger = require("../modules/logger")
 
-const cors = require('cors')
+const cors = require("cors")
 const corsConfig = {
-    origin: "*" // process.env.corsAllow.split(",")
+    origin: process.env.CORS_ALLOW.split(",")
 }
 
-const fichaServices = require('../services/ficha.api.service')
+const fichaServices = require("../services/ficha.api.service")
 
 routes.post("/atb/add", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.updateAtbFicha(req.body)
             if (response.status == 200) {
@@ -31,7 +31,7 @@ routes.post("/atb/add", cors(corsConfig), async (req, res) => {
 })
 
 routes.delete("/atb/remove", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.removeAtbFicha(req.body)
 
@@ -52,7 +52,7 @@ routes.delete("/atb/remove", cors(corsConfig), async (req, res) => {
 })
 
 routes.post("/create", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.createFicha(req.body)
             if (response.status == 200) {
@@ -73,7 +73,7 @@ routes.post("/create", cors(corsConfig), async (req, res) => {
 })
 
 routes.patch("/update", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.updateFicha(req.body)
 
@@ -94,7 +94,7 @@ routes.patch("/update", cors(corsConfig), async (req, res) => {
 })
 
 routes.patch("/rename", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.renameFicha(req.body)
             if (response.status == 200) {
@@ -114,7 +114,7 @@ routes.patch("/rename", cors(corsConfig), async (req, res) => {
 })
 
 routes.delete("/delete", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.deleteFicha(req.body)
             if (response.status == 200) {
@@ -134,7 +134,7 @@ routes.delete("/delete", cors(corsConfig), async (req, res) => {
 })
 
 routes.post("/password", cors(corsConfig), async (req, res) => {
-    if (req.session.validation == process.env.validation) {
+    if (req.session.validation == process.env.VALIDATION) {
         try {
             const response = await fichaServices.getFichaWithPassword(req.body)
 

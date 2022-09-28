@@ -2,7 +2,7 @@ const fs = require("fs")
 const path = require("path")
 const toMs = require("milliseconds-parser")()
 const LRU = require("@alanfilho184/kami-lru-cache").kami_cache
-const { QueryTypes } = require('sequelize');
+const { QueryTypes } = require("sequelize");
 
 const fichas = new LRU({ maxAge: toMs.parse("2 horas"), updateAgeOnGet: true })
 const beta = new Set()
@@ -23,7 +23,7 @@ class Cache {
                 configCache = Object.fromEntries(configCache)
                 configCache = JSON.stringify(configCache)
 
-                fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, { flag: "w" }, function (err) {
+                fs.writeFileSync(path.join(__dirname, "json", "botinfo.json"), configCache, { flag: "w" }, function (err) {
                     if (err) {
                         logger.error(err, true)
                     }
@@ -63,7 +63,7 @@ class Cache {
                     fichasUsers[u] = fichasUser
                 })
 
-                fs.writeFileSync(path.join(__dirname, "json", 'nomeFichas.json'), JSON.stringify(fichasUsers), { flag: "w" }, function (err) {
+                fs.writeFileSync(path.join(__dirname, "json", "nomeFichas.json"), JSON.stringify(fichasUsers), { flag: "w" }, function (err) {
                     if (err) {
                         logger.error(err, true)
                     }
@@ -113,13 +113,13 @@ class Cache {
         configCache.status = status
         configCache = JSON.stringify(configCache)
 
-        fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
+        fs.writeFileSync(path.join(__dirname, "json", "botinfo.json"), configCache, function (err) {
             if (err) {
                 logger.error(err, true)
             }
         })
 
-        await db.site.query(`update info set status = '${JSON.stringify(status)}'`).catch(err => logger.error(err, true))
+        await db.site.query(`update info set status = "${JSON.stringify(status)}"`).catch(err => logger.error(err, true))
     }
 
     async setComandos(comandos) {
@@ -128,13 +128,13 @@ class Cache {
         configCache.comandos = comandos
         configCache = JSON.stringify(configCache)
 
-        fs.writeFileSync(path.join(__dirname, "json", 'botinfo.json'), configCache, function (err) {
+        fs.writeFileSync(path.join(__dirname, "json", "botinfo.json"), configCache, function (err) {
             if (err) {
                 logger.error(err, true)
             }
         })
 
-        await db.site.query(`update info set comandos = '${JSON.stringify(comandos)}'`).catch(err => logger.error(err, true))
+        await db.site.query(`update info set comandos = "${JSON.stringify(comandos)}"`).catch(err => logger.error(err, true))
     }
 
     getFichaPublica(key) {

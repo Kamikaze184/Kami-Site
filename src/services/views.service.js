@@ -1,4 +1,4 @@
-const ss = require('string-similarity')
+const ss = require("string-similarity")
 const cache = require("../modules/cache/cache")
 
 module.exports = {

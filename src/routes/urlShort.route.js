@@ -1,4 +1,4 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const routes = Router()
 
 const urlShortServices = require("../services/urlShort.service")

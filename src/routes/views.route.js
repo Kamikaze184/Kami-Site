@@ -1,9 +1,9 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const routes = Router()
 
-const tutoriais = require('../public/assets/tutoriais/tutoriais');
+const tutoriais = require("../public/assets/tutoriais/tutoriais");
 
-const viewsServices = require('../services/views.service')
+const viewsServices = require("../services/views.service")
 
 routes.get("/", (req, res) => {
     const botinfo = viewsServices.getBotinfo()
@@ -50,10 +50,17 @@ routes.get("/tutoriais", (req, res) => {
 routes.get("/tutoriais/:tutorial", (req, res) => {
     const tutorial = viewsServices.getTutorial(req.params.tutorial, tutoriais)
 
-    res.render("tutorial.ejs", {
-        tutorial: tutorial,
-        session: req.session
-    })
+    if (tutorial) {
+        res.render("tutorial.ejs", {
+            tutorial: tutorial,
+            session: req.session
+        })
+    }
+    else {
+        res.render("404.ejs", {
+            session: req.session
+        })
+    }
 });
 
 module.exports = routes

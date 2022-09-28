@@ -158,7 +158,7 @@ module.exports = {
             }
         }
 
-        try { nomerpg = nomerpg.replace("'", '') } catch { }
+        try { nomerpg = nomerpg.replace("'", "") } catch { }
 
         try {
             await cache.updateFicha(body.id, nomerpg, { [atb]: valor }, { query: "update" })
@@ -185,7 +185,7 @@ module.exports = {
         var nomerpg = body.nomerpg
         var atb = body.atb
 
-        try { nomerpg = nomerpg.replace("'", '') } catch { }
+        try { nomerpg = nomerpg.replace("'", "") } catch { }
 
         try {
             atb = utils.matchAtb(atb, atributos)
@@ -236,7 +236,7 @@ module.exports = {
         const fichasUser = await cache.getFichasUser(body.ficha.id)
 
         var nomerpg = body.ficha.nomerpg
-        try { nomerpg = nomerpg.replace("'", '') } catch { }
+        try { nomerpg = nomerpg.replace("'", "") } catch { }
 
         if (fichasUser.includes(nomerpg)) {
             return {
@@ -295,7 +295,7 @@ module.exports = {
         const fichasUser = await cache.getFichasUser(body.id)
 
         var nomerpg = body.novonomerpg
-        try { nomerpg = nomerpg.replace("'", '') } catch { }
+        try { nomerpg = nomerpg.replace("'", "") } catch { }
 
         if (fichasUser.includes(nomerpg)) {
             return {

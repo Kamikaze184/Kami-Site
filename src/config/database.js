@@ -12,7 +12,7 @@ function conStr(DATABASE_URL) {
         dialect: "postgres",
     }
 
-    if (process.env.deploy == "production") {
+    if (process.env.NODE_ENV == "production") {
         conStr["dialectOptions"] = {
             ssl: {
                 require: true,

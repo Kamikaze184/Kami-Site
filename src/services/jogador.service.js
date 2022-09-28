@@ -1,4 +1,4 @@
-const resources = require('../public/assets/others/texts.json')
+const resources = require("../public/assets/others/texts.json")
 const cache = require("../modules/cache/cache")
 
 module.exports = {
