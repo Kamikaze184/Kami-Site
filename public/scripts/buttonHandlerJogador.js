@@ -10,7 +10,7 @@ const itens = document.querySelectorAll('.item');
 const criarFicha = document.querySelector('#criarFicha');
 
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
-const connUrl = "http://localhost:3005/"
+const connUrl = document.location.href.startsWith("http://localhost") ? "http://localhost:3005/" : "https://bot.kamiapp.com.br/"
 
 const socket = io(connUrl, {
     reconnectionDelayMax: 10000,
