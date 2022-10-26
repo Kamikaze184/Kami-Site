@@ -1,0 +1,7 @@
+/node_modules
+desktop.ini
+nodemon.json
+/system/modules/cache/json/botinfo.json
+/system/modules/cache/json/nomeFichas.json
+.env
+.vercel

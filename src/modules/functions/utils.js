@@ -3,7 +3,7 @@ const time = require("luxon").DateTime
 
 module.exports = {
     gerarSenha() {
-        const senha = CryptoJS.AES.encrypt(Date.now().toString(), process.env.fKey)
+        const senha = CryptoJS.AES.encrypt(Date.now().toString(), process.env.PASS_KEY)
         return senha.toString().slice(33, 43)
     },
 
