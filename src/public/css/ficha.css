@@ -87,10 +87,51 @@ button:hover {
 
 .icons img {
     width: 10%;
-    filter: invert(100%)
+    filter: invert(100%);
 }
 
 .icons img:hover {
     filter: invert(0%);
     cursor: pointer;
+}
+
+#buttonConfirm {
+    width: 20%;
+    height: 20%;
+    font-size: 1vw;
+}
+
+.addControls {
+    display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.addControls input {
+    width: 90%;
+    height: 25%;
+    margin: 1px;
+    background-color: var(--cinza-azulado);
+    border: 2px solid var(--azul-claro);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1vw;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+.addButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#buttonConfAddAtb, #buttonCancAddAtb {
+    font-size: 0.9vw;
+    width: 40%;
+    height: 80%;
 }

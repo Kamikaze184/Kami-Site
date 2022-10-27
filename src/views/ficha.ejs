@@ -23,28 +23,37 @@
             </div>
             <div class="divisor"></div>
             <div class="addRmButtons">
-                <button>Adicionar Atributo</button>
-                <button>Remover Atributo</button>
+                <button id="buttonAddAtb">Adicionar Atributo</button>
+                <button id="buttonRmAtb">Remover Atributo</button>
+            </div>
+            <div class="addControls">
+                <input id="inputNomeAtb" placeholder="Nome do Atributo" />
+                <input id="inputValorAtb" placeholder="Valor do Atributo" />
+                <div class="addButtons">
+                    <button id="buttonConfAddAtb">Adicionar</button>
+                    <button id="buttonCancAddAtb">Cancelar</button>
+                </div>
             </div>
             <div class="divisor"></div>
             <div class="salvarCompButtons">
-                <button>Salvar Alterações</button>
+                <button id="buttonSalvar">Salvar Alterações</button>
                 <div class="icons">
                     <img id="share" alt="Icone de compatilhamento" src="/assets/img/shareIcon.svg">
                 </div>
             </div>
             <div class="divisor"></div>
             <div class="rnApgButtons">
-                <button>Renomear Ficha</button>
-                <button>Apagar Ficha</button>
+                <button id="buttonRenomear">Renomear Ficha</button>
+                <button id="buttonApagar">Apagar Ficha</button>
             </div>
             <div class="divisor"></div>
             <div class="notificacao">
                 <h1>Titulo notificação</h1>
                 <p>Mensagem notificação</p>
-                <button>Ok</button>
+                <button id="buttonConfirm">Ok</button>
             </div>
         </div>
+        <script src="/scripts/buttonHandlerFicha.js" type="module"></script>
     </main>
     <footer>
         <%- include('./partials/betaFooter.ejs', {}); %>
