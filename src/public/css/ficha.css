@@ -27,15 +27,17 @@
 }
 
 .nomeFicha h1 {
+    font-size: 2vw;
     font-weight: bold;
 }
 
 .nomeFicha p {
+    font-size: 1vw;
     font-weight: bold;
     opacity: 50%;
 }
 
-.addRmButtons, .salvarCompButtons, .rnApgButtons {
+.addRmButtons, .salvarCompButtons, .rnApgButtons, .notificacao {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -52,7 +54,43 @@ button {
     background-color: var(--azul-escuro);
     color: #FFFFFF;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.5vw;
     box-shadow: rgb(0, 0, 0, 0.212) 0px 3px 5px 0px;
+}
 
+button:hover {
+    background-color: var(--azul-claro);
+    cursor: pointer;
+}
+
+.notificacao h1 {
+    font-size: 1.5vw;
+    font-weight: bold;
+    color: #FFFFFF
+}
+
+.notificacao p {
+    font-size: 1.0vw;
+    font-weight: bold;
+    color: #FFFFFF;
+    max-width: 90%;
+    max-height: 30%;
+}
+
+.icons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.icons img {
+    width: 10%;
+    filter: invert(100%)
+}
+
+.icons img:hover {
+    filter: invert(0%);
+    cursor: pointer;
 }

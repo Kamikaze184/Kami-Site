@@ -16,8 +16,10 @@
     <main>
         <div class="bgControls">
             <div class="nomeFicha">
-                <h1>Ficha: <%= ficha.nomerpg%></h1>
-                <p>Criada por: <%= session.user.username %>#<%=session.user.discriminator%></p>
+                <h1>Ficha: <%= ficha.nomerpg%>
+                </h1>
+                <p>Criada por: <%= session.user.username %>#<%=session.user.discriminator%>
+                </p>
             </div>
             <div class="divisor"></div>
             <div class="addRmButtons">
@@ -27,6 +29,9 @@
             <div class="divisor"></div>
             <div class="salvarCompButtons">
                 <button>Salvar Alterações</button>
+                <div class="icons">
+                    <img id="share" alt="Icone de compatilhamento" src="/assets/img/shareIcon.svg">
+                </div>
             </div>
             <div class="divisor"></div>
             <div class="rnApgButtons">
@@ -34,7 +39,11 @@
                 <button>Apagar Ficha</button>
             </div>
             <div class="divisor"></div>
-            <div class="notification"></div>
+            <div class="notificacao">
+                <h1>Titulo notificação</h1>
+                <p>Mensagem notificação</p>
+                <button>Ok</button>
+            </div>
         </div>
     </main>
     <footer>
