@@ -14,9 +14,9 @@ routes.get("/login", (req, res) => {
         session.user = {
             id: "252868463150759961",
             username: "Kamikaze_184",
-            avatar: "347aa6655964484ff3f10e74c1170c1c",
+            avatar: "db949980e5d2a66ab559251404a9b747",
             discriminator: "7417",
-            avatarURL: "https://cdn.discordapp.com/avatars/252868463150759961/347aa6655964484ff3f10e74c1170c1c.png?size=128",
+            avatarURL: "https://cdn.discordapp.com/avatars/252868463150759961/db949980e5d2a66ab559251404a9b747.webp?size=128",
         }
         session.validation = process.env.VALIDATION
 
