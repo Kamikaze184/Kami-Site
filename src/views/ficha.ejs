@@ -2,206 +2,165 @@
 <html lang="pt-br">
 
 <head>
-    <%- include('./partials/head.ejs') %>
-        <link rel="stylesheet" href="/css/global.css">
-        <link rel="stylesheet" href="/css/ficha.css">
-        <link rel="stylesheet" href="/css/partials/formFicha.css">
-        <script type="text/javascript" src="https://livejs.com/live.js"></script>
+  <%- include('./partials/head.ejs') %>
+  <link rel="stylesheet" href="/css/ficha.css">
+  <script type="text/javascript" src="https://livejs.com/live.js"></script>
 </head>
 
 <body>
-    <header>
-        <%- include('./partials/nav.ejs', {session: session, redirect: `/jogador/ficha/${ficha.nomerpg}`}) %>
-    </header>
-    <main>
-        <input id="nomerpg" type="hidden" value="<%= ficha.nomerpg%>">
-        <input id="userid" type="hidden" value="<%= ficha.id%>">
-        <input id="tag" type="hidden" value="<%= session.user.username %>#<%=session.user.discriminator%>">
-        <div class="bgControls">
-            <div class="nomeFicha">
-                <h1>Ficha: <%= ficha.nomerpg%>
-                </h1>
-                <p>Criada por: <%= session.user.username %>#<%=session.user.discriminator%>
-                </p>
-            </div>
-            <div class="divisor"></div>
-            <div class="addRmButtons">
-                <button id="buttonAddAtb">Adicionar Atributo</button>
-                <button id="buttonRmAtb">Remover Atributo</button>
-            </div>
-            <div class="addControls">
-                <input id="inputNomeAtbAdd" placeholder="Nome do Atributo" />
-                <input id="inputValorAtbAdd" placeholder="Valor do Atributo" />
-                <div class="addButtons">
-                    <button id="buttonConfAddAtb">Adicionar</button>
-                    <button id="buttonCancAddAtb">Cancelar</button>
-                </div>
-            </div>
-            <div class="rmControls">
-                <input id="inputNomeAtbRm" placeholder="Nome do Atributo" />
-                <div class="rmButtons">
-                    <button id="buttonConfRmAtb">Adicionar</button>
-                    <button id="buttonCancRmAtb">Cancelar</button>
-                </div>
-            </div>
-            <div class="divisor"></div>
-            <div class="salvarCompButtons">
-                <button id="buttonSalvar">Salvar Alterações</button>
-                <div class="icons">
-                    <img id="share" alt="Icone de compatilhamento" src="/assets/img/shareIcon.svg">
-                </div>
-            </div>
-            <div class="compControls">
-                <div class="compItem">
-                    <div class="labelBox">
-                        <h1>Link e senha da ficha</h1>
-                    </div>
-                    <input id="compLink" value="https://kamiapp.com.br/ficha/<%= ficha.id %>/<%= ficha.nomerpg%>"
-                        readonly>
-                    <input id="compPassword" type="password" value="<%= ficha.senha %>" readonly>
-                </div>
-                <div class="compButtons">
-                    <button id="buttonCompLink">Copiar tudo</button>
-                    <button id="buttonCancComp">Cancelar</button>
-                </div>
-            </div>
-            <div class="divisor"></div>
-            <div class="rnApgButtons">
-                <button id="buttonRenomear">Renomear Ficha</button>
-                <button id="buttonApagar">Apagar Ficha</button>
-            </div>
-            <div class="rnControls">
-                <input id="inputNovoNome" placeholder="Novo nome da ficha" />
-                <div class="rnButtons">
-                    <button id="buttonConfRnFicha">Renomear</button>
-                    <button id="buttonCancRnFicha">Cancelar</button>
-                </div>
-            </div>
-            <div class="divisor"></div>
-            <div class="notificacao">
-                <h1>Nenhuma notificação</h1>
-                <p></p>
-                <button id="buttonConfirm">Ok</button>
-            </div>
+  <header>
+    <%- include('./partials/nav.ejs', {session: session, redirect: `/jogador/ficha/${ficha.nomerpg}`}) %>
+  </header>
+  <main>
+    <input id="nomerpg" type="hidden" value="<%= ficha.nomerpg%>">
+    <input id="userid" type="hidden" value="<%= ficha.id%>">
+    <input id="tag" type="hidden" value="<%= session.user.username %>#<%=session.user.discriminator%>">
+    <div class="bgControls">
+      <div class="nomeFicha">
+        <h1>Ficha: <%= ficha.nomerpg%>
+        </h1>
+        <p>Criada por: <%= session.user.username %>#<%=session.user.discriminator%>
+        </p>
+      </div>
+      <div class="divisor"></div>
+      <div class="addRmButtons">
+        <button id="buttonAddAtb">Adicionar Atributo</button>
+        <button id="buttonRmAtb">Remover Atributo</button>
+      </div>
+      <div class="addControls">
+        <input id="inputNomeAtbAdd" placeholder="Nome do Atributo" />
+        <input id="inputValorAtbAdd" placeholder="Valor do Atributo" />
+        <div class="addButtons">
+          <button id="buttonConfAddAtb">Adicionar</button>
+          <button id="buttonCancAddAtb">Cancelar</button>
         </div>
-
-        <div class="bgFicha">
-            <div class="infoBox">
-                <div class="titleBox">
-                    <h1>
-                        Informações do Personagem
-                    </h1>
-                </div>
-                <section class="atbs">
-                    <% if (ficha.atributos && ficha.atributos.imagem) {%>
-                        <div class="imgBox">
-                            <img src="<%= ficha.atributos.imagem %>">
-                            <textarea><%= ficha.atributos.imagem %></textarea>
-                        </div>
-                        <% } %>
-                            <div class="atbBox">
-                                <atb>
-                                    <atbLabel>Nome</atbLabel>
-                                    <textarea>Valor</textarea>
-                                </atb>
-                                <atb>
-                                    <atbLabel>Nome</atbLabel>
-                                    <textarea>Valor</textarea>
-                                </atb>
-                                <atb>
-                                    <atbLabel>Nome</atbLabel>
-                                    <textarea>Valor</textarea>
-                                </atb>
-                                <atb>
-                                    <atbLabel>Nome</atbLabel>
-                                    <textarea>Valor</textarea>
-                                </atb>
-                                <atb>
-                                    <atbLabel>Nome</atbLabel>
-                                    <textarea>Valor</textarea>
-                                </atb>
-                                <atb>
-                                    <atbLabel>Nome</atbLabel>
-                                    <textarea>Valor</textarea>
-                                </atb>
-                            </div>
-                </section>
-            </div>
-            <div class="descricaoBox">
-                <h1>Descrição do Personagem</h1>
-                <% if (ficha.atributos && ficha.atributos.descricao) {%>
-                    <textarea id="descricao"><%= ficha.atributos.descricao %></textarea>
-                    <% } %>
-            </div>
-            <div class="divisor" id="divFicha1-1"></div>
-            <div class="divisor" id="divFicha1-2"></div>
-            <div class="divisor" id="divFicha1-3"></div>
-            <div class="divisor" id="divFicha2"></div>
-            <div class="longStatusBox">
-                <div class="titleBox">
-                    <h1>
-                        Atributos Longos do Personagem
-                    </h1>
-                </div>
-                <atb>
-                    <atbLabel>Nome</atbLabel>
-                    <textarea>Valor</textarea>
-                </atb>
-                <atb>
-                    <atbLabel>Nome</atbLabel>
-                    <textarea>Valor</textarea>
-                </atb>
-                <atb>
-                    <atbLabel>Nome</atbLabel>
-                    <textarea>Valor</textarea>
-                </atb>
-                <atb>
-                    <atbLabel>Nome</atbLabel>
-                    <textarea>Valor</textarea>
-                </atb>
-                <atb>
-                    <atbLabel>Nome</atbLabel>
-                    <textarea>Valor</textarea>
-                </atb>
-            </div>
-            <div class="divisor" id="divFicha3-1"></div>
-            <div class="divisor" id="divFicha3-2"></div>
-            <div class="divisor" id="divFicha3-3"></div>
-            <div class="statusBox">
-                <div class="titleBox">
-                    <h1>
-                        Status do Personagem
-                    </h1>
-                </div>
-                <div class="atbBox">
-                    <atb>
-                        <atbLabel>Nome</atbLabel>
-                        <textarea>Valor</textarea>
-                    </atb>
-                    <atb>
-                        <atbLabel>Nome</atbLabel>
-                        <textarea>Valor</textarea>
-                    </atb>
-                    <atb>
-                        <atbLabel>Nome</atbLabel>
-                        <textarea>Valor</textarea>
-                    </atb>
-                    <atb>
-                        <atbLabel>Nome</atbLabel>
-                        <textarea>Valor</textarea>
-                    </atb>
-                    <atb>
-                        <atbLabel>Nome</atbLabel>
-                        <textarea>Valor</textarea>
-                    </atb>
-                </div>
-            </div>
+      </div>
+      <div class="rmControls">
+        <input id="inputNomeAtbRm" placeholder="Nome do Atributo" />
+        <div class="rmButtons">
+          <button id="buttonConfRmAtb">Adicionar</button>
+          <button id="buttonCancRmAtb">Cancelar</button>
         </div>
-        <script src="/scripts/buttonHandlerFicha.js" type="module"></script>
-    </main>
-    <footer>
-        <%- include('./partials/betaFooter.ejs', {}); %>
-    </footer>
+      </div>
+      <div class="divisor"></div>
+      <div class="salvarCompButtons">
+        <button id="buttonSalvar">Salvar Alterações</button>
+        <div class="icons">
+          <img id="share" alt="Icone de compatilhamento" src="/assets/img/shareIcon.svg">
+        </div>
+      </div>
+      <div class="compControls">
+        <div class="compItem">
+          <div class="labelBox">
+            <h1>Link e senha da ficha</h1>
+          </div>
+          <input id="compLink" value="https://kamiapp.com.br/ficha/<%= ficha.id %>/<%= ficha.nomerpg%>" readonly>
+          <input id="compPassword" type="password" value="<%= ficha.senha %>" readonly>
+        </div>
+        <div class="compButtons">
+          <button id="buttonCompLink">Copiar tudo</button>
+          <button id="buttonCancComp">Cancelar</button>
+        </div>
+      </div>
+      <div class="divisor"></div>
+      <div class="rnApgButtons">
+        <button id="buttonRenomear">Renomear Ficha</button>
+        <button id="buttonApagar">Apagar Ficha</button>
+      </div>
+      <div class="rnControls">
+        <input id="inputNovoNome" placeholder="Novo nome da ficha" />
+        <div class="rnButtons">
+          <button id="buttonConfRnFicha">Renomear</button>
+          <button id="buttonCancRnFicha">Cancelar</button>
+        </div>
+      </div>
+      <div class="divisor"></div>
+      <div class="notificacao">
+        <h1>Nenhuma notificação</h1>
+        <p></p>
+        <button id="buttonConfirm">Ok</button>
+      </div>
+    </div>
+    <div class="bgFicha">
+      <div class="infoBox">
+        <div class="titleBox">
+          <img class="navigation" id="infoBoxNavigateLeft" src="/assets/img/navigateIcon.svg">
+          <h1>
+            Informações do Personagem
+          </h1>
+          <img class="navigation" id="infoBoxNavigateRight" src="/assets/img/navigateIcon.svg">
+        </div>
+        <section class="atbs">
+          <% if (ficha.atributos && ficha.atributos.imagem) {%>
+          <div class="imgBox">
+            <img src="<%= ficha.atributos.imagem %>">
+            <textarea><%= ficha.atributos.imagem %></textarea>
+          </div>
+          <% } %>
+        </section>
+      </div>
+      <div class="descricaoBox">
+        <h1>Descrição do Personagem</h1>
+        <% if (ficha.atributos && ficha.atributos.descricao) {%>
+        <textarea id="descricao"><%= ficha.atributos.descricao %></textarea>
+        <% } %>
+      </div>
+      <div class="divisor" id="divFicha1-1"></div>
+      <div class="divisor" id="divFicha1-2"></div>
+      <div class="divisor" id="divFicha1-3"></div>
+      <div class="divisor" id="divFicha2"></div>
+      <div class="longStatusBox">
+        <div class="titleBox">
+          <img class="navigation" id="longStatusBoxNavigateLeft" src="/assets/img/navigateIcon.svg">
+          <h1>
+            Atributos Longos do Personagem
+          </h1>
+          <img class="navigation" id="longStatusBoxNavigateRight" src="/assets/img/navigateIcon.svg">
+        </div>
+        <div class="atbs">
+          
+        </div>
+      </div>
+      <div class="divisor" id="divFicha3-1"></div>
+      <div class="divisor" id="divFicha3-2"></div>
+      <div class="divisor" id="divFicha3-3"></div>
+      <div class="statusBox">
+        <div class="titleBox">
+          <img class="navigation" id="infoBoxNavigateLeft" src="/assets/img/navigateIcon.svg">
+          <h1>
+            Status do Personagem
+          </h1>
+          <img class="navigation" id="infoBoxNavigateRight" src="/assets/img/navigateIcon.svg">
+        </div>
+        <div class="atbBox">
+          <atb>
+            <atbLabel>Nome</atbLabel>
+            <textarea>Valor</textarea>
+          </atb>
+          <atb>
+            <atbLabel>Nome</atbLabel>
+            <textarea>Valor</textarea>
+          </atb>
+          <atb>
+            <atbLabel>Nome</atbLabel>
+            <textarea>Valor</textarea>
+          </atb>
+          <atb>
+            <atbLabel>Nome</atbLabel>
+            <textarea>Valor</textarea>
+          </atb>
+          <atb>
+            <atbLabel>Nome</atbLabel>
+            <textarea>Valor</textarea>
+          </atb>
+        </div>
+      </div>
+    </div>
+    <script src="/scripts/handlerFicha.js" type="module"></script>
+  </main>
+  <footer>
+    <%- include('./partials/betaFooter.ejs', {}); %>
+  </footer>
 </body>
 
 </html>

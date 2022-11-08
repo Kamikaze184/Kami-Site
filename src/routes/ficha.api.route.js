@@ -10,6 +10,26 @@ const corsConfig = {
 
 const fichaServices = require("../services/ficha.api.service")
 
+routes.post("/", cors(corsConfig), async (req, res) => {
+    if (req.session.validation == process.env.VALIDATION) {
+        try {
+            const ficha = await fichaServices.getFicha(req.body.id, req.body.nomerpg)
+            if (ficha) {
+                res.status(200).send(ficha)
+            }
+            else {
+                res.status(404).send({ error: "Ficha não encontrada" })
+            }
+        }
+        catch (err) {
+            res.status(500).end()
+        }
+    }
+    else {
+        res.status(401).end()
+    }
+})
+
 routes.post("/atb/add", cors(corsConfig), async (req, res) => {
     if (req.session.validation == process.env.VALIDATION) {
         try {

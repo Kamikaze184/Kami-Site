@@ -4,4 +4,4 @@ nodemon.json
 /src/modules/cache/json/botinfo.json
 /src/modules/cache/json/nomeFichas.json
 .env
-.vercel
+.vscode

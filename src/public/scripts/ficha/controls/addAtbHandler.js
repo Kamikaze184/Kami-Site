@@ -15,8 +15,8 @@ export async function addAtbHandler() {
         addRmButtons.style = "display: flex;"
         addControls.style = "display: none;"
 
-        document.getElementById("inputNomeAtb").value = ""
-        document.getElementById("inputValorAtb").value = ""
+        document.getElementById("inputNomeAtbAdd").value = ""
+        document.getElementById("inputValorAtbAdd").value = ""
     })
 
     buttonConfAddAtb.addEventListener("click", () => {

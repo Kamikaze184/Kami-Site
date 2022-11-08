@@ -16,7 +16,6 @@ export async function rmAtbHandler() {
         rmControls.style = "display: none;"
 
         document.getElementById("inputNomeAtbRm").value = ""
-        document.getElementById("inputValorAtbRm").value = ""
     })
 
     buttonConfRmAtb.addEventListener("click", () => {

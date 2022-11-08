@@ -15,8 +15,7 @@ export async function rnAtbHandler() {
         rnApgButtons.style = "display: flex;"
         rnControls.style = "display: none;"
 
-        document.getElementById("inputNomeAtbRm").value = ""
-        document.getElementById("inputValorAtbRm").value = ""
+        document.getElementById("inputNovoNome").value = ""
     })
 
     buttonConfRnFicha.addEventListener("click", () => {

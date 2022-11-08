@@ -197,7 +197,7 @@ button:hover {
     display: grid;
     background-color: var(--azul-escuro);
     width: 100%;
-    height: 75vmin;
+    height: 80vmin;
     margin: 15px 0 75px 0;
     grid-template-columns: 2.838fr 0.1fr 2fr 0.1fr 2fr;
     grid-template-rows: 2fr 0.1fr 2fr;
@@ -228,16 +228,9 @@ button:hover {
     grid-area: b;
 }
 
-.longStatusBox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    grid-area: c;
-}
-
 .statusBox {
     grid-area: d;
+    margin: 5px;
 }
 
 #divFicha1-1 {
@@ -279,9 +272,12 @@ button:hover {
 
 .titleBox {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
     align-items: center;
-    margin: 5px;
+    width: 95%;
+    margin: 5px 2px 5px 2px;
 }
 
 .titleBox h1 {
@@ -411,8 +407,33 @@ atbLabel {
     margin: 0;
 }
 
+.longStatusBox {
+    max-height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-area: c;
+    margin: 5px;
+}
+
+.longStatusBox .atbs {
+    width: 100%;
+    height: 100%;
+}
+
+.longStatusBox .atbBox {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
 .longStatusBox atb {
-    width: 80%;
+    width: 90%;
+    height: 12.5vmin;
 }
 
 .statusBox .atbBox {
@@ -429,4 +450,19 @@ atbLabel {
 .statusBox atb {
     width: 25%;
     margin: 10px;
+}
+
+.navigation {
+    width: 1rem;
+    cursor: pointer;
+    transition: none;
+}
+
+.navigation:hover {
+    filter: brightness(0) saturate(100%) invert(57%) sepia(49%) saturate(545%) hue-rotate(173deg) brightness(94%) contrast(102%);
+    cursor: pointer;
+}
+
+#infoBoxNavigateLeft, #longStatusBoxNavigateLeft {
+    rotate: 180deg;
 }
