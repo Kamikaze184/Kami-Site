@@ -6,6 +6,7 @@ import { notificacaoHandler } from "./ficha/controls/notificacaoHandler.js"
 
 import { infoBoxHandler } from "./ficha/atbs/infoBoxHandler.js"
 import { longStatusBoxHandler } from "./ficha/atbs/longStatusBoxHandler.js"
+import { statusBoxHandler } from "./ficha/atbs/statusBoxHandler.js"
 
 const id = document.getElementById("userid").value
 const nomerpg = document.getElementById("nomerpg").value
@@ -25,6 +26,7 @@ xhr.onreadystatechange = async (e) => {
 
         infoBoxHandler(ficha)
         longStatusBoxHandler(ficha)
+        statusBoxHandler(ficha)
     }
 }
 

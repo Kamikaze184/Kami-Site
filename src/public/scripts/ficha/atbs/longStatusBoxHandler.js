@@ -7,17 +7,30 @@ export async function longStatusBoxHandler(ficha) {
     const fetchAtbs = await fetch("/assets/others/texts.json")
     const { atbs } = await fetchAtbs.json()
 
-    const atbI2 = atbs.atbsI1
-    const atbI2F = atbs.atbsI1F
+    ficha.atributos = {
+        ...ficha.atributos,
+        "habilidadesderaca": "a",
+        "talentos": "b"
+    }
+
+    const atbI2 = atbs.atbsI2
+    const atbI2F = atbs.atbsI2F
 
     const atbsBox = new Array()
 
     let atbBox = document.createElement("div")
     atbBox.classList.add("atbBox")
 
+    console.log(window.innerHeight)
+
+    let atbMax = 6
+    if (window.innerHeight <= 770) {
+        atbMax = 4
+    }
+
     let atbCount = 0
     for (let i in atbI2) {
-        if (atbCount >= 5 || parseInt(i) + 1 == atbI2.length) {
+        if (atbCount == atbMax || parseInt(i) == atbI2.length) {
             atbsBox.push(atbBox)
 
             atbBox = document.createElement("div")

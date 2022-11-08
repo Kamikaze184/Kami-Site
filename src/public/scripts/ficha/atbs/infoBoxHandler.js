@@ -17,7 +17,7 @@ export async function infoBoxHandler(ficha) {
 
     let atbCount = 0
     for (let i in atbI1) {
-        if (atbCount >= 6 || parseInt(i) + 1 == atbI1.length) {
+        if (atbCount >= 6 || parseInt(i) == atbI1.length) {
             atbsBox.push(atbBox)
 
             atbBox = document.createElement("div")

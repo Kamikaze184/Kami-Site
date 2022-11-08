@@ -389,8 +389,9 @@ atbLabel {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom: none;
-    height: 0.5em;
-    font-size: 1em;
+    height: fit-content;
+    max-height: 1em;
+    font-size: small;
     color: #FFFFFF;
     font-weight: bold;
 }
@@ -426,14 +427,20 @@ atbLabel {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
     height: 100%;
 }
 
 .longStatusBox atb {
     width: 90%;
-    height: 12.5vmin;
+}
+
+.statusBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .statusBox .atbBox {
@@ -442,14 +449,11 @@ atbLabel {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    grid-column: 2;
-    grid-row: 1;
     width: 100%;
 }
 
 .statusBox atb {
-    width: 25%;
-    margin: 10px;
+    width: 40%;
 }
 
 .navigation {
@@ -463,6 +467,16 @@ atbLabel {
     cursor: pointer;
 }
 
-#infoBoxNavigateLeft, #longStatusBoxNavigateLeft {
+#infoBoxNavigateLeft, #longStatusBoxNavigateLeft, #statusBoxNavigateLeft {
     rotate: 180deg;
+}
+
+@media (max-height: 770px) {
+    .longStatusBox atb textarea {
+        height: 4.5em;
+    }
+
+    .statusBox atb textarea {
+        height: 4.5em
+    }
 }
