@@ -84,20 +84,20 @@
     <div class="bgFicha">
       <div class="infoBox">
         <div class="titleBox">
-          <img class="navigation" id="infoBoxNavigateLeft" src="/assets/img/navigateIcon.svg">
           <h1>
             Informações do Personagem
           </h1>
-          <img class="navigation" id="infoBoxNavigateRight" src="/assets/img/navigateIcon.svg">
         </div>
-        <section class="atbs">
+        <div class="content">
           <% if (ficha.atributos && ficha.atributos.imagem) {%>
-          <div class="imgBox">
-            <img src="<%= ficha.atributos.imagem %>">
-            <textarea><%= ficha.atributos.imagem %></textarea>
-          </div>
-          <% } %>
-        </section>
+            <div class="imgBox">
+              <img src="<%= ficha.atributos.imagem %>">
+              <textarea><%= ficha.atributos.imagem %></textarea>
+            </div>
+            <% } %>
+            <div class="atbs">
+            </div>
+        </div>
       </div>
       <div class="descricaoBox">
         <h1>Descrição do Personagem</h1>
@@ -111,11 +111,9 @@
       <div class="divisor" id="divFicha2"></div>
       <div class="longStatusBox">
         <div class="titleBox">
-          <img class="navigation" id="longStatusBoxNavigateLeft" src="/assets/img/navigateIcon.svg">
           <h1>
             Atributos Longos do Personagem
           </h1>
-          <img class="navigation" id="longStatusBoxNavigateRight" src="/assets/img/navigateIcon.svg">
         </div>
         <div class="atbs">
         </div>
@@ -125,13 +123,11 @@
       <div class="divisor" id="divFicha3-3"></div>
       <div class="statusBox">
         <div class="titleBox">
-          <img class="navigation" id="statusBoxNavigateLeft" src="/assets/img/navigateIcon.svg">
           <h1>
             Status do Personagem
           </h1>
-          <img class="navigation" id="statusBoxNavigateRight" src="/assets/img/navigateIcon.svg">
         </div>
-       <div class="atbs"></div>
+        <div class="atbs"></div>
       </div>
     </div>
     <script src="/scripts/handlerFicha.js" type="module"></script>
