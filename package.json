@@ -1,43 +1,19 @@
 {
   "name": "kami-site",
-  "version": "4.0.11-beta",
-  "description": "Site para o BOT para Discord Kami",
-  "main": "index.js",
+  "private": true,
+  "version": "5.0.0",
+  "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "author": "Kamikaze_184",
-  "license": "CC BY-NC-ND 4.0",
   "dependencies": {
-    "@alanfilho184/kami-lru-cache": "^1.2.0",
-    "@discordjs/rest": "^0.3.0",
-    "axios": "^0.24.0",
-    "colors": "^1.4.0",
-    "connect-pg-simple": "^7.0.0",
-    "cookie-parser": "^1.4.6",
-    "cookies": "^0.8.0",
-    "cors": "^2.8.5",
-    "crypto-js": "^4.1.1",
-    "discord-api-types": "^0.27.2",
-    "discord-oauth2": "^2.9.0",
-    "dotenv": "^10.0.0",
-    "ejs": "^3.1.8",
-    "express": "^4.17.3",
-    "express-session": "^1.17.2",
-    "fast-glob": "^3.2.7",
-    "lodash": "^4.17.21",
-    "luxon": "^2.5.2",
-    "milliseconds-parser": "^1.0.2",
-    "pg": "^8.7.3",
-    "sequelize": "^6.16.2",
-    "serve-favicon": "^2.5.0",
-    "socket.io-client": "^4.5.1",
-    "string-similarity": "^4.0.4"
+    "vue": "^3.2.45",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
-  },
-  "engines": {
-    "node": ">=16.15.1"
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.0.0"
   }
 }

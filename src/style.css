@@ -1,0 +1,29 @@
+:root {
+  font-family: 'Roboto', sans-serif;
+  --primary: rgb(0, 105, 206);
+  --secondary: rgb(89, 160, 241);
+  --text: rgb(255, 255, 255);
+  --text-secondary: rgba(255, 255, 255, 0.61);
+  --background: rgb(35, 39, 42);
+  --background-secondary: rgb(74, 80, 85);
+}
+
+@font-face {
+  font-family: 'Azonix';
+  src: url('./assets/fonts/AzonixRegular.woff2') format('woff2'),
+    url('./assets/fonts/AzonixRegular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background-color: var(--background);
+  margin: 0;
+  padding: 0;
+  margin-bottom: 30px;
+}
+
+a {
+  text-decoration: none;
+}
