@@ -21,9 +21,9 @@ export default {
       <h1>Se precisa de ajuda com algum comando este lugar pode te ajudar!</h1>
       <p>Mas, claro, se você precisar de mais ajuda você pode perguntar no <a href="/suporte"><b>Servidor de Suporte do
             Kami no Discord.</b></a></p>
-      <SearchBar />
     </div>
-    <div class="tutorials-list">
+    <div class="tutorials-search">
+      <SearchBar />
     </div>
   </div>
 </template>
@@ -45,6 +45,7 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 6em;
+  width: 90%;
 }
 
 .tutorials-description h1 {
@@ -71,29 +72,11 @@ export default {
   color: var(--secondary);
 }
 
-.command-item {
+.tutorials-search {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: center;
   align-items: center;
-  flex-wrap: nowrap;
-  background-color: var(--primary);
-  width: 16em;
-  margin: 5px;
-  background-color: var(--primary);
-  border: 3px solid var(--background);
-  border-radius: 10px;
-  text-align: center;
-}
-
-.command-item h2 {
-  margin: 0.6em 0 0.6em 0;
-  color: var(--text);
-}
-
-.command-item p {
-  margin: 0;
-  color: var(--text-secondary);
   width: 90%;
 }
 </style>
