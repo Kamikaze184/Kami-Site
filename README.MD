@@ -8,13 +8,13 @@
 ## Este projeto
 Este projeto é um site criado para realizar a apresentação do BOT e ensinar a como utilizar o mesmo, possuindo informações e estatísticas relacionadas ao BOT e tutoriais de como utilizá-lo.
 &nbsp;
-> ## O site em questão pode ser encontrado **[Clicando aqui](https://kamisite.herokuapp.com)**
+> ## O site em questão pode ser encontrado **[Clicando aqui](https://kamiapp.com.br)**
 &nbsp;
 # Projetos relacionados
 - ## **[Kami](https://github.com/alanfilho184/Kami)** 
   Projeto do BOT em si.
 &nbsp;
-> ## Adicione o Kami ao seu servidor **[Clicando aqui](https://kamisite.herokuapp.com/convite)**
+> ## Adicione o Kami ao seu servidor **[Clicando aqui](https://kamiapp.com.br/convite)**
 &nbsp;
 
 # Achou algum bug? tem alguma sugestão?
