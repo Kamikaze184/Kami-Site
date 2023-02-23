@@ -66,6 +66,7 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 6em;
+  width: 90%;
 }
 
 .commands-description h1 {
@@ -90,6 +91,14 @@ export default {
 
 .commands-description a:hover {
   color: var(--secondary);
+}
+
+.commands-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
 }
 
 .command-item {

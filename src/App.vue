@@ -3,8 +3,6 @@ import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import Background from './components/Background.vue';
 
-const socket = io('')
-
 export default {
   data() {
     return {}
@@ -16,9 +14,6 @@ export default {
     Footer,
     Background
   },
-  props: {
-    socket: socket
-  }
 }
 </script>
 
@@ -30,6 +25,4 @@ export default {
 </template>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

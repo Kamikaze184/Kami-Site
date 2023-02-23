@@ -1,6 +1,34 @@
 <script>
-export default {
+import CountUp from '../components/CountUp.vue';
 
+export default {
+  data() {
+    return {
+      serversCount: 0,
+      usersCount: 0,
+      sheetsCount: 0,
+      commandsCount: 0
+    }
+  },
+  components: {
+    CountUp
+  },
+  mounted() {
+    let data = new Object()
+
+    fetch('http://localhost:3001/info', {
+      method: 'GET',
+      cache: 'force-cache',
+    })
+      .then(async res => {
+        data = await res.json()
+
+        this.serversCount = data.serversCount
+        this.usersCount = data.usersCount
+        this.sheetsCount = data.sheetsCount
+        this.commandsCount = data.commandsCount
+      })
+  }
 }
 </script>
 
@@ -16,20 +44,20 @@ export default {
     </div>
     <div class="home-botinfo">
       <div class="home-botinfo-box">
-        <div class="home-botinfo-item" id="home-botinfo-servers">
-          <h1>229</h1>
+        <div class="home-botinfo-item">
+          <CountUp :key="serversCount" :end-value="serversCount" />
           <h4>Servidores</h4>
         </div>
-        <div class="home-botinfo-item" id="botinfo-users">
-          <h1>229</h1>
+        <div class="home-botinfo-item">
+          <CountUp :key="usersCount" :end-value="usersCount" />
           <h4>Usuários</h4>
         </div>
-        <div class="home-botinfo-item" id="botinfo-sheets">
-          <h1>229</h1>
+        <div class="home-botinfo-item">
+          <CountUp :key="sheetsCount" :end-value="sheetsCount" />
           <h4>Fichas Criadas</h4>
         </div>
-        <div class="home-botinfo-item" id="botinfo-commands">
-          <h1>229</h1>
+        <div class="home-botinfo-item">
+          <CountUp :key="commandsCount" :end-value="commandsCount" />
           <h4>Comandos Executados</h4>
         </div>
       </div>
@@ -118,5 +146,4 @@ export default {
   margin: 0;
   opacity: 0.7;
 }
-
 </style>

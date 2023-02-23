@@ -6,6 +6,7 @@
   --text-secondary: rgba(255, 255, 255, 0.61);
   --background: rgb(35, 39, 42);
   --background-secondary: rgb(74, 80, 85);
+  --cancel: #272635;
 }
 
 @font-face {
