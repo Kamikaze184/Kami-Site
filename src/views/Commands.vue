@@ -2,7 +2,7 @@
 export default {
   data: () => {
     return {
-      commands: [{ name: 'insanidade', description: 'Envia uma insanidade para um personagem, temporaria ou permanente.', type: 1 }]
+      commands: []
     }
   },
   methods: {
@@ -22,8 +22,23 @@ export default {
 
       let width = ((titleSize + 7) * 0.64)
 
-      return `width: ${width > 16 ? width : 16 + "em !important"} ; height: ${((descriptionSize) * 0.11806) + "em !important"} ;`
+      return `width: ${width > 16 ? width : 16 + "em !important"} ; height: ${((descriptionSize) * 0.11806) > 5.5 ? (descriptionSize) * 0.11806 : 5.5 + "em !important"} ;`
     }
+  },
+  beforeMount() {
+    fetch('http://localhost:3001/command',
+      {
+        method: 'GET'
+      })
+      .then(res => {
+        if (res.status == 200) {
+          res.json()
+            .then(data => {
+              console.log(data)
+              this.commands = data.commands
+            })
+        }
+      })
   }
 }
 </script>
@@ -95,7 +110,7 @@ export default {
 
 .commands-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 90%;
