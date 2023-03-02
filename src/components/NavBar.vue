@@ -8,6 +8,14 @@ export default {
     }
   },
   methods: {
+    toggleMenuMobile(action) {
+      if (action == 'open') {
+        this.$refs['menu-toggle'].checked = true
+      }
+      else {
+        this.$refs['menu-toggle'].checked = false
+      }
+    }
   },
   watch: {
     $route() {
@@ -70,9 +78,9 @@ export default {
       </div>
     </div>
   </div>
-  <div id="nav-bar-mobile">
+  <div id="nav-bar-mobile" ref="menu-mobile">
     <div id="menu-toggle">
-      <input type="checkbox" />
+      <input type="checkbox" ref="menu-toggle" />
       <span></span>
       <span></span>
       <span></span>

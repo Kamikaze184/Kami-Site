@@ -1,4 +1,5 @@
 <script>
+import { default as config } from '../config/publicVars'
 import { useRoute } from 'vue-router'
 import router from '../router'
 import LoadWheel from '../components/LoadWheel.vue'
@@ -7,7 +8,7 @@ export default {
   setup() {
     const route = useRoute()
 
-    fetch('http://localhost:3001/auth/login', {
+    fetch(`${config.API_URI}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

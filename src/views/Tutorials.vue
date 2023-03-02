@@ -6,9 +6,6 @@ export default {
     return {
     }
   },
-  methods: {
-
-  },
   components: {
     SearchBar
   }

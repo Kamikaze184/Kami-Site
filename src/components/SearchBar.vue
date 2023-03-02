@@ -1,4 +1,5 @@
 <script>
+import { default as config } from '../config/publicVars'
 import socket from '../services/websocket.service.js'
 
 export default {
@@ -22,7 +23,7 @@ export default {
         })
     },
     beforeMount() {
-        fetch('http://localhost:3001/tutorial',
+        fetch(`${config.API_URI}/tutorial`,
             {
                 method: 'GET'
             })
@@ -60,6 +61,9 @@ export default {
             <h1 class="tutorial-item-title">{{ tutorial.title }}</h1>
             <img class="tutorial-item-thumbnail" :src="tutorial.thumb">
             <p class="tutorial-item-description">{{ tutorial.desc }}</p>
+        </div>
+        <div class="tutorial-not-found" v-if="tutorialsList.length == 0">
+            <h1>Nenhum tutorial encontrado</h1>
         </div>
     </div>
 </template>
@@ -104,6 +108,22 @@ export default {
     justify-content: center;
     align-items: center;
     margin-top: 15px
+}
+
+.tutorial-not-found {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px
+}
+
+.tutorial-not-found h1 {
+    font-size: 1.5em;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 .tutorial-item {
@@ -172,6 +192,15 @@ export default {
     #search-bar {
         width: 80%;
         margin-bottom: 20px;
+    }
+
+    .tutorial-not-found {
+        margin-top: 0px;
+        width: 90%;
+    }
+
+    .tutorial-not-found h1 {
+        font-size: 1.2em;
     }
 
     .tutorial-item {

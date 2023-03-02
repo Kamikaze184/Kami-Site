@@ -1,4 +1,6 @@
 <script>
+import { default as config } from '../config/publicVars'
+
 export default {
   data: () => {
     return {
@@ -26,7 +28,7 @@ export default {
     }
   },
   beforeMount() {
-    fetch('http://localhost:3001/command',
+    fetch(`${config.API_URI}/command`,
       {
         method: 'GET'
       })

@@ -1,7 +1,9 @@
 <script>
 export default {
     data() {
-        return {}
+        return {
+            width: window.innerWidth
+        }
     },
     methods: {
         imagePosition() {
@@ -26,6 +28,7 @@ export default {
     },
     mounted() {
         window.addEventListener('resize', () => {
+            if(this.width === window.innerWidth) return
             this.imagePosition(window.innerWidth)
         })
 
@@ -61,6 +64,7 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    margin: 0;
 }
 
 .images li {
@@ -83,7 +87,7 @@ export default {
     }
 
     100% {
-        transform: translateY(-1000px) rotate(720deg);
+        transform: translateY(-900px) rotate(720deg);
         opacity: 0;
     }
 }

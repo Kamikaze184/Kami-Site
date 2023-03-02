@@ -1,4 +1,5 @@
 <script>
+import { default as config } from '../config/publicVars'
 import CountUp from '../components/CountUp.vue';
 
 export default {
@@ -16,7 +17,7 @@ export default {
   mounted() {
     let data = new Object()
 
-    fetch('http://localhost:3001/info', {
+    fetch(`${config.API_URI}/info`, {
       method: 'GET',
       cache: 'force-cache',
     })

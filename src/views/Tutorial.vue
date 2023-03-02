@@ -1,4 +1,6 @@
 <script>
+import { default as config } from '../config/publicVars'
+
 export default {
     data() {
         return {
@@ -14,7 +16,7 @@ export default {
         const params = new URLSearchParams()
         params.append('link', this.$route.path.replace("/tutoriais/", ""))
 
-        fetch('http://localhost:3001/tutorial?' + params,
+        fetch(`${config.API_URI}/tutorial?` + params,
             {
                 method: 'GET'
             })
