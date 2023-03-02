@@ -5,7 +5,6 @@ export default {
       sign: localStorage.getItem('token') != null,
       userLoaded: false,
       user: {},
-      windowWidth: window.innerWidth
     }
   },
   methods: {
@@ -40,17 +39,12 @@ export default {
           })
       }
     }
-  },
-  mounted() {
-    window.addEventListener('resize', () => {
-      this.windowWidth = window.innerWidth
-    })
   }
 }
 </script>
 
 <template>
-  <div id="nav-bar" v-if="windowWidth >= 800">
+  <div id="nav-bar">
     <router-link to="/">
       <div class="nav-logo">
         <img src="../assets/img/logo.png" alt="Logo do Kami" />
@@ -76,7 +70,7 @@ export default {
       </div>
     </div>
   </div>
-  <div id="nav-bar-mobile" v-else>
+  <div id="nav-bar-mobile">
     <div id="menu-toggle">
       <input type="checkbox" />
       <span></span>
@@ -265,7 +259,7 @@ export default {
 }
 
 #nav-bar-mobile {
-  display: block;
+  display: none;
   margin-left: 20px;
   z-index: 3;
 }
@@ -334,15 +328,14 @@ export default {
   position: absolute;
   box-shadow: 0 0 10px var(--background);
   margin: -50px 0 0 -50px;
-  padding: 50px;
-  padding-top: 6em;
-  padding-bottom: 1em;
+  padding: 6em 30px 1em 50px;
   background-color: var(--primary);
   transform-origin: 0% 0%;
   transform: translate(-100%, 0);
   transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
   border-radius: 10px;
   list-style-type: none;
+  width: 12em;
 }
 
 #menu-content li {
@@ -388,9 +381,8 @@ export default {
 .mobile-sign-menu .mobile-user-profile .mobile-user-avatar {
   width: 35px;
   height: 35px;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--text);
   border-radius: 50%;
-  background-color: var(--background);
   margin: 5px;
   padding: 0;
 }
@@ -420,12 +412,22 @@ export default {
   padding: 0;
 }
 
-.mobile-sign-menu-content a{
+.mobile-sign-menu-content a {
   margin: 5px 0px 5px 0px;
 }
 
 .mobile-sign-menu-content a[cancel="true"] {
   color: var(--cancel-secondary) !important;
+}
+
+@media screen and (max-width: 800px) {
+  #nav-bar {
+    display: none;
+  }
+
+  #nav-bar-mobile {
+    display: flex;
+  }
 }
 </style>
 

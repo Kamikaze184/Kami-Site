@@ -34,7 +34,6 @@ export default {
         if (res.status == 200) {
           res.json()
             .then(data => {
-              console.log(data)
               this.commands = data.commands
             })
         }

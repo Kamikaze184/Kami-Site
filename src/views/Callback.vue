@@ -63,4 +63,23 @@ export default {
   margin: 10px;
   color: var(--text);
 }
+
+@media screen and (max-width: 800px) {
+  #callback {
+    margin-top: 3em;
+  }
+
+  .loading-message {
+    margin-top: 10px;
+  }
+
+  .loading-message h1 {
+    font-size: 1.5em;
+  }
+
+  .loading-message h1 {
+    margin: 10px;
+    color: var(--text);
+  }
+}
 </style>

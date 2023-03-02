@@ -5,7 +5,7 @@ export default {
     },
     methods: {
         imagePosition() {
-            const width = window.innerWidth
+            const width = window.innerWidth - 50
 
             for (let i = 1; i <= 15; i++) {
                 let duration = Math.random() * 40
@@ -18,21 +18,9 @@ export default {
                     size = 80
                 }
 
-                const css = {
-                    left: `${Math.random() * width}px`,
-                    width: `${size}px`,
-                    height: `${size}px`,
-                    animationDelay: `${Math.random() * 40}s`,
-                    animationDuration: `${duration}s`
-                }
+                const css = `left: ${Math.random() * width}px; width: ${size}px; height: ${size}px; animation-delay: ${(Math.random() * 40)}s; animation-duration: ${duration}s;`
 
-                console.log(this.$refs[`image-${i}`])
-
-                this.$refs[`image-${i}`].style.left = css.left
-                this.$refs[`image-${i}`].style.width = css.width
-                this.$refs[`image-${i}`].style.height = css.height
-                this.$refs[`image-${i}`].style.animationDelay = css.animationDelay
-                this.$refs[`image-${i}`].style.animationDuration = css.animationDuration
+                this.$refs['image-item'][i - 1].setAttribute('style', css)
             }
         }
     },
@@ -41,6 +29,7 @@ export default {
             this.imagePosition(window.innerWidth)
         })
 
+        this.imagePosition()
     }
 }
 </script>
@@ -48,8 +37,7 @@ export default {
 <template>
     <div class="background">
         <ul class="images">
-            <li v-for="i in 15" :key="i" v-bind:ref="`image-${i}`"><img src="../assets/img/logo.png" /></li>
-            {{ dfsdfsd }}
+            <li v-for="i in 15" :key="i" ref="image-item"><img src="../assets/img/logo.png" /></li>
         </ul>
     </div>
 </template>
@@ -92,13 +80,11 @@ export default {
     0% {
         transform: translateY(0) rotate(0deg);
         opacity: 1;
-        border-radius: 0;
     }
 
     100% {
         transform: translateY(-1000px) rotate(720deg);
         opacity: 0;
-        border-radius: 50%;
     }
 }
 </style>
