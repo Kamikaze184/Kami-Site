@@ -146,4 +146,38 @@ export default {
   margin: 0;
   opacity: 0.7;
 }
+
+@media (max-width: 800px) {
+  .home-description {
+    margin-top: 4em;
+  }
+
+  .home-description h1 {
+    width: 90%;
+  }
+
+  .home-description p {
+    width: 90%;
+  }
+
+  .home-botinfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4em;
+  }
+
+  .home-botinfo-box {
+    align-self: center;
+    flex-wrap: wrap;
+    max-width: 90%;
+    margin: 0;
+  }
+
+  .home-botinfo-item {
+    margin: 10px 0 10px 0;
+  }
+  
+}
 </style>

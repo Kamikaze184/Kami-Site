@@ -167,4 +167,55 @@ export default {
 .tutorial-item:hover {
     background-color: var(--secondary);
 }
+
+@media screen and (max-width: 800px) {
+    #search-bar {
+        width: 80%;
+        margin-bottom: 20px;
+    }
+
+    .tutorial-item {
+        width: 20em;
+        height: 12em;
+    }
+
+    .tutorial-item-title {
+        font-size: 1.2em;
+        max-width: 95%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tutorial-item-description {
+        font-size: 0.9em;
+    }
+
+    .tutorial-item-thumbnail {
+        max-width: 90%;
+    }
+
+    .tutorial-item-best-match {
+        font-size: 0.8em;
+        margin: 0;
+    }
+
+    .tutorials-found {
+        margin-top: 0px;
+    }
+
+    .first-tutorial-search {
+        grid-template-rows: 10% 20% 50% 20%;
+        gap: 0px 0px;
+        grid-template-areas:
+            "."
+            "."
+            "."
+            ".";
+    }
+
+    .first-tutorial-search .tutorial-item-description {
+        margin-top: 10px;
+        bottom: 0;
+    }
+}
 </style>

@@ -79,4 +79,19 @@ export default {
   align-items: center;
   width: 90%;
 }
+
+@media screen and (max-width: 800px) {
+  .tutorials-description {
+    margin-top: 3em;
+  }
+
+  .tutorials-description p {
+    width: 90%;
+  }
+
+  .tutorials-search {
+    width: 100%;
+  margin-bottom: 3em;
+  }
+}
 </style>

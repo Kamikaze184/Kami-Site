@@ -1,24 +1,46 @@
 <script>
-const imagePosition = () => {
-    let duration = Math.random() * 40
-    if(duration < 10){
-        duration = 10
-    }
-
-    let size = Math.random() * 250
-    if(size < 80){
-        size = 80
-    }
-
-    return `left: ${Math.random() * window.innerWidth}px; width: ${size}px; height: ${size}px; animation-delay: ${(Math.random() * 40)}s; animation-duration: ${duration}s;`
-}
-
 export default {
     data() {
         return {}
     },
     methods: {
-        imagePosition
+        imagePosition() {
+            const width = window.innerWidth
+
+            for (let i = 1; i <= 15; i++) {
+                let duration = Math.random() * 40
+                if (duration < 10) {
+                    duration = 10
+                }
+
+                let size = Math.random() * 250
+                if (size < 80) {
+                    size = 80
+                }
+
+                const css = {
+                    left: `${Math.random() * width}px`,
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    animationDelay: `${Math.random() * 40}s`,
+                    animationDuration: `${duration}s`
+                }
+
+                console.log(this.$refs[`image-${i}`])
+
+                this.$refs[`image-${i}`].style.left = css.left
+                this.$refs[`image-${i}`].style.width = css.width
+                this.$refs[`image-${i}`].style.height = css.height
+                this.$refs[`image-${i}`].style.animationDelay = css.animationDelay
+                this.$refs[`image-${i}`].style.animationDuration = css.animationDuration
+            }
+        }
+    },
+    mounted() {
+        window.addEventListener('resize', () => {
+            this.imagePosition(window.innerWidth)
+        })
+
     }
 }
 </script>
@@ -26,7 +48,8 @@ export default {
 <template>
     <div class="background">
         <ul class="images">
-            <li v-for="i in 15" :key="i" :style="imagePosition()"><img src="../assets/img/logo.png" /></li>
+            <li v-for="i in 15" :key="i" v-bind:ref="`image-${i}`"><img src="../assets/img/logo.png" /></li>
+            {{ dfsdfsd }}
         </ul>
     </div>
 </template>

@@ -170,4 +170,51 @@ export default {
   background-color: var(--text);
   color: var(--primary);
 }
+
+@media screen and (max-width: 800px) {
+    #Tutorial {
+        margin-top: 3em;
+    }
+    
+    .tutorial-body {
+        max-width: 100%;
+    }
+
+    .tutorial-title h1 {
+        font-size: 2em;
+    }
+
+    .tutorial-title p {
+        font-size: 1em;
+    }
+
+    .tutorial-body h2 {
+        font-size: 2em;
+    }
+
+    .tutorial-body h4 {
+        font-size: 1.3em;
+    }
+
+    .tutorial-body p {
+        font-size: 0.8em;
+    }
+
+    .tutorial-body img {
+        max-width: 100%;
+    }
+
+    .more-help h2 {
+        font-size: 1.5em;
+    }
+
+    .more-help p {
+        font-size: 0.8em;
+    }
+
+    .help-options button, .help-options a {
+        width: 10em;
+        font-size: 0.8em;
+    }
+}
 </style>

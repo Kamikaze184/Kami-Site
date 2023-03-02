@@ -141,4 +141,24 @@ export default {
   color: var(--text-secondary);
   width: 90%;
 }
+
+@media screen and (max-width: 800px) {
+  .commands-description {
+    margin-top: 3em;
+  }
+
+  .commands-description h1 {
+    font-size: 1.5em;
+  }
+
+  .commands-description p {
+    font-size: 1em;
+    width: 90%;
+  }
+
+  .commands-list {
+    flex-direction: column;
+    margin-bottom: 3em;
+  }
+}
 </style>
