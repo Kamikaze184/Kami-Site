@@ -67,7 +67,7 @@ export default {
       <router-link to="/login" v-if="!sign || !userLoaded">Login</router-link>
       <div class="sign-dropdown" v-else-if="sign && userLoaded">
         <div class="user-profile drop-trigger">
-          <img :src="user.avatar_url" class="user-avatar">
+          <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`" class="user-avatar">
           <h5 class="username">{{ user.username }}</h5>
         </div>
         <div class="dropdown-content">
@@ -94,7 +94,7 @@ export default {
         <li v-else-if="sign && userLoaded">
           <div class="mobile-sign-menu">
             <div class="mobile-user-profile">
-              <img :src="user.avatar_url" class="mobile-user-avatar">
+              <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`" class="mobile-user-avatar">
               <h5 class="mobile-username">{{ user.username }}</h5>
             </div>
             <div class="mobile-sign-menu-content">
