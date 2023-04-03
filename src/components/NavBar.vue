@@ -5,6 +5,7 @@ export default {
       sign: localStorage.getItem('token') != null,
       userLoaded: false,
       user: {},
+      signedRoute: false,
     }
   },
   methods: {
@@ -19,6 +20,13 @@ export default {
   },
   watch: {
     $route() {
+      if (this.$route.name == 'Sheets' || this.$route.name == 'Macros' || this.$route.name == 'Campaigns') {
+        this.signedRoute = true
+      }
+      else {
+        this.signedRoute = false
+      }
+
       this.sign = localStorage.getItem('token') != null
 
       if (this.sign) {
@@ -52,7 +60,7 @@ export default {
 </script>
 
 <template>
-  <div id="nav-bar">
+  <div id="nav-bar" v-if="!signedRoute">
     <router-link to="/">
       <div class="nav-logo">
         <img src="../assets/img/logo.png" alt="Logo do Kami" />
@@ -67,18 +75,20 @@ export default {
       <router-link to="/login" v-if="!sign || !userLoaded">Login</router-link>
       <div class="sign-dropdown" v-else-if="sign && userLoaded">
         <div class="user-profile drop-trigger">
-          <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`" class="user-avatar">
+          <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`"
+            class="user-avatar">
           <h5 class="username">{{ user.username }}</h5>
         </div>
         <div class="dropdown-content">
-          <router-link to="/jogador">Jogador</router-link>
-          <router-link to="/mestre">Mestre</router-link>
+          <router-link to="/fichas">Fichas</router-link>
+          <router-link to="/campanhas">Campanhas</router-link>
+          <router-link to="/macros">Macros</router-link>
           <router-link to="/logout" cancel="true">Sair</router-link>
         </div>
       </div>
     </div>
   </div>
-  <div id="nav-bar-mobile" ref="menu-mobile">
+  <div id="nav-bar-mobile" ref="menu-mobile" v-if="!signedRoute">
     <div id="menu-toggle">
       <input type="checkbox" ref="menu-toggle" />
       <span></span>
@@ -94,17 +104,44 @@ export default {
         <li v-else-if="sign && userLoaded">
           <div class="mobile-sign-menu">
             <div class="mobile-user-profile">
-              <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`" class="mobile-user-avatar">
+              <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`"
+                class="mobile-user-avatar">
               <h5 class="mobile-username">{{ user.username }}</h5>
             </div>
             <div class="mobile-sign-menu-content">
-              <router-link to="/jogador">Jogador</router-link>
-              <router-link to="/mestre">Mestre</router-link>
+              <router-link to="/fichas">Fichas</router-link>
+              <router-link to="/campanhas">Campanhas</router-link>
+              <router-link to="/macros">Macros</router-link>
               <router-link to="/logout" cancel="true">Sair</router-link>
             </div>
           </div>
         </li>
       </ul>
+    </div>
+  </div>
+  <div id="signed-nav-bar" v-if="signedRoute">
+    <div class="collapsable-menu">
+      <img id="toggle-signed-nav-bar" src="../assets/img/side-menu.svg">
+      <div class="user-profile">
+        <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`"
+          class="user-avatar">
+        <h5 class="username">{{ user.username }}</h5>
+      </div>
+      <div class="menu-buttons">
+        <div class="base-buttons">
+          <router-link to="/">Inicio</router-link>
+          <div class="sub-buttons">
+            <router-link to="/comandos">Comandos</router-link>
+            <router-link to="/tutoriais">Tutoriais</router-link>
+          </div>
+        </div>
+        <div class="dashboard-buttons">
+          <router-link to="/fichas" class="menu-button">Fichas</router-link>
+          <router-link to="/campanhas" class="menu-button">Campanhas</router-link>
+          <router-link to="/macros" class="menu-button">Macros</router-link>
+        </div>
+        <router-link to="/logout" class="logout-button">Sair</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -211,8 +248,14 @@ export default {
   color: var(--primary);
 }
 
+.dropdown-content a[cancel='true'] {
+  color: var(--cancel-secondary);
+  background-color: var(--cancel);
+}
+
 .dropdown-content a[cancel='true']:hover {
-  background-color: var(--background)
+  background-color: var(--cancel-secondary);
+  color: var(--cancel);
 }
 
 .sign-dropdown:hover .dropdown-content {
@@ -226,7 +269,8 @@ export default {
   border-bottom-right-radius: 0;
 }
 
-.user-profile {
+#nav-bar .user-profile,
+#nav-bar-mobile .user-profile {
   display: grid;
   grid-template-columns: 25% 75%;
   gap: 0px 0px;
@@ -241,7 +285,8 @@ export default {
   min-width: 160px;
 }
 
-.user-profile .user-avatar {
+#nav-bar .user-profile .user-avatar,
+#nav-bar-mobile .user-profile .user-avatar {
   width: 35px;
   height: 35px;
   border: 2px solid var(--background);
@@ -251,7 +296,8 @@ export default {
   padding: 0;
 }
 
-.user-profile .username {
+#nav-bar .user-profile .username,
+#nav-bar-mobile .user-profile .username {
   position: absolute;
   top: 14px;
   right: 0px;
@@ -426,6 +472,147 @@ export default {
 
 .mobile-sign-menu-content a[cancel="true"] {
   color: var(--cancel-secondary) !important;
+}
+
+#signed-nav-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+}
+
+.collapsable-menu {
+  display: flex;
+  flex-direction: column;
+  width: 22em;
+  height: 100%;
+  margin: 0;
+  padding: 5px;
+  background-color: var(--primary);
+  position: sticky;
+}
+
+#toggle-signed-nav-bar {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  right: 0;
+; filter: var(--background-filter);
+}
+
+#signed-nav-bar .user-profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  margin-top: 20px;
+  padding: 0;
+}
+
+#signed-nav-bar .user-profile .user-avatar {
+  width: 100px;
+  height: 100px;
+  border: 3px solid var(--text);
+  border-radius: 50%;
+  margin: 0;
+  margin-top: 20px;
+  padding: 0;
+}
+
+#signed-nav-bar .user-profile .username {
+  font-size: 1.5em;
+  max-width: 90%;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  margin: 0;
+  margin-top: 20px;
+  padding: 0;
+  color: var(--text);
+}
+
+#signed-nav-bar .menu-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  margin-top: 20px;
+  padding: 0;
+}
+
+#signed-nav-bar .menu-buttons a {
+  font-size: 1.5em;
+  color: var(--text);
+  background-color: var(--background);
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: 0.3s;
+  text-align: center;
+  padding: 15px;
+  width: 5em;
+  margin: 5px;
+  box-shadow: 5px 5px 15px 0px #00000044;
+}
+
+#signed-nav-bar .menu-buttons a:hover {
+  background-color: var(--background-secondary);
+}
+
+#signed-nav-bar .menu-buttons .base-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#signed-nav-bar .menu-buttons .base-buttons .sub-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#signed-nav-bar .dashboard-buttons a {
+  width: calc(11em + 15px);
+}
+
+#signed-nav-bar .dashboard-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#signed-nav-bar .menu-buttons .logout-button {
+  position: absolute;
+  bottom: 50px;
+  width: calc(11em + 15px);
+  color: var(--cancel-secondary);
 }
 
 @media screen and (max-width: 800px) {

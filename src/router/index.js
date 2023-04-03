@@ -7,6 +7,7 @@ import LoginVue from '../views/Login.vue'
 import LogoutVue from '../views/Logout.vue'
 import CallbackVue from '../views/Callback.vue'
 import TutorialVue from '../views/Tutorial.vue'
+import SheetsVue from '../views/Sheets.vue'
 
 const routes = [
     { path: '/', name: 'Home', component: HomeVue },
@@ -15,7 +16,9 @@ const routes = [
     { path: '/tutoriais/:tutorial', component: TutorialVue },
     { path: '/login', name: 'Login', component: LoginVue },
     { path: '/logout', name: 'Logout', component: LogoutVue },
-    { path: '/callback', name: 'Callback', component: CallbackVue }
+    { path: '/callback', name: 'Callback', component: CallbackVue },
+    { path: '/fichas', name: 'Sheets', component: SheetsVue }
+    //{ path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeVue }
 ]
 
 const router = createRouter({

@@ -1,14 +1,15 @@
 :root {
   font-family: 'Roboto', sans-serif;
-  --primary: rgb(0, 105, 206);
-  --secondary: rgb(89, 160, 241);
-  --text: rgb(255, 255, 255);
-  --text-secondary: rgba(255, 255, 255, 0.61);
-  --background: rgb(35, 39, 42);
-  --background-secondary: rgb(74, 80, 85);
+  --primary: #0069ce;
+  --secondary: #59a0f1;
+  --text: #ffffff;
+  --text-secondary: #ffffff9c;
+  --background: #23272a;
+  --background-filter: brightness(0%) invert(13%) sepia(7%) saturate(774%) hue-rotate(163deg) brightness(93%) contrast(93%);
+  --background-secondary: #4a5055;
   --background-tertiary: #F7F0F0;
   --cancel: #272635;
-  --cancel-secondary: #d34848;
+  --cancel-secondary: #D34848;
 }
 
 @font-face {
