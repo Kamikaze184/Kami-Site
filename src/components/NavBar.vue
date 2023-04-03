@@ -6,21 +6,32 @@ export default {
       userLoaded: false,
       user: {},
       signedRoute: false,
+      collapsed: false
     }
   },
   methods: {
     toggleMenuMobile(action) {
-      if (action == 'open') {
-        this.$refs['menu-toggle'].checked = true
+      try {
+        if (action == 'open') {
+          this.$refs['menu-toggle'].checked = true
+        }
+        else {
+          this.$refs['menu-toggle'].checked = false
+        }
+      } catch (err) { }
+    },
+    toggleSideMenu() {
+      if (this.collapsed) {
+        this.collapsed = false
       }
       else {
-        this.$refs['menu-toggle'].checked = false
+        this.collapsed = true
       }
     }
   },
   watch: {
     $route() {
-      if (this.$route.name == 'Sheets' || this.$route.name == 'Macros' || this.$route.name == 'Campaigns') {
+      if (this.$route.name == 'Dashboard' || this.$route.name == 'Sheets' || this.$route.name == 'Macros' || this.$route.name == 'Campaigns') {
         this.signedRoute = true
       }
       else {
@@ -54,6 +65,20 @@ export default {
             this.userLoaded = false
           })
       }
+    },
+    collapsed() {
+      if (this.collapsed) {
+        this.$refs['toggleSignedNavBar'].style.transform = this.collapsed ? 'rotate(180deg)' : 'rotate(0deg)'
+        this.$refs['toggleSignedNavBar'].style.left = '0'
+        this.$refs['toggleSignedNavBar'].style.right = 'unset'
+        this.$refs['toggleSignedNavBar'].style.filter = 'var(--primary-filter)'
+      }
+      else {
+        this.$refs['toggleSignedNavBar'].style.transform = this.collapsed ? 'rotate(180deg)' : 'rotate(0deg)'
+        this.$refs['toggleSignedNavBar'].style.right = '0'
+        this.$refs['toggleSignedNavBar'].style.left = 'unset'
+        this.$refs['toggleSignedNavBar'].style.filter = 'var(--background-filter)'
+      }
     }
   }
 }
@@ -80,6 +105,7 @@ export default {
           <h5 class="username">{{ user.username }}</h5>
         </div>
         <div class="dropdown-content">
+          <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/fichas">Fichas</router-link>
           <router-link to="/campanhas">Campanhas</router-link>
           <router-link to="/macros">Macros</router-link>
@@ -109,6 +135,7 @@ export default {
               <h5 class="mobile-username">{{ user.username }}</h5>
             </div>
             <div class="mobile-sign-menu-content">
+              <router-link to="/dashboard">Dashboard</router-link>
               <router-link to="/fichas">Fichas</router-link>
               <router-link to="/campanhas">Campanhas</router-link>
               <router-link to="/macros">Macros</router-link>
@@ -120,8 +147,8 @@ export default {
     </div>
   </div>
   <div id="signed-nav-bar" v-if="signedRoute">
-    <div class="collapsable-menu">
-      <img id="toggle-signed-nav-bar" src="../assets/img/side-menu.svg">
+    <img id="toggle-signed-nav-bar" src="../assets/img/side-menu.svg" @click="toggleSideMenu()" ref="toggleSignedNavBar">
+    <div class="collapsable-menu" v-if="!collapsed">
       <div class="user-profile">
         <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`"
           class="user-avatar">
@@ -136,6 +163,7 @@ export default {
           </div>
         </div>
         <div class="dashboard-buttons">
+          <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/fichas" class="menu-button">Fichas</router-link>
           <router-link to="/campanhas" class="menu-button">Campanhas</router-link>
           <router-link to="/macros" class="menu-button">Macros</router-link>
@@ -479,8 +507,8 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   height: 100%;
+  width: 22em;
   margin: 0;
   padding: 0;
   position: fixed;
@@ -492,7 +520,7 @@ export default {
   width: 22em;
   height: 100%;
   margin: 0;
-  padding: 5px;
+  padding: 0;
   background-color: var(--primary);
   position: sticky;
 }
@@ -501,9 +529,10 @@ export default {
   width: 50px;
   height: 50px;
   position: absolute;
-  top: 0;
-  right: 0;
-; filter: var(--background-filter);
+  top: 1px;
+  right: 1px;
+  z-index: 2;
+  filter: var(--background-filter);
 }
 
 #signed-nav-bar .user-profile {

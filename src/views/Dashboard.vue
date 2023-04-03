@@ -1,0 +1,110 @@
+<script>
+import router from '../router'
+import ItemVue from '../components/Item.vue'
+
+export default {
+    setup() {
+    },
+    components: {
+        ItemVue
+    },
+    mounted() {
+        const sideMenu = document.querySelector('#signed-nav-bar')
+
+        const observer = new MutationObserver(() => {
+            if(sideMenu.childElementCount == 2){
+                this.$refs.dashboard.style.marginLeft = '23em'
+                this.$refs.dashboard.style.width = 'calc(100% - 24em)'
+            }
+            else {
+                this.$refs.dashboard.style.marginLeft = '1em'
+                this.$refs.dashboard.style.width = 'calc(100% - 1em)'
+            }
+        })
+
+        observer.observe(sideMenu, {
+            attributes: true,
+            childList: true,
+            subtree: true
+        })
+    }
+}
+</script>
+
+<template>
+    <div id="Dashboard" ref="dashboard">
+        <div class="dashboard-quick-access">
+            <h1 style="text-align: center; width: 100%;">Acesso Rápido</h1>
+            <h1>Notificações</h1>
+            <div class="quick-access-category notifications">
+                <ItemVue type="5" description="Sessão da campanha
+            Nome_da_Campanha
+            marcada para:
+            dd/MM às hh:mm" />
+            </div>
+            <h1>Fichas</h1>
+            <div class="quick-access-category sheets">
+                <ItemVue type="6" description="teste" href="teste" />
+                <ItemVue type="6" description="teste" />
+                <ItemVue type="6" description="teste" />
+                <ItemVue type="6" description="teste" />
+            </div>
+            <h1>Campanhas</h1>
+            <div class="quick-access-category campaings">
+                <ItemVue type="7" description="teste" />
+            </div>
+            <h1>Macros</h1>
+            <div class="quick-access-category macros">
+                <ItemVue type="8" description="teste" />
+            </div>
+            <h1>Templates</h1>
+            <div class="quick-access-category templates">
+                <ItemVue type="9" description="teste" />
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+#Dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    margin-left: 23em;
+    margin-bottom: 4em;
+    overflow: hidden;
+    width: calc(100% - 24em);
+}
+
+.dashboard-quick-access {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    padding: 0 1em;
+    overflow-y: scroll;
+}
+
+.dashboard-quick-access h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0.5em 0;
+    color: var(--text);
+}
+
+.quick-access-category {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+</style>

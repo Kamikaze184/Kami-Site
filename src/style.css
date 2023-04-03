@@ -1,6 +1,7 @@
 :root {
   font-family: 'Roboto', sans-serif;
   --primary: #0069ce;
+  --primary-filter: brightness(0%) invert(26%) sepia(59%) saturate(2504%) hue-rotate(194deg) brightness(101%) contrast(102%);
   --secondary: #59a0f1;
   --text: #ffffff;
   --text-secondary: #ffffff9c;

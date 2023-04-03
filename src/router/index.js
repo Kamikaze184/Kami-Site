@@ -7,6 +7,7 @@ import LoginVue from '../views/Login.vue'
 import LogoutVue from '../views/Logout.vue'
 import CallbackVue from '../views/Callback.vue'
 import TutorialVue from '../views/Tutorial.vue'
+import DashboardVue from '../views/Dashboard.vue'
 import SheetsVue from '../views/Sheets.vue'
 
 const routes = [
@@ -17,6 +18,7 @@ const routes = [
     { path: '/login', name: 'Login', component: LoginVue },
     { path: '/logout', name: 'Logout', component: LogoutVue },
     { path: '/callback', name: 'Callback', component: CallbackVue },
+    { path: '/dashboard', name: 'Dashboard', component: DashboardVue },
     { path: '/fichas', name: 'Sheets', component: SheetsVue }
     //{ path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeVue }
 ]
