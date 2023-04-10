@@ -1,6 +1,7 @@
 <script>
 import config from '../config/publicVars'
 import LoadWheel from '../components/LoadWheel.vue'
+import socket from '../services/websocket.service'
 
 export default {
     data() {
@@ -52,7 +53,8 @@ export default {
             registerTextValue: {
                 username: '',
                 email: '',
-            }
+            },
+            registerSuccess: false,
         }
     },
     methods: {
@@ -90,7 +92,8 @@ export default {
                 if (response.status === 200) {
                     const data = await response.json()
                     localStorage.setItem('token', data.token)
-                    this.$router.push({ name: 'Home' })
+                    socket.emit('login', { token: data.token })
+                    this.$router.push({ name: 'Dashboard' })
                 }
                 else if (response.status === 400) {
                     this.loginError.state = true
@@ -119,6 +122,7 @@ export default {
             }
         },
         async registerUser() {
+            this.registeringUser = true
             const username = this.$refs['register-username'].value
             const email = this.$refs['register-email'].value
             const password = this.$refs['register-password'].value
@@ -147,9 +151,7 @@ export default {
                 })
 
                 if (response.status === 201) {
-                    const data = await response.json()
-                    localStorage.setItem('token', data.token)
-                    this.$router.push({ name: 'Login' })
+                    this.registerSuccess = true
                 }
                 else if (response.status == 400) {
                     const data = await response.json()
@@ -162,6 +164,8 @@ export default {
                     this.registerError.state = true
                 }
             }
+
+            this.registeringUser = false
         },
         validateUsername() {
             const username = this.$refs['register-username'].value
@@ -234,6 +238,16 @@ export default {
                 this.validationErrors.confirmPassword.state = false
             }
         },
+        triggerLogin(e) {
+            if (e.key === 'Enter') {
+                this.makeLogin()
+            }
+        },
+        triggerRegister(e) {
+            if (e.key === 'Enter') {
+                this.registerUser()
+            }
+        }
     },
     components: {
         LoadWheel
@@ -243,7 +257,7 @@ export default {
 
 <template>
     <div id="Login">
-        <div class="login-box" v-if="login">
+        <div class="login-box" v-if="login" @keypress="triggerLogin">
             <div class="login-box-header" v-if="!makingLogin && !loginError.state">
                 <h1>Acesse sua conta</h1>
             </div>
@@ -270,29 +284,33 @@ export default {
             </div>
             <LoadWheel v-else-if="makingLogin && !loginError.state" style="border-color: var(--text) transparent" />
         </div>
-        <div class="register-box" v-else>
-            <div class="register-box-header" v-if="!registeringUser && !registerError.state">
+        <div class="register-box" v-else @keypress="triggerRegister">
+            <div class="register-box-header" v-if="!registeringUser && !registerError.state && !registerSuccess">
                 <h1>Crie sua conta</h1>
             </div>
-            <div class="register-box-header" v-else-if="registeringUser && !registerError.state">
+            <div class="register-box-header" v-else-if="registeringUser && !registerError.state && !registerSuccess">
                 <h1>Carregando...</h1>
             </div>
-            <div class="register-box-header" v-else>
+            <div class="register-box-header" v-else-if="!registeringUser && registerError.state && !registerSuccess">
                 <h1 v-for="error of registerError.errors" :key="error">{{ error.message }}</h1>
                 <button @click="registerError.state = false; registerError.message = ''">Ok</button>
             </div>
-            <div class="register-box-body" v-if="!registeringUser && !registerError.state">
+            <div class="register-box-header" v-else-if="!registeringUser && !registerError.state && registerSuccess">
+                <h1>Conta criada com sucesso! Faça login para acessar sua nova conta</h1>
+                <button @click="registerSuccess = false; toggleLogin()">Ok</button>
+            </div>
+            <div class="register-box-body" v-if="!registeringUser && !registerError.state && !registerSuccess">
                 <div class="register-box-body-input">
                     <label for="name">Nome de usuário</label>
                     <input type="text" id="name" placeholder="Insira um nome de usuário" ref="register-username"
-                        @keyup="validateUsername()" :value="registerTextValue.username"/>
+                        @keyup="validateUsername()" :value="registerTextValue.username" />
                     <p class="register-error-message" ref="register-username-error-message"
                         v-if="validationErrors.username.state">{{ validationErrors.username.actualMessage }}</p>
                 </div>
                 <div class="register-box-body-input">
                     <label for="email">Email</label>
                     <input type="email" id="email" placeholder="Insira seu email" ref="register-email"
-                        @keyup="validateEmail()" :value="registerTextValue.email"/>
+                        @keyup="validateEmail()" :value="registerTextValue.email" />
                     <p class="register-error-message" ref="register-email-error-message"
                         v-if="validationErrors.email.state">{{ validationErrors.email.actualMessage }}</p>
                 </div>
@@ -496,8 +514,10 @@ export default {
 }
 
 @media screen and (max-width: 768px) {
-   .login-box, .register-box {
-       width: 80%;
-   }
+
+    .login-box,
+    .register-box {
+        width: 80%;
+    }
 }
 </style>

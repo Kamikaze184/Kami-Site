@@ -12,12 +12,12 @@ export default {
 
         const observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '4em'
-                this.$refs.sheets.style.width = 'calc(100% - 4em)'
+                this.$refs.macros.style.marginLeft = '4em'
+                this.$refs.macros.style.width = 'calc(100% - 4em)'
             }
             else {
-                this.$refs.sheets.style.marginLeft = '23em'
-                this.$refs.sheets.style.width = 'calc(100% - 24em)'
+                this.$refs.macros.style.marginLeft = '23em'
+                this.$refs.macros.style.width = 'calc(100% - 24em)'
             }
         })
 
@@ -27,31 +27,26 @@ export default {
 </script>
 
 <template>
-    <div id="Sheets" ref="sheets">
-        <div class="sheets-list">
-            <h1>Suas fichas</h1>
-            <div class="list-category sheets">
-                <img class="add-sheet-icon" src="../assets/img/add.svg">
-                <ItemVue type="1" description="teste" href="teste" />
-                <ItemVue type="1" description="teste" />
-                <ItemVue type="1" description="teste" />
-                <ItemVue type="1" description="teste" />
+    <div id="Macros" ref="macros">
+        <div class="macros-list">
+            <h1>Seus Macros</h1>
+            <div class="list-category macros">
+                <img class="add-macro-icon" src="../assets/img/add.svg">
+                <ItemVue type="3" description="teste" href="teste" />
+                <ItemVue type="3" description="teste" />
+                <ItemVue type="3" description="teste" />
+                <ItemVue type="3" description="teste" />
             </div>
-            <h1>Seus templates de fichas</h1>
+            <h1>Seus macros de campanhas</h1>
             <div class="list-category templates">
-                <img class="add-sheet-icon" src="../assets/img/add.svg">
-                <ItemVue type="4" description="teste" />
-            </div>
-            <h1>Fichas dos jogadores em suas campanhas modificadas recentemente</h1>
-            <div class="list-category templates">
-                <ItemVue type="13" description="teste" />
+                <ItemVue type="3" description="teste" />
             </div>
         </div>
     </div>
 </template>
 
 <style>
-#Sheets {
+#Macros {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -65,7 +60,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheets-list {
+.macros-list {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -77,7 +72,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheets-list h1 {
+.macros-list h1 {
     font-size: 2em;
     font-weight: bold;
     margin: 0.5em 0;
@@ -96,7 +91,7 @@ export default {
     padding: 0;
 }
 
-.list-category .add-sheet-icon {
+.list-category .add-macro-icon {
     width: 4em;
     height: 4em;
     margin: 0.5em;
@@ -105,7 +100,7 @@ export default {
     transition: 0.3s;
 }
 
-.list-category .add-sheet-icon:hover {
+.list-category .add-macro-icon:hover {
     filter: var(--secondary-filter);
 }
 </style>

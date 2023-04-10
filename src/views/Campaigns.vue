@@ -12,12 +12,12 @@ export default {
 
         const observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '4em'
-                this.$refs.sheets.style.width = 'calc(100% - 4em)'
+                this.$refs.campaigns.style.marginLeft = '4em'
+                this.$refs.campaigns.style.width = 'calc(100% - 4em)'
             }
             else {
-                this.$refs.sheets.style.marginLeft = '23em'
-                this.$refs.sheets.style.width = 'calc(100% - 24em)'
+                this.$refs.campaigns.style.marginLeft = '23em'
+                this.$refs.campaigns.style.width = 'calc(100% - 24em)'
             }
         })
 
@@ -27,20 +27,20 @@ export default {
 </script>
 
 <template>
-    <div id="Sheets" ref="sheets">
-        <div class="sheets-list">
-            <h1>Suas fichas</h1>
-            <div class="list-category sheets">
-                <img class="add-sheet-icon" src="../assets/img/add.svg">
-                <ItemVue type="1" description="teste" href="teste" />
-                <ItemVue type="1" description="teste" />
-                <ItemVue type="1" description="teste" />
-                <ItemVue type="1" description="teste" />
+    <div id="Campaigns" ref="campaigns">
+        <div class="campaigns-list">
+            <h1>Suas Campanhas</h1>
+            <div class="list-category campaigns">
+                <img class="add-campaign-icon" src="../assets/img/add.svg">
+                <ItemVue type="2" description="teste" href="teste" />
+                <ItemVue type="2" description="teste" />
+                <ItemVue type="2" description="teste" />
+                <ItemVue type="2" description="teste" />
             </div>
-            <h1>Seus templates de fichas</h1>
+            <h1>Campanhas que você participa</h1>
             <div class="list-category templates">
-                <img class="add-sheet-icon" src="../assets/img/add.svg">
-                <ItemVue type="4" description="teste" />
+                <img class="add-campaign-icon" src="../assets/img/add.svg">
+                <ItemVue type="2" description="teste" />
             </div>
             <h1>Fichas dos jogadores em suas campanhas modificadas recentemente</h1>
             <div class="list-category templates">
@@ -51,7 +51,7 @@ export default {
 </template>
 
 <style>
-#Sheets {
+#Campaigns {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -65,7 +65,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheets-list {
+.campaigns-list {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -77,7 +77,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheets-list h1 {
+.campaigns-list h1 {
     font-size: 2em;
     font-weight: bold;
     margin: 0.5em 0;
@@ -96,7 +96,7 @@ export default {
     padding: 0;
 }
 
-.list-category .add-sheet-icon {
+.list-category .add-campaign-icon {
     width: 4em;
     height: 4em;
     margin: 0.5em;
@@ -105,7 +105,7 @@ export default {
     transition: 0.3s;
 }
 
-.list-category .add-sheet-icon:hover {
+.list-category .add-campaign-icon:hover {
     filter: var(--secondary-filter);
 }
 </style>

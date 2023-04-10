@@ -3,11 +3,12 @@
   --primary: #0069ce;
   --primary-filter: brightness(0%) invert(26%) sepia(59%) saturate(2504%) hue-rotate(194deg) brightness(101%) contrast(102%);
   --secondary: #59a0f1;
+  --secondary-filter: brightness(0%) invert(57%) sepia(22%) saturate(1356%) hue-rotate(175deg) brightness(102%) contrast(89%);
   --text: #ffffff;
   --text-secondary: #ffffff9c;
   --background: #23272a;
   --background-filter: brightness(0%) invert(13%) sepia(7%) saturate(774%) hue-rotate(163deg) brightness(93%) contrast(93%);
-  --background-secondary: #4a5055;
+  --background-secondary: #3c3f42;
   --background-tertiary: #F7F0F0;
   --cancel: #272635;
   --cancel-secondary: #D34848;

@@ -64,6 +64,7 @@ export default {
     justify-content: center;
     align-items: center;
     margin: 10px;
+    transition: 0.3s;
 }
 
 .item-title {

@@ -5,10 +5,14 @@ import CommandsVue from '../views/Commands.vue'
 import TutorialsVue from '../views/Tutorials.vue'
 import LoginVue from '../views/Login.vue'
 import LogoutVue from '../views/Logout.vue'
-import CallbackVue from '../views/Callback.vue'
+import SyncVue from '../views/Sync.vue'
 import TutorialVue from '../views/Tutorial.vue'
 import DashboardVue from '../views/Dashboard.vue'
 import SheetsVue from '../views/Sheets.vue'
+import CampaignsVue from '../views/Campaigns.vue'
+import MacrosVue from '../views/Macros.vue'
+import SheetVue from '../views/Sheet.vue'
+import ConfigVue from '../views/Config.vue'
 
 const routes = [
     { path: '/', name: 'Home', component: HomeVue },
@@ -17,9 +21,13 @@ const routes = [
     { path: '/tutoriais/:tutorial', component: TutorialVue },
     { path: '/login', name: 'Login', component: LoginVue },
     { path: '/logout', name: 'Logout', component: LogoutVue },
-    { path: '/callback', name: 'Callback', component: CallbackVue },
+    { path: '/sync', name: 'Sync', component: SyncVue },
     { path: '/dashboard', name: 'Dashboard', component: DashboardVue },
-    { path: '/fichas', name: 'Sheets', component: SheetsVue }
+    { path: '/fichas', name: 'Sheets', component: SheetsVue },
+    { path: '/fichas/:sheetId', name: 'Sheet', component: SheetVue },
+    { path: '/campanhas', name: 'Campaigns', component: CampaignsVue },
+    { path: '/macros', name: 'Macros', component: MacrosVue },
+    { path: '/configuracoes', name: 'Config', component: ConfigVue },
     //{ path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeVue }
 ]
 

@@ -8,10 +8,11 @@ export default {
   setup() {
     const route = useRoute()
 
-    fetch(`${config.API_URI}/auth/login`, {
+    fetch(`${config.API_URI}/auth/discord/sync`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token')
       },
       body: JSON.stringify({ code: route.query.code })
     })
@@ -19,13 +20,12 @@ export default {
         if (res.status == 200) {
           res.json()
             .then(data => {
-              localStorage.setItem('token', data.token)
-              router.push({ name: 'Home' })
+              router.push({ name: 'Config' })
             })
         }
       })
       .catch(err => {
-        router.push({ name: 'Home' })
+        router.push({ name: 'Config', params: { error: 'SyncError' } })
       })
   },
   components: {
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <template>
-  <div id="callback">
+  <div id="Sync">
     <div class="loading-message">
       <LoadWheel />
       <h1>Carregando informações...</h1>
@@ -44,7 +44,7 @@ export default {
 </template>
 
 <style>
-#callback {
+#Sync {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,7 +66,7 @@ export default {
 }
 
 @media screen and (max-width: 800px) {
-  #callback {
+  #Sync {
     margin-top: 3em;
   }
 

@@ -1,4 +1,7 @@
 <script>
+import socket from '../services/websocket.service'
+const signedRoutes = ['Dashboard', 'Sheets', 'Macros', 'Campaigns', 'Sheet', 'Config']
+
 export default {
   data() {
     return {
@@ -29,9 +32,14 @@ export default {
       }
     }
   },
+  computed: {
+    userState() {
+      return this.$store.state.user
+    },
+  },
   watch: {
     $route() {
-      if (this.$route.name == 'Dashboard' || this.$route.name == 'Sheets' || this.$route.name == 'Macros' || this.$route.name == 'Campaigns') {
+      if (signedRoutes.includes(this.$route.name)) {
         this.signedRoute = true
       }
       else {
@@ -53,6 +61,7 @@ export default {
               res.json()
                 .then(data => {
                   this.user = data.user
+                  this.$store.commit('setUser', data.user)
                   this.userLoaded = true
                 })
             }
@@ -68,19 +77,46 @@ export default {
     },
     collapsed() {
       if (this.collapsed) {
-        this.$refs['toggleSignedNavBar'].style.transform = this.collapsed ? 'rotate(180deg)' : 'rotate(0deg)'
-        this.$refs['toggleSignedNavBar'].style.left = '0'
-        this.$refs['toggleSignedNavBar'].style.right = 'unset'
-        this.$refs['toggleSignedNavBar'].style.filter = 'var(--primary-filter)'
+        this.$refs['toggle-signed-nav-bar'].style.left = '0px'
+        this.$refs['toggle-signed-nav-bar'].style.transform = 'rotate(180deg)'
+
+        this.$refs['collapsable-menu'].style.transform = 'translateX(-100%)'
+
+        this.$refs['signed-nav-bar'].style.zIndex = '1'
+
+        this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
+
       }
       else {
-        this.$refs['toggleSignedNavBar'].style.transform = this.collapsed ? 'rotate(180deg)' : 'rotate(0deg)'
-        this.$refs['toggleSignedNavBar'].style.right = '0'
-        this.$refs['toggleSignedNavBar'].style.left = 'unset'
-        this.$refs['toggleSignedNavBar'].style.filter = 'var(--background-filter)'
+        this.$refs['toggle-signed-nav-bar'].style.left = '19em'
+        this.$refs['toggle-signed-nav-bar'].style.transform = 'rotate(0deg)'
+
+        this.$refs['collapsable-menu'].style.transform = 'translateX(0%)'
+
+        this.$refs['signed-nav-bar'].style.zIndex = '0'
+
+        this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--background-filter)'
       }
+    },
+    userState(newValue) {
+      this.user = newValue
     }
-  }
+  },
+  beforeMount() {
+    socket.on('userPasswordChanged', () => {
+      if (!this.$store.state.config.changedPasswordNow) {
+        localStorage.removeItem('token')
+        this.$store.commit('setUser', {})
+        window.location.href = '/login'
+      }
+    })
+
+    socket.on('userChanged', (data) => {
+      if (data.user.id == this.$store.state.user.id) {
+        this.$store.commit('setUser', data.user)
+      }
+    })
+  },
 }
 </script>
 
@@ -146,9 +182,10 @@ export default {
       </ul>
     </div>
   </div>
-  <div id="signed-nav-bar" v-if="signedRoute">
-    <img id="toggle-signed-nav-bar" src="../assets/img/side-menu.svg" @click="toggleSideMenu()" ref="toggleSignedNavBar">
-    <div class="collapsable-menu" v-if="!collapsed">
+  <div id="signed-nav-bar" v-if="signedRoute" ref="signed-nav-bar">
+    <img id="toggle-signed-nav-bar" src="../assets/img/side-menu.svg" @click="toggleSideMenu()"
+      ref="toggle-signed-nav-bar">
+    <div class="collapsable-menu" ref="collapsable-menu" :collapsed="collapsed">
       <div class="user-profile">
         <img :src="user.avatar_url ? user.avatar_url : `https://ui-avatars.com/api/?name=${user.username}`"
           class="user-avatar">
@@ -168,7 +205,10 @@ export default {
           <router-link to="/campanhas" class="menu-button">Campanhas</router-link>
           <router-link to="/macros" class="menu-button">Macros</router-link>
         </div>
-        <router-link to="/logout" class="logout-button">Sair</router-link>
+        <div class="other-buttons">
+          <router-link to="/configuracoes" class="menu-button">Configurações</router-link>
+          <router-link to="/logout" class="menu-button logout-button">Sair</router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -523,16 +563,20 @@ export default {
   padding: 0;
   background-color: var(--primary);
   position: sticky;
+  transition: all 0.5s linear;
 }
 
 #toggle-signed-nav-bar {
   width: 50px;
   height: 50px;
   position: absolute;
-  top: 1px;
+  top: 0px;
+  left: 19em;
   right: 1px;
   z-index: 2;
   filter: var(--background-filter);
+  cursor: pointer;
+  transition: all 0.5s linear;
 }
 
 #signed-nav-bar .user-profile {
@@ -573,9 +617,10 @@ export default {
 #signed-nav-bar .menu-buttons {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
+  height: 100%;
   margin: 0;
   margin-top: 20px;
   padding: 0;
@@ -637,11 +682,28 @@ export default {
   padding: 0;
 }
 
-#signed-nav-bar .menu-buttons .logout-button {
-  position: absolute;
-  bottom: 50px;
+#signed-nav-bar .other-buttons a {
   width: calc(11em + 15px);
+}
+
+#signed-nav-bar .other-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  margin-bottom: 55px;
+  padding: 0;
+}
+
+#signed-nav-bar .menu-buttons .logout-button {
   color: var(--cancel-secondary);
+}
+
+#signed-nav-bar .menu-buttons .link-active {
+  background-color: var(--background-secondary);
 }
 
 @media screen and (max-width: 800px) {

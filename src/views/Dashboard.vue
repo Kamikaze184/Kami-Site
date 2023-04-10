@@ -1,5 +1,4 @@
 <script>
-import router from '../router'
 import ItemVue from '../components/Item.vue'
 
 export default {
@@ -9,24 +8,20 @@ export default {
         ItemVue
     },
     mounted() {
-        const sideMenu = document.querySelector('#signed-nav-bar')
+        const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
 
         const observer = new MutationObserver(() => {
-            if(sideMenu.childElementCount == 2){
+            if (sideMenu.getAttribute('collapsed') == 'true') {
+                this.$refs.dashboard.style.marginLeft = '3em'
+                this.$refs.dashboard.style.width = 'calc(100% - 3em)'
+            }
+            else {
                 this.$refs.dashboard.style.marginLeft = '23em'
                 this.$refs.dashboard.style.width = 'calc(100% - 24em)'
             }
-            else {
-                this.$refs.dashboard.style.marginLeft = '1em'
-                this.$refs.dashboard.style.width = 'calc(100% - 1em)'
-            }
         })
 
-        observer.observe(sideMenu, {
-            attributes: true,
-            childList: true,
-            subtree: true
-        })
+        observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
     }
 }
 </script>
@@ -34,13 +29,13 @@ export default {
 <template>
     <div id="Dashboard" ref="dashboard">
         <div class="dashboard-quick-access">
-            <h1 style="text-align: center; width: 100%;">Acesso Rápido</h1>
+            <h1 style="text-align: center; width: 80%; align-self: center;">Acesso Rápido</h1>
             <h1>Notificações</h1>
             <div class="quick-access-category notifications">
                 <ItemVue type="5" description="Sessão da campanha
-            Nome_da_Campanha
-            marcada para:
-            dd/MM às hh:mm" />
+                Nome_da_Campanha
+                marcada para:
+                dd/MM às hh:mm" />
             </div>
             <h1>Fichas</h1>
             <div class="quick-access-category sheets">
@@ -76,6 +71,8 @@ export default {
     margin-bottom: 4em;
     overflow: hidden;
     width: calc(100% - 24em);
+    transition: all 0.5s linear;
+    z-index: 2 !important;
 }
 
 .dashboard-quick-access {
@@ -86,7 +83,8 @@ export default {
     width: 100%;
     height: 100%;
     padding: 0 1em;
-    overflow-y: scroll;
+    overflow-y: auto;
+    z-index: 2 !important;
 }
 
 .dashboard-quick-access h1 {
