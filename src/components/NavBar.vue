@@ -624,6 +624,7 @@ export default {
   margin: 0;
   margin-top: 20px;
   padding: 0;
+  overflow-y: hidden;
 }
 
 #signed-nav-bar .menu-buttons a {
@@ -713,6 +714,42 @@ export default {
 
   #nav-bar-mobile {
     display: flex;
+  }
+}
+
+@media screen and (max-height: 800px) {
+  #signed-nav-bar .menu-buttons {
+    overflow-y: scroll;
+  }
+
+  #signed-nav-bar .menu-buttons::-webkit-scrollbar-track {
+    background-color: var(--background);
+    border-radius: 10px;
+  }
+
+  #signed-nav-bar .menu-buttons::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--background);
+  }
+
+  #signed-nav-bar .menu-buttons::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary);
+    border-radius: 10px;
+  }
+
+  #signed-nav-bar .menu-buttons a {
+    font-size: 1.1em;
+    width: 7em;
+    height: 1.3em;
+    padding: 10px;
+  }
+
+  #signed-nav-bar .dashboard-buttons a {
+    width: calc(15em + 15px);
+  }
+
+  #signed-nav-bar .other-buttons a {
+    width: calc(15em + 15px);
   }
 }
 </style>
