@@ -1,11 +1,26 @@
 <script>
 import ItemVue from '../components/Item.vue'
+import LoadWheel from '../components/LoadWheel.vue'
+import SheetBar from '../components/SheetBar.vue'
+import SheetSection from '../components/SheetSection.vue'
+import SheetNumber from '../components/SheetNumber.vue'
+import SheetLongText from '../components/SheetLongText.vue'
+import SheetList from '../components/SheetList.vue'
+import SheetImage from '../components/SheetImage.vue'
+
 
 export default {
     setup() {
     },
     components: {
-        ItemVue
+        ItemVue,
+        LoadWheel,
+        SheetBar,
+        SheetSection,
+        SheetNumber,
+        SheetLongText,
+        SheetList,
+        SheetImage
     },
     mounted() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
@@ -24,22 +39,22 @@ export default {
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
     },
     beforeMount() {
-        const sheetId = this.$route.params.sheetId
+        // const sheetId = this.$route.params.sheetId
 
-        fetch(`http://localhost:3001/sheet?id=${sheetId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': localStorage.getItem('token')
-          },
-          cache: 'no-cache'
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-        })
-        .catch(error => {
-          console.log(error)
-        })
+        // fetch(`http://localhost:3001/sheet?id=${sheetId}`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Authorization': localStorage.getItem('token')
+        //   },
+        //   cache: 'no-cache'
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   console.log(data)
+        // })
+        // .catch(error => {
+        //   console.log(error)
+        // })
     }
 }
 </script>
@@ -47,7 +62,7 @@ export default {
 <template>
     <div id="Sheets" ref="sheets">
         <div class="sheet">
-            <h1>Ficha</h1>
+            <SheetNumber name="DevelopmentExampleDevelopmentExample" value="999999"/>
         </div>
     </div>
 </template>

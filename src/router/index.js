@@ -24,7 +24,7 @@ const routes = [
     { path: '/sync', name: 'Sync', component: SyncVue },
     { path: '/dashboard', name: 'Dashboard', component: DashboardVue },
     { path: '/fichas', name: 'Sheets', component: SheetsVue },
-    { path: '/fichas/:sheetId', name: 'Sheet', component: SheetVue },
+    { path: '/ficha/:userId/:sheetName', name: 'Sheet', component: SheetVue },
     { path: '/campanhas', name: 'Campaigns', component: CampaignsVue },
     { path: '/macros', name: 'Macros', component: MacrosVue },
     { path: '/configuracoes', name: 'Config', component: ConfigVue },

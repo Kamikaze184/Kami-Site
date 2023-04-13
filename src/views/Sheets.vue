@@ -1,11 +1,18 @@
 <script>
+import config from '../config/publicVars.js'
 import ItemVue from '../components/Item.vue'
+import LoadWheel from '../components/LoadWheel.vue'
 
 export default {
-    setup() {
+    data() {
+        return {
+            sheets: [],
+            sheetsLoaded: false
+        }
     },
     components: {
-        ItemVue
+        ItemVue,
+        LoadWheel
     },
     mounted() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
@@ -22,6 +29,19 @@ export default {
         })
 
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+    },
+    beforeMount() {
+        fetch(`${config.API_URI}/sheet/all`, {
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.sheets = data.sheets
+                this.sheetsLoaded = true
+            })
+
     }
 }
 </script>
@@ -31,11 +51,10 @@ export default {
         <div class="sheets-list">
             <h1>Suas fichas</h1>
             <div class="list-category sheets">
-                <img class="add-sheet-icon" src="../assets/img/add.svg">
-                <ItemVue type="1" description="teste" href="teste" />
-                <ItemVue type="1" description="teste" />
-                <ItemVue type="1" description="teste" />
-                <ItemVue type="1" description="teste" />
+                <img v-if="sheetsLoaded" class="add-sheet-icon" src="../assets/img/add.svg">
+                <ItemVue v-for="sheet of sheets" :key="sheet" type="1" :description="sheet.sheet_name"
+                    :href="`/ficha/${sheet.user_id}/${sheet.sheet_name}`" />
+                <LoadWheel v-if="!sheetsLoaded" />
             </div>
             <h1>Seus templates de fichas</h1>
             <div class="list-category templates">
