@@ -63,6 +63,7 @@ export default {
     <div id="Sheets" ref="sheets">
         <div class="sheet">
             <SheetNumber name="DevelopmentExampleDevelopmentExample" value="999999"/>
+            <SheetNumber name="DevelopmentExampleDevelopmentExample" value="999999"/>
         </div>
     </div>
 </template>
@@ -84,7 +85,7 @@ export default {
 
 .sheet {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: flex-start;
     width: 100%;
