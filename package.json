@@ -29,7 +29,7 @@
     "luxon": "^2.5.2",
     "milliseconds-parser": "^1.0.2",
     "pg": "^8.7.3",
-    "sequelize": "^6.16.2",
+    "sequelize": "^6.29.0",
     "serve-favicon": "^2.5.0",
     "socket.io-client": "^4.5.1",
     "string-similarity": "^4.0.4"
