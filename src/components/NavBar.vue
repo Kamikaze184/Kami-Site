@@ -82,10 +82,15 @@ export default {
 
         this.$refs['collapsable-menu'].style.transform = 'translateX(-100%)'
 
-        this.$refs['signed-nav-bar'].style.zIndex = '1'
+        this.$refs['signed-nav-bar'].style.zIndex = '4'
 
-        this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
+        if (this.$route.name != 'Sheet') {
+          this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
+        }
 
+        setTimeout(() => {
+          this.$refs['signed-nav-bar'].style.width = '50px'
+        }, 450)
       }
       else {
         this.$refs['toggle-signed-nav-bar'].style.left = '19em'
@@ -93,9 +98,11 @@ export default {
 
         this.$refs['collapsable-menu'].style.transform = 'translateX(0%)'
 
-        this.$refs['signed-nav-bar'].style.zIndex = '0'
+        this.$refs['signed-nav-bar'].style.zIndex = '4'
 
         this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--background-filter)'
+        
+        this.$refs['signed-nav-bar'].style.width = '22em'
       }
     },
     userState(newValue) {
@@ -573,7 +580,7 @@ export default {
   top: 0px;
   left: 19em;
   right: 1px;
-  z-index: 2;
+  z-index: 4 !important;
   filter: var(--background-filter);
   cursor: pointer;
   transition: all 0.5s linear;
