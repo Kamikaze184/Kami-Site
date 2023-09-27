@@ -69,7 +69,14 @@ export default {
                 <img src="../assets/img/navigateIcon.svg" class="next-section">
             </div>
             <div class="sheet-body" ref="sheet-body">
-                <SheetNumber title="teste" value="20"/>
+                <SheetNumber name="teste" value="20" />
+                <SheetLongText name="teste2"
+                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut laoreet, augue id ultricies hendrerit, sapien lorem interdum magna, ac congue dolor elit quis tortor. Phasellus sodales ornare turpis, id dapibus massa hendrerit in. In molestie cursus risus, et rhoncus nisi pharetra vitae. In eleifend justo in lacus vulputate, eget tincidunt ipsum gravida. Duis vestibulum eleifend est, non tristique lectus egestas ut. Duis mattis ornare ornare. Aenean accumsan non eros a placerat. Quisque eleifend velit in libero tristique, a commodo odio pulvinar. Curabitur quis sapien egestas, aliquam arcu at, dictum quam. In dui nisl, eleifend vel accumsan ac, molestie ac ligula. Aenean tellus sem, facilisis a risus sit amet, rhoncus rutrum enim. Morbi dui quam, hendrerit quis nisi vitae, egestas placerat urna. Cras pharetra erat purus, eu ullamcorper lorem porta sed. Quisque molestie, tellus vitae volutpat porta, lorem augue pulvinar erat, eu malesuada elit nisl vel dolor. In fringilla ligula mi." />
+                <SheetImage
+                    value="https://media.discordapp.net/attachments/681288910386888766/716822771140657192/unknown.png" />
+                <SheetList name="teste"
+                    value='{"items":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}]}' />
+                <SheetBar name="teste" value='{"actual":35,"max":100}' />
             </div>
         </div>
     </div>
@@ -100,6 +107,7 @@ export default {
     height: 100%;
     padding: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     z-index: 3 !important;
 }
 
@@ -121,6 +129,7 @@ export default {
     margin: 0;
     margin-bottom: 1em;
     padding: 0;
+    position: static;
 }
 
 .sheet-section h1 {
@@ -163,5 +172,18 @@ export default {
 
 .sheet-body {
     transition: all 0.5s linear;
+    width: 100%;
+    height: 90vh;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 0.5em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
 }
 </style>

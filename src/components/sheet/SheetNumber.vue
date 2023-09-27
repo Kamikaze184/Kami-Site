@@ -67,21 +67,25 @@ export default {
         </div>
         <div class="sheet-number-config" v-else>
             <div class="sheet-number-config-item">
-                <p>Sessão</p>
+                <p>Seção</p>
                 <select>
-                    <option value="1">Sessão 1</option>
-                    <option value="2">Sessão 2</option>
-                    <option value="3">Sessão 3</option>
+                    <option value="1">Seção 1</option>
+                    <option value="2">Seção 2</option>
+                    <option value="3">Seção 3</option>
                 </select>
             </div>
             <div class="sheet-number-config-item">
                 <p>Posição</p>
-                <input type="number" :value="1" />
+                <div class="sheet-number-config-item-row">
+                    <img src="../../assets/img/navigateIcon.svg">
+                    <input type="number" :value="1" disabled/>
+                    <img src="../../assets/img/navigateIcon.svg">
+                </div>
             </div>
         </div>
         <div class="sheet-number-controls" ref="sheet-number-controls">
-            <img class="sheet-controls-config" src="../assets/img/setting.svg" @click="toggleConfig()">
-            <img class="sheet-controls-remove" src="../assets/img/cancel.svg" @click="toggleControlsOff()">
+            <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
+            <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
     </div>
 </template>
@@ -93,15 +97,14 @@ export default {
     max-width: 19em;
     height: 10em;
     color: var(--text);
-    cursor: pointer;
-    margin: 0px 5px;
+    margin: 5px 5px;
 }
 
 .sheet-number,
 .sheet-number-config {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: var(--primary);
     border: 2px solid var(--background);
@@ -119,6 +122,7 @@ export default {
     align-items: center;
     margin: 5px;
     padding: 0;
+    width: 100%;
 }
 
 .sheet-number-config-item p {
@@ -127,11 +131,12 @@ export default {
     font-weight: bold;
 }
 
-.sheet-number-config-item input, .sheet-number-config-item select {
+.sheet-number-config-item input,
+.sheet-number-config-item select {
     margin: 0;
     padding: 5px 5px;
     width: 10em;
-    height: 1.5em;
+    height: 2em;
     border: none;
     border-radius: 5px;
     background-color: var(--background);
@@ -140,6 +145,48 @@ export default {
     font-weight: bold;
     font-size: 1.2em;
     outline: none;
+}
+
+.sheet-number-config-item input {
+    width: 3em;
+    height: 2em;
+    text-align: center;
+    font-size: 1.2em;
+    -webkit-appearance: none;
+}
+
+.sheet-number-config-item input::-webkit-outer-spin-button,
+.sheet-number-config-item input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sheet-number-config-item input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.sheet-number-config-item-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+}
+
+.sheet-number-config-item-row img {
+    width: 2em;
+    height: 2em;
+    margin: 0 5px;
+    cursor: pointer;
+    filter: var(--background-filter);
+}
+
+.sheet-number-config-item-row img:hover {
+    filter: var(--background-filter-hover);
+}
+
+.sheet-number-config-item-row img:first-of-type {
+    rotate: 180deg;
 }
 
 .sheet-number-controls {
@@ -169,7 +216,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 4em;
+    height: 3.5em;
     background-color: var(--background);
     box-sizing: border-box;
     border: 2px solid var(--primary);
@@ -191,7 +238,7 @@ export default {
     border: none;
     text-align: center;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.35em;
     color: var(--text);
     resize: none;
     outline: none;
@@ -206,6 +253,7 @@ export default {
 .sheet-number-header textarea::-webkit-scrollbar {
     width: 10px;
     background-color: var(--background);
+    border-radius: 10px;
 }
 
 .sheet-number-header textarea::-webkit-scrollbar-thumb {
@@ -233,7 +281,7 @@ export default {
     border: none;
     text-align: center;
     font-weight: bold;
-    font-size: 2.5em;
+    font-size: 3em;
     color: var(--text);
     text-overflow: ellipsis;
     overflow: hidden;
