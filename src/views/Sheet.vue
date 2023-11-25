@@ -1,4 +1,5 @@
 <script>
+import { createVNode, render } from 'vue'
 import ItemVue from '../components/Item.vue'
 import LoadWheel from '../components/LoadWheel.vue'
 import SheetBar from '../components/sheet/SheetBar.vue'
@@ -7,8 +8,20 @@ import SheetLongText from '../components/sheet/SheetLongText.vue'
 import SheetList from '../components/sheet/SheetList.vue'
 import SheetImage from '../components/sheet/SheetImage.vue'
 
+const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
 export default {
+    data() {
+        return {
+            sheetName: this.$route.params.sheetName,
+            userId: this.$route.params.userId,
+            sheet: {},
+            sheetLoaded: false,
+            actualSectionIndex: 0,
+            actualSectionName: 'Carregando...',
+            componentsErrorState: {}
+        }
+    },
     components: {
         ItemVue,
         LoadWheel,
@@ -39,22 +52,90 @@ export default {
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
     },
     beforeMount() {
-        // const sheetId = this.$route.params.sheetId
+        const { userId, sheetName } = this.$route.params
 
-        // fetch(`http://localhost:3001/sheet?id=${sheetId}`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Authorization': localStorage.getItem('token')
-        //   },
-        //   cache: 'no-cache'
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //   console.log(data)
-        // })
-        // .catch(error => {
-        //   console.log(error)
-        // })
+        fetch(`http://localhost:3001/sheet/one?userId=${userId}&sheetName=${sheetName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            },
+            cache: 'no-cache'
+        })
+            .then(response => response.json())
+            .then(data => {
+                this.sheet = data.sheet
+                this.sheetLoaded = true
+
+                console.log(this.sheet)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    },
+    watch: {
+        sheetLoaded() {
+            if (this.sheetLoaded) {
+                this.actualSectionIndex = 0
+                this.actualSectionName = this.sheet.attributes.sections[0].name
+
+                this.loadAttributes()
+            }
+        },
+        actualSectionIndex() {
+            this.loadAttributes()
+        }
+    },
+    methods: {
+        loadAttributes() {
+            render(null, this.$refs['sheet-body'])
+            this.$refs['sheet-body'].innerHTML = ''
+
+            const components = this.sheet.attributes.sections[this.actualSectionIndex].attributes.map((attribute, index) => {
+                if (typeof attribute.value == 'object') {
+                    attribute.value = JSON.stringify(attribute.value)
+                }
+
+                let component = null
+
+                component = createVNode(
+                    componentList[attribute.type],
+                    {
+                        name: attribute.type == 2 ? undefined : attribute.name,
+                        value: attribute.value,
+                        position: `${this.actualSectionIndex}-${index}`,
+                    }
+                )
+
+                this.componentsErrorState[`${this.actualSectionIndex}-${index}`] = {
+                    state: false,
+                    errors: {}
+                }
+
+                return component
+            })
+
+            render(createVNode('div', { class: 'sheet-body-components' }, components), this.$refs['sheet-body'])
+        },
+        nextSection() {
+            if (this.actualSectionIndex == this.sheet.attributes.sections.length - 1) {
+                this.actualSectionIndex = 0
+            }
+            else {
+                this.actualSectionIndex++
+            }
+
+            this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
+        },
+        previousSection() {
+            if (this.actualSectionIndex == 0) {
+                this.actualSectionIndex = this.sheet.attributes.sections.length - 1
+            }
+            else {
+                this.actualSectionIndex--
+            }
+
+            this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
+        }
     }
 }
 </script>
@@ -63,20 +144,20 @@ export default {
     <div id="Sheet" ref="sheets">
         <div class="sheet" ref="sheet">
             <div class="sheet-section" index="0" ref="section">
-                <img src="../assets/img/navigateIcon.svg" class="previous-section">
-                <h1>Informações do Personagem da Ficha</h1>
+                <img src="../assets/img/navigateIcon.svg" class="previous-section" @click="previousSection()">
+                <h1>{{ actualSectionName }}</h1>
                 <p>Clique para Editar</p>
-                <img src="../assets/img/navigateIcon.svg" class="next-section">
+                <img src="../assets/img/navigateIcon.svg" class="next-section" @click="nextSection()">
             </div>
             <div class="sheet-body" ref="sheet-body">
-                <SheetNumber name="teste" value="20" />
+                <!-- <SheetNumber name="teste" value="20" />
                 <SheetLongText name="teste2"
                     value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut laoreet, augue id ultricies hendrerit, sapien lorem interdum magna, ac congue dolor elit quis tortor. Phasellus sodales ornare turpis, id dapibus massa hendrerit in. In molestie cursus risus, et rhoncus nisi pharetra vitae. In eleifend justo in lacus vulputate, eget tincidunt ipsum gravida. Duis vestibulum eleifend est, non tristique lectus egestas ut. Duis mattis ornare ornare. Aenean accumsan non eros a placerat. Quisque eleifend velit in libero tristique, a commodo odio pulvinar. Curabitur quis sapien egestas, aliquam arcu at, dictum quam. In dui nisl, eleifend vel accumsan ac, molestie ac ligula. Aenean tellus sem, facilisis a risus sit amet, rhoncus rutrum enim. Morbi dui quam, hendrerit quis nisi vitae, egestas placerat urna. Cras pharetra erat purus, eu ullamcorper lorem porta sed. Quisque molestie, tellus vitae volutpat porta, lorem augue pulvinar erat, eu malesuada elit nisl vel dolor. In fringilla ligula mi." />
                 <SheetImage
                     value="https://media.discordapp.net/attachments/681288910386888766/716822771140657192/unknown.png" />
                 <SheetList name="teste"
                     value='{"items":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}]}' />
-                <SheetBar name="teste" value='{"actual":35,"max":100}' />
+                <SheetBar name="teste" value='{"actual":35,"max":100}' /> -->
             </div>
         </div>
     </div>
@@ -173,17 +254,28 @@ export default {
 .sheet-body {
     transition: all 0.5s linear;
     width: 100%;
-    height: 90vh;
     margin: 0;
     padding: 0;
-    padding-bottom: 0.5em;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
-    align-content: flex-start;
+}
+
+.sheet-body-components {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    align-content: space-between;
+    width: 92%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 0.5em;
 }
 </style>

@@ -64,6 +64,10 @@ export default {
                     <div class="sheet-bar-inner-display" :style="{ width: ((value.actual / value.max) * 100) + '%' }"></div>
                 </div>
             </div>
+            <div class="sheet-bar-buttons">
+                <img src="../../assets/img/plus.svg">
+                <img src="../../assets/img/minus.svg">
+            </div>
         </div>
         <div class="sheet-bar-config" v-else>
             <div class="sheet-bar-config-item">
@@ -332,4 +336,25 @@ export default {
     margin: 0;
     padding: 0;
     transition: all 0.5s linear;
-}</style>
+}
+
+.sheet-bar-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 15em;
+    height: 2em;
+    margin-top: 10px;
+}
+
+.sheet-bar-buttons img {
+    width: 2.5em;
+    height: 2.5em;
+    background-color: var(--primary);
+    border-radius: 50%;
+    margin: 5px;
+    box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+</style>
