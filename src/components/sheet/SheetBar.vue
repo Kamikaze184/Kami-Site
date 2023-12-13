@@ -1,11 +1,65 @@
 <script>
+import { eventEmitter } from '../../utils/EventEmitter.js'
+
 export default {
     data() {
         return {
             name: '',
-            value: { actual: 0, max: 0 },
+            value: { actual: 0, max: 0, min: 0, step: 1 },
+            section: 0,
+            position: 0,
             mobile: false,
-            config: false
+            config: false,
+            validationErrors: {
+                name: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O nome do atributo não pode ser vazio',
+                        tooLong: 'O nome do atributo não pode ter mais de 32 caracteres',
+                        invalidChars: 'O nome do atributo não pode conter caracteres especiais',
+                        alreadyExists: 'O nome do atributo já existe',
+                    }
+                },
+                actual: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O valor atual não pode ser vazio',
+                        biggerThanMax: 'O valor atual não pode ser maior que o valor máximo',
+                        smallerThanMin: 'O valor atual não pode ser menor que o valor mínimo',
+                        invalidChars: 'O valor atual deve conter apenas números inteiros',
+                    }
+                },
+                max: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O valor máximo não pode ser vazio',
+                        smallerThanActual: 'O valor máximo não pode ser menor que o valor atual',
+                        invalidChars: 'O valor máximo deve conter apenas números inteiros',
+                    }
+                },
+                min: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O valor mínimo não pode ser vazio',
+                        biggerThanActual: 'O valor mínimo não pode ser maior que o valor atual',
+                        invalidChars: 'O valor mínimo deve conter apenas números inteiros',
+                    }
+                },
+                step: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O passo não pode ser vazio',
+                        invalidChars: 'O passo deve conter apenas números inteiros positivos',
+                        greaterThanMax: 'O passo não pode ser maior que o valor máximo',
+                    }
+                }
+            },
+            confirmComponentRemove: false
         }
     },
     methods: {
@@ -28,11 +82,173 @@ export default {
             else {
                 this.config = true
             }
+        },
+        nextPosition() {
+            if (this.position < this.maxPosition) {
+                this.position++
+            }
+            else {
+                this.position = 0
+            }
+        },
+        previousPosition() {
+            if (this.position > 0) {
+                this.position--
+            }
+            else {
+                this.position = this.maxPosition
+            }
+        },
+        increaseValue() {
+            if (this.value.actual < this.value.max) {
+                if (this.value.actual + this.value.step > this.value.max) {
+                    this.value.actual = this.value.max
+                }
+                else {
+                    this.value.actual += this.value.step
+                }
+            }
+        },
+        decreaseValue() {
+            if (this.value.actual > this.value.min) {
+                if (this.value.actual - this.value.step < this.value.min) {
+                    this.value.actual = this.value.min
+                }
+                else {
+                    this.value.actual -= this.value.step
+                }
+            }
+        },
+        validateName() {
+            const name = this.name
+
+            if (name == '') {
+                this.validationErrors.name.state = true
+                this.validationErrors.name.actualMessage = this.validationErrors.name.messages.empty
+            }
+            else if (name.length > 32) {
+                this.validationErrors.name.state = true
+                this.validationErrors.name.actualMessage = this.validationErrors.name.messages.tooLong
+            }
+            else if (!name.match(/^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]{1,}(?: [a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]+){0,}$/gim)) {
+                this.validationErrors.name.state = true
+                this.validationErrors.name.actualMessage = this.validationErrors.name.messages.invalidChars
+            }
+            else {
+                this.validationErrors.name.state = false
+                this.validationErrors.name.actualMessage = ''
+            }
+        },
+        validateActual() {
+            const actual = this.value.actual
+
+            if (actual.toString() == '') {
+                this.validationErrors.actual.state = true
+                this.validationErrors.actual.actualMessage = this.validationErrors.actual.messages.empty
+            }
+            else if (actual > this.value.max) {
+                this.validationErrors.actual.state = true
+                this.validationErrors.actual.actualMessage = this.validationErrors.actual.messages.biggerThanMax
+            }
+            else if (actual < this.value.min) {
+                this.validationErrors.actual.state = true
+                this.validationErrors.actual.actualMessage = this.validationErrors.actual.messages.smallerThanMin
+            }
+            else if (!actual.toString().match(/^(-?[0-9]+)$/gim)) {
+                this.validationErrors.actual.state = true
+                this.validationErrors.actual.actualMessage = this.validationErrors.actual.messages.invalidChars
+            }
+            else {
+                this.validationErrors.actual.state = false
+                this.validationErrors.actual.actualMessage = ''
+            }
+        },
+        validateMax() {
+            const max = this.value.max
+
+            if (max.toString() == '') {
+                this.validationErrors.max.state = true
+                this.validationErrors.max.actualMessage = this.validationErrors.max.messages.empty
+            }
+            else if (max < this.value.actual) {
+                this.validationErrors.max.state = true
+                this.validationErrors.max.actualMessage = this.validationErrors.max.messages.smallerThanActual
+            }
+            else if (!max.toString().match(/^(-?[0-9]+)$/gim)) {
+                this.validationErrors.max.state = true
+                this.validationErrors.max.actualMessage = this.validationErrors.max.messages.invalidChars
+            }
+            else {
+                this.validationErrors.max.state = false
+                this.validationErrors.max.actualMessage = ''
+            }
+        },
+        validateMin() {
+            const min = this.value.min
+
+            if (min.toString() == '') {
+                this.validationErrors.min.state = true
+                this.validationErrors.min.actualMessage = this.validationErrors.min.messages.empty
+            }
+            else if (min > this.value.actual) {
+                this.validationErrors.min.state = true
+                this.validationErrors.min.actualMessage = this.validationErrors.min.messages.biggerThanActual
+            }
+            else if (!min.toString().match(/^(-?[0-9]+)$/gim)) {
+                this.validationErrors.min.state = true
+                this.validationErrors.min.actualMessage = this.validationErrors.min.messages.invalidChars
+            }
+            else {
+                this.validationErrors.min.state = false
+                this.validationErrors.min.actualMessage = ''
+            }
+        },
+        validateStep() {
+            const step = this.value.step
+
+            if (step.toString() == '') {
+                this.validationErrors.step.state = true
+                this.validationErrors.step.actualMessage = this.validationErrors.step.messages.empty
+            }
+            else if (step > this.value.max) {
+                this.validationErrors.step.state = true
+                this.validationErrors.step.actualMessage = this.validationErrors.step.messages.greaterThanMax
+            }
+            else if (!step.toString().match(/^[0-9]+$/gim)) {
+                this.validationErrors.step.state = true
+                this.validationErrors.step.actualMessage = this.validationErrors.step.messages.invalidChars
+            }
+            else {
+                this.validationErrors.step.state = false
+                this.validationErrors.step.actualMessage = ''
+            }
         }
     },
     mounted() {
         this.name = this.$refs['sheet-bar'].getAttribute('name')
-        this.value = JSON.parse(this.$refs['sheet-bar'].getAttribute('value') || '{}')
+        const valueString = JSON.parse(this.$refs['sheet-bar'].getAttribute('value') || '{}')
+
+        this.value = {
+            actual: Number(valueString.actual) || 0,
+            max: Number(valueString.max) || 100,
+            min: Number(valueString.min) || 0,
+            step: Number(valueString.step) || 1
+        }
+
+        const position = this.$refs['sheet-bar'].getAttribute('position')
+
+        this.section = position.split('-')[0]
+        this.position = position.split('-')[1]
+
+        eventEmitter.on('set-sections', (sections) => {
+            this.sections = sections
+        })
+        eventEmitter.emit('get-sections')
+
+        eventEmitter.on('set-max-position', (positions) => {
+            this.maxPosition = positions
+        })
+        eventEmitter.emit('get-max-position')
 
         if (window.innerWidth < 768) {
             this.mobile = true
@@ -49,6 +265,61 @@ export default {
                 this.mobile = false
             }
         })
+    },
+    watch: {
+        name() {
+            this.validateName()
+            eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
+        },
+        value: {
+            handler() {
+                this.validateActual()
+                this.validateMax()
+                this.validateMin()
+                this.validateStep()
+                eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
+            },
+            deep: true
+        },
+        section() {
+            eventEmitter.emit('move-component', this.$refs['sheet-bar'], this.section, this.position)
+        },
+        position() {
+            eventEmitter.emit('move-component', this.$refs['sheet-bar'], this.section, this.position)
+        },
+        validationErrors: {
+            handler() {
+                if (this.validationErrors.name.state || this.validationErrors.actual.state || this.validationErrors.max.state || this.validationErrors.min.state || this.validationErrors.step.state) {
+                    const errors = {
+                        name: {
+                            state: this.validationErrors.name.state,
+                            actualMessage: this.validationErrors.name.actualMessage
+                        },
+                        actual: {
+                            state: this.validationErrors.actual.state,
+                            actualMessage: this.validationErrors.actual.actualMessage
+                        },
+                        max: {
+                            state: this.validationErrors.max.state,
+                            actualMessage: this.validationErrors.max.actualMessage
+                        },
+                        min: {
+                            state: this.validationErrors.min.state,
+                            actualMessage: this.validationErrors.min.actualMessage
+                        },
+                        step: {
+                            state: this.validationErrors.step.state,
+                            actualMessage: this.validationErrors.step.actualMessage
+                        }
+                    }
+                    eventEmitter.emit('invalid-component', this.$refs['sheet-bar'], errors)
+                }
+                else {
+                    eventEmitter.emit('valid-component', this.$refs['sheet-bar'])
+                }
+            },
+            deep: true
+        }
     }
 }
 </script>
@@ -56,34 +327,65 @@ export default {
     <div class="sheet-bar-wrapper" ref="sheet-bar">
         <div class="sheet-bar" @click="toggleControlsOn()" v-if="!config">
             <div class="sheet-bar-header">
-                <input type="text" :value="name" class="sheet-bar-title">
+                <input type="text" :value="name" class="sheet-bar-title" ref="sheet-bar-name"
+                    @keyup="name = $refs['sheet-bar-name'].value">
                 <h4>{{ `${value.actual}/${value.max}` }}</h4>
             </div>
             <div class="sheet-bar-body">
-                <div class="sheet-bar-outer-display">
+                <div class="sheet-bar-outer-display" v-if="value.actual > 0">
                     <div class="sheet-bar-inner-display" :style="{ width: ((value.actual / value.max) * 100) + '%' }"></div>
+                </div>
+                <div class="sheet-bar-outer-display negative-outer-display" v-else>
+                    <div class="sheet-bar-inner-display negative-inner-display"
+                        :style="{ width: Math.abs(((value.actual / value.min) * 100)) + '%' }"></div>
                 </div>
             </div>
             <div class="sheet-bar-buttons">
-                <img src="../../assets/img/plus.svg">
-                <img src="../../assets/img/minus.svg">
+                <img src="../../assets/img/plus.svg" @click="increaseValue()">
+                <img src="../../assets/img/minus.svg" @click="decreaseValue()">
+            </div>
+            <div class="sheet-bar-errors">
+                <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
+                <p v-if="validationErrors.actual.state">{{ validationErrors.actual.actualMessage }}</p>
+                <p v-if="validationErrors.max.state">{{ validationErrors.max.actualMessage }}</p>
+                <p v-if="validationErrors.min.state">{{ validationErrors.min.actualMessage }}</p>
+                <p v-if="validationErrors.step.state">{{ validationErrors.step.actualMessage }}</p>
             </div>
         </div>
         <div class="sheet-bar-config" v-else>
             <div class="sheet-bar-config-item">
+                <p>Valor atual</p>
+                <input type="number" :value="value.actual"
+                    @change="value.actual = Number($refs['sheet-bar-config-actual'].value)" ref="sheet-bar-config-actual">
+            </div>
+            <div class="sheet-bar-config-item">
+                <p>Valor máximo</p>
+                <input type="number" :value="value.max" @change="value.max = Number($refs['sheet-bar-config-max'].value)"
+                    ref="sheet-bar-config-max">
+            </div>
+            <div class="sheet-bar-config-item">
+                <p>Valor mínimo</p>
+                <input type="number" :value="value.min" @change="value.min = Number($refs['sheet-bar-config-min'].value)"
+                    ref="sheet-bar-config-min">
+            </div>
+            <div class="sheet-bar-config-item">
+                <p>Passo dos botões</p>
+                <input type="number" :value="value.step" @change="value.step = Number($refs['sheet-bar-config-step'].value)"
+                    ref="sheet-bar-config-step">
+            </div>
+            <div class="sheet-bar-config-item">
                 <p>Seção</p>
-                <select>
-                    <option value="1">Seção 1</option>
-                    <option value="2">Seção 2</option>
-                    <option value="3">Seção 3</option>
+                <select :value="section" @change="section = $refs['sheet-bar-config-section'].value"
+                    ref="sheet-bar-config-section">
+                    <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}</option>
                 </select>
             </div>
             <div class="sheet-bar-config-item">
                 <p>Posição</p>
                 <div class="sheet-bar-config-item-row">
-                    <img src="../../assets/img/navigateIcon.svg">
-                    <input type="number" :value="1" disabled />
-                    <img src="../../assets/img/navigateIcon.svg">
+                    <img src="../../assets/img/navigateIcon.svg" @click="previousPosition()">
+                    <input type="number" :value="position" disabled />
+                    <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
         </div>
@@ -107,7 +409,7 @@ export default {
 .sheet-bar-config {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     background-color: var(--primary);
     border: 2px solid var(--background);
@@ -116,6 +418,24 @@ export default {
     width: 15em;
     color: var(--text);
     position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sheet-bar-config::-webkit-scrollbar-track {
+    background-color: var(--background);
+    border-radius: 10px;
+}
+
+.sheet-bar-config::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--background);
+    border-radius: 10px;
+}
+
+.sheet-bar-config::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary);
+    border-radius: 10px;
 }
 
 .sheet-bar {
@@ -160,6 +480,7 @@ export default {
     text-align: center;
     font-size: 1.2em;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .sheet-bar-config-item input::-webkit-outer-spin-button,
@@ -170,6 +491,7 @@ export default {
 
 .sheet-bar-config-item input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .sheet-bar-config-item-row {
@@ -277,6 +599,7 @@ export default {
 .sheet-bar-value input[type=number],
 .sheet-bar-header input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .sheet-bar-header h4 {
@@ -301,13 +624,49 @@ export default {
     grid-area: max;
 }
 
-
 .sheet-bar-body {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 15em;
+}
+
+.sheet-bar-errors {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 15em;
+    height: 4em;
+    margin-top: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sheet-bar-errors p {
+    margin: 5px;
+    padding: 0;
+    color: var(--text);
+    font-weight: bold;
+    font-size: 1em;
+    text-align: center;
+}
+
+.sheet-bar-errors::-webkit-scrollbar-track {
+    background-color: var(--primary);
+    border-radius: 10px;
+}
+
+.sheet-bar-errors::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--background);
+    border-radius: 10px;
+}
+
+.sheet-bar-errors::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary);
+    border-radius: 10px;
 }
 
 .sheet-bar-outer-display {
@@ -336,6 +695,14 @@ export default {
     margin: 0;
     padding: 0;
     transition: all 0.5s linear;
+}
+
+.negative-outer-display {
+    justify-content: flex-end;
+}
+
+.negative-inner-display {
+    background-color: #910000;
 }
 
 .sheet-bar-buttons {
