@@ -1,5 +1,6 @@
 <script>
 import socket from '../services/websocket.service'
+import config from '../config/publicVars'
 const signedRoutes = ['Dashboard', 'Sheets', 'Macros', 'Campaigns', 'Sheet', 'Config']
 
 export default {
@@ -49,7 +50,7 @@ export default {
       this.sign = localStorage.getItem('token') != null
 
       if (this.sign) {
-        fetch(`http://localhost:3001/user`, {
+        fetch(`${config.API_URI}/user`, {
           method: 'GET',
           headers: {
             'Authorization': localStorage.getItem('token')

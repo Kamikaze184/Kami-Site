@@ -2,7 +2,6 @@
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import Background from './components/Background.vue';
-import { default as config } from './config/publicVars'
 
 export default {
   data() {
