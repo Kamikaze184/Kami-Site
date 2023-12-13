@@ -1,11 +1,37 @@
 <script>
+import { eventEmitter } from '../../utils/EventEmitter.js'
+
 export default {
     data() {
         return {
             name: '',
             value: '',
+            section: 0,
+            position: 0,
             mobile: false,
-            config: false
+            config: false,
+            validationErrors: {
+                name: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O nome do atributo não pode ser vazio',
+                        tooLong: 'O nome do atributo não pode ter mais de 32 caracteres',
+                        invalidChars: 'O nome do atributo não pode conter caracteres especiais',
+                        alreadyExists: 'O nome do atributo já existe',
+                    }
+                },
+                value: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O valor do atributo não pode ser vazio',
+                        tooLong: 'O valor do atributo não pode ter mais de 1024 caracteres',
+                        invalidChars: 'O valor do atributo não pode conter caracteres especiais',
+                    }
+                }
+            },
+            confirmComponentRemove: false
         }
     },
     methods: {
@@ -28,11 +54,82 @@ export default {
             else {
                 this.config = true
             }
-        }
+        },
+        nextPosition() {
+            if (this.position < this.maxPosition) {
+                this.position++
+            }
+            else {
+                this.position = 0
+            }
+        },
+        previousPosition() {
+            if (this.position > 0) {
+                this.position--
+            }
+            else {
+                this.position = this.maxPosition
+            }
+        },
+        validateName() {
+            const name = this.name
+
+            if (name == '') {
+                this.validationErrors.name.state = true
+                this.validationErrors.name.actualMessage = this.validationErrors.name.messages.empty
+            }
+            else if (name.length > 32) {
+                this.validationErrors.name.state = true
+                this.validationErrors.name.actualMessage = this.validationErrors.name.messages.tooLong
+            }
+            else if (!name.match(/^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]{1,}(?: [a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]+){0,}$/gim)) {
+                this.validationErrors.name.state = true
+                this.validationErrors.name.actualMessage = this.validationErrors.name.messages.invalidChars
+            }
+            else {
+                this.validationErrors.name.state = false
+                this.validationErrors.name.actualMessage = ''
+            }
+        },
+        validateValue() {
+            const value = this.value
+
+            if (value == '') {
+                this.validationErrors.value.state = true
+                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.empty
+            }
+            else if (value.length > 1024) {
+                this.validationErrors.value.state = true
+                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.tooLong
+            }
+            else if (!value.match(/^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]{1,}(?: [a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]+){0,}$/gim)) {
+                this.validationErrors.value.state = true
+                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.invalidChars
+            }
+            else {
+                this.validationErrors.value.state = false
+                this.validationErrors.value.actualMessage = ''
+            }
+        },
     },
     mounted() {
         this.name = this.$refs['sheet-longtext'].getAttribute('name')
         this.value = this.$refs['sheet-longtext'].getAttribute('value')
+
+        const position = this.$refs['sheet-longtext'].getAttribute('position')
+
+        this.section = position.split('-')[0]
+        this.position = position.split('-')[1]
+
+        eventEmitter.on('set-sections', (sections) => {
+            this.sections = sections
+        })
+        eventEmitter.emit('get-sections')
+
+        eventEmitter.on('set-max-position', (positions) => {
+            this.maxPosition = positions
+        })
+        eventEmitter.emit('get-max-position')
 
         if (window.innerWidth < 768) {
             this.mobile = true
@@ -49,6 +146,45 @@ export default {
                 this.mobile = false
             }
         })
+    },
+    watch: {
+        name() {
+            this.name = this.name.trim()
+            this.validateName()
+            eventEmitter.emit('update-component', this.$refs['sheet-longtext'], this.name, this.value)
+        },
+        value() {
+            this.value = this.value.trim()
+            this.validateValue()
+            eventEmitter.emit('update-component', this.$refs['sheet-longtext'], this.name, this.value)
+        },
+        section() {
+            eventEmitter.emit('move-component', this.$refs['sheet-longtext'], this.section, this.position)
+        },
+        position() {
+            eventEmitter.emit('move-component', this.$refs['sheet-longtext'], this.section, this.position)
+        },
+        validationErrors: {
+            handler() {
+                if (this.validationErrors.name.state || this.validationErrors.value.state) {
+                    const errors = {
+                        name: {
+                            state: this.validationErrors.name.state,
+                            actualMessage: this.validationErrors.name.actualMessage
+                        },
+                        value: {
+                            state: this.validationErrors.value.state,
+                            actualMessage: this.validationErrors.value.actualMessage
+                        }
+                    }
+                    eventEmitter.emit('invalid-component', this.$refs['sheet-longtext'], errors)
+                }
+                else {
+                    eventEmitter.emit('valid-component', this.$refs['sheet-longtext'])
+                }
+            },
+            deep: true
+        }
     }
 }
 </script>
@@ -56,10 +192,14 @@ export default {
     <div class="sheet-longtext-wrapper" ref="sheet-longtext">
         <div class="sheet-longtext" @click="toggleControlsOn()" v-if="!config">
             <div class="sheet-longtext-header">
-                <textarea :value="name" placeholder="Insira um nome" />
+                <textarea :value="name" placeholder="Insira um nome" ref="sheet-longtext-name"
+                    @keyup="name = $refs['sheet-longtext-name'].value" />
             </div>
             <div class="sheet-longtext-body">
-                <textarea :value="value" placeholder="Insira um valor" />
+                <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
+                <p v-if="validationErrors.value.state">{{ validationErrors.value.actualMessage }}</p>
+                <textarea :value="value" placeholder="Insira um valor" ref="sheet-longtext-value"
+                    @keyup="value = $refs['sheet-longtext-value'].value" />
             </div>
             <div class="sheet-longtext-footer" v-if="mobile">
                 <p>Clique para expandir</p>
@@ -68,18 +208,17 @@ export default {
         <div class="sheet-longtext-config" v-else>
             <div class="sheet-longtext-config-item">
                 <p>Seção</p>
-                <select>
-                    <option value="1">Seção 1</option>
-                    <option value="2">Seção 2</option>
-                    <option value="3">Seção 3</option>
+                <select :value="section" @change="section = $refs['sheet-longtext-config-section'].value"
+                    ref="sheet-longtext-config-section">
+                    <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}</option>
                 </select>
             </div>
             <div class="sheet-longtext-config-item">
                 <p>Posição</p>
                 <div class="sheet-longtext-config-item-row">
-                    <img src="../../assets/img/navigateIcon.svg">
-                    <input type="number" :value="1" disabled/>
-                    <img src="../../assets/img/navigateIcon.svg">
+                    <img src="../../assets/img/navigateIcon.svg" @click="previousPosition()">
+                    <input type="number" :value="position" disabled />
+                    <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
         </div>
@@ -262,6 +401,7 @@ export default {
 
 .sheet-longtext-body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -270,6 +410,15 @@ export default {
     font-weight: bold;
     margin: 0;
     padding: 5px;
+}
+
+.sheet-longtext-body p{
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--cancel);
+    text-align: center;
 }
 
 .sheet-longtext-body textarea {

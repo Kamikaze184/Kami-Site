@@ -1,10 +1,25 @@
 <script>
+import { eventEmitter } from '../../utils/EventEmitter.js'
+
 export default {
     data() {
         return {
             value: '',
+            section: 0,
+            position: 0,
             mobile: false,
-            config: false
+            config: false,
+            validationErrors: {
+                value: {
+                    state: false,
+                    actualMessage: '',
+                    messages: {
+                        empty: 'O valor do atributo não pode ser vazio',
+                        invalidImageURL: 'O valor do atributo deve ser um URL de imagem válido'
+                    }
+                }
+            },
+            confirmComponentRemove: false
         }
     },
     methods: {
@@ -39,10 +54,57 @@ export default {
                 }
             }
             catch (err) { }
+        },
+        nextPosition() {
+            if (this.position < this.maxPosition) {
+                this.position++
+            }
+            else {
+                this.position = 0
+            }
+        },
+        previousPosition() {
+            if (this.position > 0) {
+                this.position--
+            }
+            else {
+                this.position = this.maxPosition
+            }
+        },
+        validateValue() {
+            const value = this.value
+
+            if (value == '') {
+                this.validationErrors.value.state = true
+                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.empty
+            }
+            else if (!value.match(/https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg|webp)/gi)) {
+                this.validationErrors.value.state = true
+                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.invalidImageURL
+            }
+            else {
+                this.validationErrors.value.state = false
+                this.validationErrors.value.actualMessage = ''
+            }
         }
     },
     mounted() {
         this.value = this.$refs['sheet-image'].getAttribute('value')
+
+        const position = this.$refs['sheet-image'].getAttribute('position')
+
+        this.section = position.split('-')[0]
+        this.position = position.split('-')[1]
+
+        eventEmitter.on('set-sections', (sections) => {
+            this.sections = sections
+        })
+        eventEmitter.emit('get-sections')
+
+        eventEmitter.on('set-max-position', (positions) => {
+            this.maxPosition = positions
+        })
+        eventEmitter.emit('get-max-position')
 
         if (window.innerWidth < 768) {
             this.mobile = true
@@ -59,6 +121,36 @@ export default {
                 this.mobile = false
             }
         })
+    },
+    watch: {
+        value() {
+            this.value = this.value.trim()
+            this.validateValue()
+            eventEmitter.emit('update-component', this.$refs['sheet-image'], this.name, this.value)
+        },
+        section(){
+            eventEmitter.emit('move-component', this.$refs['sheet-image'], this.section, this.position)
+        },
+        position(){
+            eventEmitter.emit('move-component', this.$refs['sheet-image'], this.section, this.position)
+        },
+        validationErrors: {
+            handler() {
+                if (this.validationErrors.value.state) {
+                    const errors = {
+                        value: {
+                            state: this.validationErrors.value.state,
+                            actualMessage: this.validationErrors.value.actualMessage
+                        }
+                    }
+                    eventEmitter.emit('invalid-component', this.$refs['sheet-image'], errors)
+                }
+                else {
+                    eventEmitter.emit('valid-component', this.$refs['sheet-image'])
+                }
+            },
+            deep: true
+        }
     }
 }
 </script>
@@ -66,6 +158,7 @@ export default {
     <div class="sheet-image-wrapper" ref="sheet-image">
         <div class="sheet-image" @click="toggleControlsOn()" v-if="!config">
             <div class="sheet-image-body">
+                <p v-if="validationErrors.value.state">{{ validationErrors.value.actualMessage }}</p>
                 <img :src="value" ref="sheet-image-body-img" @click="expandImage()">
             </div>
             <div class="sheet-image-footer" @click="expandImage()">
@@ -75,22 +168,20 @@ export default {
         <div class="sheet-image-config" v-else>
             <div class="sheet-image-config-item">
                 <p>Link da imagem</p>
-                <input class="sheet-image-config-link" type="text" :value="value" />
+                <input class="sheet-image-config-link" ref="sheet-image-config-value" type="text" :value="value" @keyup="value = $refs['sheet-image-config-value'].value" @change="value = $refs['sheet-image-config-value'].value" />
             </div>
             <div class="sheet-image-config-item">
                 <p>Seção</p>
-                <select>
-                    <option value="1">Seção 1</option>
-                    <option value="2">Seção 2</option>
-                    <option value="3">Seção 3</option>
+                <select :value="section" @change="section = $refs['sheet-image-config-section'].value" ref="sheet-image-config-section">
+                    <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}</option>
                 </select>
             </div>
             <div class="sheet-image-config-item">
                 <p>Posição</p>
                 <div class="sheet-image-config-item-row">
-                    <img src="../../assets/img/navigateIcon.svg">
-                    <input type="number" :value="1" disabled />
-                    <img src="../../assets/img/navigateIcon.svg">
+                    <img src="../../assets/img/navigateIcon.svg" @click="previousPosition()">
+                    <input type="number" :value="position" disabled />
+                    <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
         </div>
@@ -248,6 +339,7 @@ export default {
 
 .sheet-image-body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -258,12 +350,22 @@ export default {
     padding: 5px;
 }
 
+.sheet-image-body p {
+    margin: 5px;
+    padding: 0;
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--text);
+    text-align: center;
+}
+
 .sheet-image-body img {
     width: 100%;
     height: 100%;
     object-fit: scale-down;
     border-radius: 10px !important;
     cursor: pointer;
+    transition: all 0.2s linear;
 }
 
 .sheet-image-body-img-expanded {

@@ -7,6 +7,12 @@ import SheetNumber from '../components/sheet/SheetNumber.vue'
 import SheetLongText from '../components/sheet/SheetLongText.vue'
 import SheetList from '../components/sheet/SheetList.vue'
 import SheetImage from '../components/sheet/SheetImage.vue'
+import SheetConfigMenu from '../components/sheet/SheetConfigMenu.vue'
+import SheetAddSectionMenu from '../components/sheet/SheetAddSectionMenu.vue'
+import SheetAddCompMenu from '../components/sheet/SheetAddCompMenu.vue'
+import SheetEditSectionMenu from '../components/sheet/SheetEditSectionMenu.vue'
+import { eventEmitter } from '../utils/EventEmitter.js'
+import config from '../config/publicVars.js'
 
 const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
@@ -19,7 +25,11 @@ export default {
             sheetLoaded: false,
             actualSectionIndex: 0,
             actualSectionName: 'Carregando...',
-            componentsErrorState: {}
+            sections: [],
+            componentsErrorState: {},
+            sheetValidationErrors: [],
+            menu: 'None', // None, AddSection, AddComp, Config, EditSection, ShowErrors
+            savingSheet: false
         }
     },
     components: {
@@ -29,32 +39,16 @@ export default {
         SheetNumber,
         SheetLongText,
         SheetList,
-        SheetImage
-    },
-    mounted() {
-        const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
-
-        const observer = new MutationObserver(() => {
-            if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '0em'
-                this.$refs.sheets.style.width = '100%'
-
-                this.$refs['sheet-body'].style.marginLeft = '50px'
-            }
-            else {
-                this.$refs.sheets.style.marginLeft = '22em'
-                this.$refs.sheets.style.width = 'calc(100% - 22em)'
-
-                this.$refs['sheet-body'].style.marginLeft = '0px'
-            }
-        })
-
-        observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+        SheetImage,
+        SheetConfigMenu,
+        SheetAddSectionMenu,
+        SheetAddCompMenu,
+        SheetEditSectionMenu
     },
     beforeMount() {
         const { userId, sheetName } = this.$route.params
 
-        fetch(`http://localhost:3001/sheet/one?userId=${userId}&sheetName=${sheetName}`, {
+        fetch(`${config.API_URI}/sheet/one?userId=${userId}&sheetName=${sheetName}`, {
             method: 'GET',
             headers: {
                 'Authorization': localStorage.getItem('token')
@@ -63,10 +57,38 @@ export default {
         })
             .then(response => response.json())
             .then(data => {
-                this.sheet = data.sheet
-                this.sheetLoaded = true
+                if (data.sheet.legacy == true) {
+                    const sheet = {
+                        attributes: { sections: [{ attributes: [], name: 'Info', position: 0, type: 0 }] },
+                        id: data.sheet.id,
+                        sheet_name: data.sheet.sheet_name,
+                        user_id: data.sheet.user_id,
+                        sheet_name: data.sheet.sheet_name,
+                        sheet_passoword: data.sheet.sheet_password,
+                        is_public: data.sheet.is_public,
+                        legacy: false,
+                        user: data.sheet.user
+                    }
 
-                console.log(this.sheet)
+                    let position = 0
+                    for (let attribute of Object.keys(data.sheet.attributes)) {
+                        sheet.attributes.sections[0].attributes.push({
+                            name: attribute,
+                            value: data.sheet.attributes[attribute],
+                            type: isNaN(Number(data.sheet.attributes[attribute])) ? 0 : 1,
+                            position: position
+                        })
+
+                        position++
+                    }
+
+                    this.sheet = sheet
+                    this.sheetLoaded = true
+                }
+                else {
+                    this.sheet = data.sheet
+                    this.sheetLoaded = true
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -78,11 +100,18 @@ export default {
                 this.actualSectionIndex = 0
                 this.actualSectionName = this.sheet.attributes.sections[0].name
 
+                this.seactions = this.getSheetSections()
                 this.loadAttributes()
             }
         },
         actualSectionIndex() {
             this.loadAttributes()
+        },
+        sheet: {
+            handler() {
+                this.sections = this.getSheetSections()
+            },
+            deep: true
         }
     },
     methods: {
@@ -135,18 +164,405 @@ export default {
             }
 
             this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
+        },
+        reDefinePosition() {
+            this.sheet.attributes.sections.forEach((section, sectionIndex) => {
+                section.position = sectionIndex
+
+                section.attributes.forEach((attribute, attributeIndex) => {
+                    attribute.position = attributeIndex
+                })
+            })
+
+            this.componentsErrorState = {}
+
+            this.loadAttributes()
+        },
+        getSheetSections() {
+            return this.sheet.attributes.sections.map(section => { return { name: section.name, position: section.position, type: section.type } })
+        },
+        createNewSection(sectionName) {
+            const newSection = {
+                attributes: [],
+                name: sectionName,
+                position: this.sheet.attributes.sections.length,
+                type: 0
+            }
+
+            this.sheet.attributes.sections.push(newSection)
+            this.actualSectionIndex = this.sheet.attributes.sections.length - 1
+            this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
+            this.sections = this.getSheetSections()
+            eventEmitter.emit('set-sections', this.sections)
+
+            this.reDefinePosition()
+        },
+        editSection(sectionName) {
+            this.sheet.attributes.sections[this.actualSectionIndex].name = sectionName
+            this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
+            this.sections = this.getSheetSections()
+            eventEmitter.emit('set-sections', this.sections)
+        },
+        openAddNewSectionMenu() {
+            eventEmitter.emit('set-sections', this.sections)
+            this.menu = 'AddSection'
+        },
+        openEditSectionMenu() {
+            eventEmitter.emit('set-section', this.sections)
+            this.menu = 'EditSection'
+        },
+        openAddCompMenu() {
+            eventEmitter.emit('set-section-attributes', this.sheet.attributes.sections[this.actualSectionIndex].attributes)
+            this.menu = 'AddComp'
+        },
+        createNewComponent(component) {
+            let value = 'Clique para alterar'
+
+            if (component.type == 2) {
+                value = 'https://www.kamiapp.com.br/assets/img/logo.webp'
+            }
+            else if (component.type == 3) {
+                value = { items: [] }
+            }
+            else if (component.type == 4) {
+                value = { actual: 10, max: 100, min: 0, step: 1 }
+            }
+
+            const newComponent = {
+                name: component.name,
+                value: value,
+                type: component.type,
+                position: this.sheet.attributes.sections[this.actualSectionIndex].attributes.length
+            }
+
+            this.sheet.attributes.sections[this.actualSectionIndex].attributes.push(newComponent)
+            this.reDefinePosition()
+        },
+        async saveSheet() {
+            const errors = []
+            const editedComponents = {}
+
+            Object.keys(this.componentsErrorState).forEach((key) => {
+                if (this.componentsErrorState[key].state) {
+                    Object.keys(this.componentsErrorState[key]).forEach((errorKey) => {
+                        if (errorKey != 'state') {
+                            errors.push({
+                                type: 'component',
+                                position: key,
+                                message: this.componentsErrorState[key][errorKey]
+                            })
+                        }
+                    })
+                }
+                else {
+                    const sectionIndex = key.split('-')[0]
+                    const componentIndex = key.split('-')[1]
+
+                    if (this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].type == 1) {
+                        editedComponents[key] = {
+                            type: 'number',
+                            value: this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value
+                        }
+                    }
+                    else if (this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].type == 4) {
+                        editedComponents[key] = {
+                            type: 'bar',
+                            value: JSON.stringify(this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value)
+                        }
+                    }
+                    else {
+                        editedComponents[key] = {
+                            type: 'text',
+                            value: this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value
+                        }
+                    }
+                }
+            })
+
+            if (errors.length > 0) {
+                errors.forEach(error => {
+                    if (error.type == 'component') {
+                        const sectionIndex = error.position.split('-')[0]
+                        const componentIndex = error.position.split('-')[1]
+
+                        this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name
+
+                        Object.keys(error.message).forEach(errorKey => {
+                            if (error.message[errorKey].state) {
+                                this.sheetValidationErrors.push(`No componente "${this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name}": ${error.message[errorKey].actualMessage}`)
+                            }
+                        })
+                    }
+                })
+
+                this.menu = 'ShowErrors'
+                return
+            }
+            else {
+                this.savingSheet = true
+                const updatedSheet = {
+                    ...this.sheet,
+                    sheet_name: this.sheetName,
+                    attributes: {
+                        sections: this.sheet.attributes.sections.map((section) => {
+                            return {
+                                ...section,
+                                attributes: section.attributes.map((attribute) => {
+                                    if (attribute.type == 1) {
+                                        return {
+                                            ...attribute,
+                                            value: parseInt(attribute.value)
+                                        }
+                                    }
+                                    else if (attribute.type == 4) {
+                                        return {
+                                            ...attribute,
+                                            value: JSON.stringify({
+                                                actual: attribute.value.actual,
+                                                max: attribute.value.max,
+                                                min: attribute.value.min,
+                                                step: attribute.value.step
+                                            })
+                                        }
+                                    }
+                                    else {
+                                        return attribute
+                                    }
+                                })
+                            }
+                        })
+                    },
+                    legacy: false
+                }
+
+                const res = await fetch(`${config.API_URI}/sheet/update`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('token')
+                    },
+                    body: JSON.stringify(updatedSheet)
+                })
+
+                if (res.status == 200) {
+                    if (this.sheet.sheet_name != updatedSheet.sheet_name) {
+                        window.location.href = `/ficha/${this.userId}/${this.sheetName}`
+                    }
+
+                    this.sheetSavedSuccess = true
+                }
+                else if (res.status == 400) {
+                    const data = await res.json()
+
+                    this.sheetValidationErrors = data.errors.map(error => error.message)
+                    this.menu = 'ShowErrors'
+                }
+                else if (res.status == 401) {
+                    localStorage.removeItem('token')
+                    window.location.href = '/login'
+                }
+                else {
+                    this.sheetValidationErrors = ['Erro desconhecido ao tentar salvar a ficha, tente novamente mais tarde']
+                    this.menu = 'ShowErrors'
+                }
+
+                this.savingSheet = false
+            }
+        },
+        async deleteSheet() {
+            const res = await fetch(`${config.API_URI}/sheet/delete?id=${this.sheet.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
+                }
+            })
+
+            if (res.status == 200) {
+                window.location.href = `/fichas`
+            }
+            else if (res.status == 401) {
+                localStorage.removeItem('token')
+                window.location.href = '/login'
+            }
+            else {
+                this.sheetValidationErrors = ['Erro desconhecido ao tentar deletar a ficha, tente novamente mais tarde']
+                this.menu = 'ShowErrors'
+            }
         }
+    },
+    mounted() {
+        const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
+
+        const observer = new MutationObserver(() => {
+            if (sideMenu.getAttribute('collapsed') == 'true') {
+                this.$refs.sheets.style.marginLeft = '0em'
+                this.$refs.sheets.style.width = '100%'
+
+                this.$refs['sheet-body'].style.marginLeft = '50px'
+            }
+            else {
+                this.$refs.sheets.style.marginLeft = '22em'
+                this.$refs.sheets.style.width = 'calc(100% - 22em)'
+
+                this.$refs['sheet-body'].style.marginLeft = '0px'
+            }
+        })
+
+        observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+
+        eventEmitter.on('remove-component', (component) => {
+            const sectionIndex = component.getAttribute('position').split('-')[0]
+            const componentIndex = component.getAttribute('position').split('-')[1]
+
+            this.sheet.attributes.sections[sectionIndex].attributes.splice(componentIndex, 1)
+
+            delete this.componentsErrorState[`${sectionIndex}-${componentIndex}`]
+
+            this.reDefinePosition()
+        })
+
+        eventEmitter.on('update-component', (component, name, value) => {
+            if (component.classList[0] == 'sheet-image-wrapper') {
+                if (value) {
+                    const sectionIndex = component.getAttribute('position').split('-')[0]
+                    const componentIndex = component.getAttribute('position').split('-')[1]
+
+                    this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name = name
+                    this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value = value
+                }
+            }
+            else {
+                if (name && value) {
+                    const sectionIndex = component.getAttribute('position').split('-')[0]
+                    const componentIndex = component.getAttribute('position').split('-')[1]
+
+                    this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name = name
+                    this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value = value
+                }
+            }
+        })
+
+        eventEmitter.on('move-component', (component, section, position) => {
+            const sectionIndex = component.getAttribute('position').split('-')[0]
+            const componentIndex = component.getAttribute('position').split('-')[1]
+
+
+            if (sectionIndex == section && componentIndex == position) {
+                return
+            }
+
+            if (sectionIndex != section) {
+                const component = this.sheet.attributes.sections[sectionIndex].attributes[componentIndex]
+
+                this.sheet.attributes.sections[sectionIndex].attributes.splice(componentIndex, 1)
+                this.sheet.attributes.sections[section].attributes.splice(position, 0, component)
+            }
+
+            if (position != componentIndex) {
+                const component = this.sheet.attributes.sections[sectionIndex].attributes[componentIndex]
+
+                this.sheet.attributes.sections[sectionIndex].attributes.splice(componentIndex, 1)
+                this.sheet.attributes.sections[sectionIndex].attributes.splice(position, 0, component)
+            }
+
+            this.reDefinePosition()
+        })
+
+        eventEmitter.on('invalid-component', (component, errors) => {
+            const sectionIndex = component.getAttribute('position').split('-')[0]
+            const componentIndex = component.getAttribute('position').split('-')[1]
+
+            this.componentsErrorState[`${sectionIndex}-${componentIndex}`] = {
+                state: true,
+                errors: errors
+            }
+        })
+
+        eventEmitter.on('valid-component', (component) => {
+            const sectionIndex = component.getAttribute('position').split('-')[0]
+            const componentIndex = component.getAttribute('position').split('-')[1]
+
+            this.componentsErrorState[`${sectionIndex}-${componentIndex}`] = {
+                state: false,
+                errors: {}
+            }
+        })
+
+        eventEmitter.on('edit-sheet-name', (sheetName) => {
+            this.sheetName = sheetName
+            this.menu = 'None'
+        })
+
+        eventEmitter.on('get-sections', () => {
+            eventEmitter.emit('set-sections', this.sections)
+        })
+
+        eventEmitter.on('get-max-position', () => {
+            eventEmitter.emit('set-max-position', this.sheet.attributes.sections[this.actualSectionIndex].attributes.length - 1)
+        })
+
+        eventEmitter.on('close-sheet-menu', () => {
+            this.menu = 'None'
+        })
+
+        eventEmitter.on('create-new-section', (sectionName) => {
+            this.menu = 'None'
+            this.createNewSection(sectionName)
+        })
+
+        eventEmitter.on('create-new-component', (component) => {
+            this.menu = 'None'
+            this.createNewComponent(component)
+        })
+
+        eventEmitter.on('edit-section', (sectionName) => {
+            this.menu = 'None'
+            this.editSection(sectionName)
+        })
+
+        eventEmitter.on('get-actual-section', () => {
+            eventEmitter.emit('set-actual-section', this.sheet.attributes.sections[this.actualSectionIndex])
+        })
+
+        eventEmitter.on('delete-sheet', () => {
+            this.deleteSheet()
+        })
     }
 }
 </script>
 
 <template>
     <div id="Sheet" ref="sheets">
-        <div class="sheet" ref="sheet">
+        <div class="sheet" ref="sheet" :class="menu == 'None' ? '' : 'hidden-div'">
+            <div class="sheet-tool-bar">
+                <h2>Ficha: {{ sheetName }}</h2>
+                <div class="sheet-tool-bar-buttons">
+                    <button class="sheet-tool-bar-item" @click="menu = 'Config'">
+                        <img src="../assets/img/setting.svg">
+                        <h4>Configurações</h4>
+                    </button>
+                    <button class="sheet-tool-bar-item" @click="saveSheet()" v-if="!savingSheet">
+                        <img src="../assets/img/save.svg">
+                        <h4>Salvar</h4>
+                    </button>
+                    <button class="sheet-tool-bar-item" disabled v-else>
+                        <LoadWheel />
+                    </button>
+                    <button class="sheet-tool-bar-item" @click="openAddNewSectionMenu()">
+                        <img src="../assets/img/add-section.svg">
+                        <h4>Adicionar seção</h4>
+                    </button>
+                    <button class="sheet-tool-bar-item" @click="openAddCompMenu()">
+                        <img src="../assets/img/add-component.svg">
+                        <h4>Adicionar componente</h4>
+                    </button>
+                </div>
+            </div>
             <div class="sheet-section" index="0" ref="section">
                 <img src="../assets/img/navigateIcon.svg" class="previous-section" @click="previousSection()">
-                <h1>{{ actualSectionName }}</h1>
-                <p>Clique para Editar</p>
+                <h1 @click="openEditSectionMenu()">{{ actualSectionName }}</h1>
+                <p @click="openEditSectionMenu()">Clique para Editar</p>
                 <img src="../assets/img/navigateIcon.svg" class="next-section" @click="nextSection()">
             </div>
             <div class="sheet-body" ref="sheet-body">
@@ -156,14 +572,31 @@ export default {
                 <SheetImage
                     value="https://media.discordapp.net/attachments/681288910386888766/716822771140657192/unknown.png" />
                 <SheetList name="teste"
-                    value='{"items":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}]}' />
+                    value='{"itens":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}]}' />
                 <SheetBar name="teste" value='{"actual":35,"max":100}' /> -->
+            </div>
+        </div>
+        <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName" />
+        <SheetAddSectionMenu :class="menu == 'AddSection' ? '' : 'hidden-div'" />
+        <SheetAddCompMenu :class="menu == 'AddComp' ? '' : 'hidden-div'" />
+        <SheetEditSectionMenu :class="menu == 'EditSection' ? '' : 'hidden-div'" />
+        <div :class="`sheet-show-validation-errors ${menu == 'ShowErrors' ? '' : 'hidden-div'}`">
+            <div class="sheet-show-validation-errors-list">
+                <div class="sheet-show-validation-errors-box">
+                    <h1>Erros de validação ao tentar salvar a ficha</h1>
+                    <p v-for="error of sheetValidationErrors" :key="error">{{ error }}</p>
+                    <button @click="menu = 'None'">Voltar</button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <style>
+.hidden-div {
+    display: none !important;
+}
+
 #Sheet {
     display: flex;
     flex-direction: column;
@@ -190,6 +623,86 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 3 !important;
+}
+
+.sheet-tool-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 4em;
+    background-color: var(--primary);
+    margin: 0;
+    padding: 2px 60px;
+    position: static;
+}
+
+.sheet-tool-bar h2 {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+}
+
+.sheet-tool-bar-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 60%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    padding-right: 7em;
+}
+
+.sheet-tool-bar-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 10em;
+    height: 3.5em;
+    background-color: var(--background);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s all linear;
+    position: relative;
+}
+
+.sheet-tool-bar-item h4 {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    margin-left: 0.2em;
+    z-index: 1;
+}
+
+.sheet-tool-bar-item img {
+    width: 3em;
+    height: 3em;
+    margin: 0;
+    padding: 0;
+    filter: var(--primary-filter);
+    opacity: 0.7;
+    transition: 0.3s all linear;
+    position: absolute;
+    z-index: 0;
+}
+
+.sheet-tool-bar-item:hover {
+    background-color: var(--background-secondary);
+}
+
+.sheet-tool-bar-item:hover>img {
+    filter: var(--background-filter);
 }
 
 .sheet-section {
@@ -220,6 +733,7 @@ export default {
     color: var(--text);
     margin: 0;
     padding: 0;
+    cursor: pointer;
 }
 
 .sheet-section p {
@@ -233,6 +747,7 @@ export default {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding: 2px 10px;
+    cursor: pointer;
 }
 
 .sheet-section img {
@@ -244,6 +759,11 @@ export default {
     rotate: 180deg;
     filter: var(--background-filter);
     cursor: pointer;
+    transition: 0.3s all linear;
+}
+
+.sheet-section img:hover {
+    filter: var(--background-secondary-filter)
 }
 
 .sheet-section img.next-section {
@@ -277,5 +797,88 @@ export default {
     margin: 0;
     padding: 0;
     padding-bottom: 0.5em;
+}
+
+.sheet-show-validation-errors {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    margin-bottom: 4em;
+    overflow: hidden;
+    width: 100%;
+    transition: all 0.5s linear;
+    z-index: 2 !important;
+}
+
+.sheet-show-validation-errors-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 95vh;
+    padding: 0 1em;
+    overflow: hidden;
+    z-index: 2 !important;
+}
+
+.sheet-show-validation-errors-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 1em;
+    width: 25em;
+    height: 40em;
+    overflow-y: auto;
+}
+
+.sheet-show-validation-errors-box h1 {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1em;
+    padding: 0;
+    text-align: center;
+}
+
+.sheet-show-validation-errors-box p {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text);
+    margin: 10px;
+    padding: 0;
+    text-align: center;
+}
+
+.sheet-show-validation-errors-box button {
+    width: 12em;
+    height: 3em;
+    background-color: var(--background);
+    color: var(--text);
+    font-weight: bold;
+    font-size: 1em;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s all linear;
+}
+
+.sheet-show-validation-errors-box button:hover {
+    background-color: var(--background-secondary);
+}
+
+.loading {
+    height: 25px;
+    width: 25px;
+    border: 7px solid var(--primary);
+    border-color: var(--primary) transparent var(--primary) transparent;
 }
 </style>

@@ -9,9 +9,11 @@
   --background: #23272a;
   --background-filter: brightness(0%) invert(13%) sepia(7%) saturate(774%) hue-rotate(163deg) brightness(93%) contrast(93%);
   --background-secondary: #3c3f42;
+  --background-secondary-filter: brightness(0%) invert(22%) sepia(4%) saturate(692%) hue-rotate(169deg) brightness(98%) contrast(90%);
   --background-tertiary: #F7F0F0;
   --cancel: #272635;
   --cancel-secondary: #D34848;
+  --cancel-tertiary: #ffa7a7;
 }
 
 @font-face {
