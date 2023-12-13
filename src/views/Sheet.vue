@@ -547,7 +547,7 @@ export default {
                         <h4>Salvar</h4>
                     </button>
                     <button class="sheet-tool-bar-item" disabled v-else>
-                        <LoadWheel />
+                        <LoadWheel class="loading loading-saving-sheet" />
                     </button>
                     <button class="sheet-tool-bar-item" @click="openAddNewSectionMenu()">
                         <img src="../assets/img/add-section.svg">
@@ -875,10 +875,10 @@ export default {
     background-color: var(--background-secondary);
 }
 
-.loading {
-    height: 25px;
-    width: 25px;
-    border: 7px solid var(--primary);
-    border-color: var(--primary) transparent var(--primary) transparent;
+.loading-saving-sheet {
+    height: 25px !important;
+    width: 25px !important;
+    border: 7px solid var(--primary) !important;
+    border-color: var(--primary) transparent var(--primary) transparent !important;
 }
 </style>

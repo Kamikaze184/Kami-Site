@@ -132,7 +132,7 @@ export default {
                 <img v-if="sheetsLoaded" class="add-sheet-icon" src="../assets/img/add.svg" @click="menu = 'CreateSheet'">
                 <ItemVue v-for="sheet of sheets" :key="sheet" type="1" :description="sheet.sheet_name"
                     :href="`/ficha/${sheet.user_id}/${sheet.sheet_name}`" />
-                <LoadWheel v-if="!sheetsLoaded" />
+                <LoadWheel class="loading loading-sheets" v-if="!sheetsLoaded" />
             </div>
             <!-- <h1>Seus templates de fichas</h1>
             <div class="list-category templates">
@@ -302,9 +302,9 @@ export default {
     background-color: var(--background-secondary);
 }
 
-.loading {
-    border: 10px solid var(--background) !important;
-    border-color: var(--background) transparent var(--background) transparent !important;
+.loading-sheets {
+    border: 10px solid var(--primary) !important;
+    border-color: var(--primary) transparent var(--primary) transparent !important;
     width: 60px !important;
     height: 60px !important;
 }
