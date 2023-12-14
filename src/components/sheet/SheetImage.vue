@@ -86,6 +86,9 @@ export default {
                 this.validationErrors.value.state = false
                 this.validationErrors.value.actualMessage = ''
             }
+        },
+        removeComponent() {
+            eventEmitter.emit('remove-component', this.$refs['sheet-image'])
         }
     },
     mounted() {
@@ -184,6 +187,14 @@ export default {
                     <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
+            <div class="sheet-image-config-item">
+                <button v-if="!confirmComponentRemove" @click="confirmComponentRemove = true">Remover</button>
+                <p v-if="confirmComponentRemove">Tem certeza que deseja apagar este componente?</p>
+                <div class="sheet-image-confirm-remove-component" v-if="confirmComponentRemove">
+                    <button class="sheet-image-danger-alert" @click="removeComponent()">Confirmar</button>
+                    <button @click="confirmComponentRemove = false">Cancelar</button>
+                </div>
+            </div>
         </div>
         <div class="sheet-image-controls" ref="sheet-image-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
@@ -236,6 +247,49 @@ export default {
 .sheet-image-config::-webkit-scrollbar-thumb {
     background-color: var(--background-secondary);
     border-radius: 10px;
+}
+
+.sheet-image-confirm-remove-component {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 12em;
+    height: 5em;
+    margin-bottom: 5px;
+}
+
+.sheet-image-config-item button {
+    margin: 5px 0;
+    padding: 5px 5px;
+    width: 10em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+    cursor: pointer;
+}
+
+.sheet-image-config-item button:hover {
+    background-color: var(--background-secondary);
+}
+
+.sheet-image-config-item p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text);
+    text-align: center;
+}
+
+.sheet-image-danger-alert{
+    color: var(--cancel-secondary) !important;
 }
 
 .sheet-image-config-item {

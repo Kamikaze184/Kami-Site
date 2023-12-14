@@ -111,6 +111,9 @@ export default {
                 this.validationErrors.value.actualMessage = ''
             }
         },
+        removeComponent() {
+            eventEmitter.emit('remove-component', this.$refs['sheet-number'])
+        }
     },
     mounted() {
         this.name = this.$refs['sheet-number'].getAttribute('name')
@@ -222,6 +225,14 @@ export default {
                     <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
+            <div class="sheet-number-config-item">
+                <button v-if="!confirmComponentRemove" @click="confirmComponentRemove = true">Remover</button>
+                <p v-if="confirmComponentRemove">Tem certeza que deseja apagar este componente?</p>
+                <div class="sheet-number-confirm-remove-component" v-if="confirmComponentRemove">
+                    <button class="sheet-number-danger-alert" @click="removeComponent()">Confirmar</button>
+                    <button @click="confirmComponentRemove = false">Cancelar</button>
+                </div>
+            </div>
         </div>
         <div class="sheet-number-controls" ref="sheet-number-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
@@ -253,6 +264,70 @@ export default {
     width: 15em;
     color: var(--text);
     position: relative;
+}
+
+.sheet-number-config {
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sheet-number-config::-webkit-scrollbar-track {
+    background-color: var(--background);
+    border-radius: 10px;
+}
+
+.sheet-number-config::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--background);
+}
+
+.sheet-number-config::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary);
+    border-radius: 10px;
+}
+
+.sheet-number-confirm-remove-component {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 12em;
+    height: 5em;
+    margin-bottom: 5px;
+}
+
+.sheet-number-config-item button {
+    margin: 5px 0;
+    padding: 5px 5px;
+    width: 10em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+    cursor: pointer;
+}
+
+.sheet-number-config-item button:hover {
+    background-color: var(--background-secondary);
+}
+
+.sheet-number-config-item p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text);
+    text-align: center;
+}
+
+.sheet-number-danger-alert{
+    color: var(--cancel-secondary) !important;
 }
 
 .sheet-number-config-item {

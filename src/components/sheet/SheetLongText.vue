@@ -111,6 +111,9 @@ export default {
                 this.validationErrors.value.actualMessage = ''
             }
         },
+        removeComponent() {
+            eventEmitter.emit('remove-component', this.$refs['sheet-longtext'])
+        }
     },
     mounted() {
         this.name = this.$refs['sheet-longtext'].getAttribute('name')
@@ -221,6 +224,14 @@ export default {
                     <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
+            <div class="sheet-longtext-config-item">
+                <button v-if="!confirmComponentRemove" @click="confirmComponentRemove = true">Remover</button>
+                <p v-if="confirmComponentRemove">Tem certeza que deseja apagar este componente?</p>
+                <div class="sheet-longtext-confirm-remove-component" v-if="confirmComponentRemove">
+                    <button class="sheet-longtext-danger-alert" @click="removeComponent()">Confirmar</button>
+                    <button @click="confirmComponentRemove = false">Cancelar</button>
+                </div>
+            </div>
         </div>
         <div class="sheet-longtext-controls" ref="sheet-longtext-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
@@ -252,6 +263,27 @@ export default {
     width: 15em;
     color: var(--text);
     position: relative;
+}
+
+.sheet-longtext-config {
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sheet-longtext-config::-webkit-scrollbar-track {
+    background-color: var(--background);
+    border-radius: 10px;
+}
+
+.sheet-longtext-config::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--background);
+}
+
+.sheet-longtext-config::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary);
+    border-radius: 10px;
 }
 
 .sheet-longtext-config-item {
@@ -292,6 +324,45 @@ export default {
     text-align: center;
     font-size: 1.2em;
     -webkit-appearance: none;
+}
+
+.sheet-longtext-confirm-remove-component {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 12em;
+    height: 5em;
+    margin-bottom: 5px;
+}
+
+.sheet-longtext-config-item button {
+    margin: 5px 0;
+    padding: 5px 5px;
+    width: 10em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+    cursor: pointer;
+}
+
+.sheet-longtext-config-item button:hover {
+    background-color: var(--background-secondary);
+}
+
+.sheet-longtext-config-item p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text);
+    text-align: center;
 }
 
 .sheet-longtext-config-item input::-webkit-outer-spin-button,
@@ -412,7 +483,7 @@ export default {
     padding: 5px;
 }
 
-.sheet-longtext-body p{
+.sheet-longtext-body p {
     margin: 0;
     padding: 0;
     font-weight: bold;
@@ -480,5 +551,9 @@ export default {
     font-size: 0.8em;
     margin: 0;
     padding: 5px;
+}
+
+.sheet-longtext-danger-alert{
+    color: var(--cancel-secondary) !important;
 }
 </style>
