@@ -16,7 +16,7 @@ import ConfigVue from '../views/Config.vue'
 import NotFoundVue from '../views/NotFound.vue'
 
 const routes = [
-    { path: '/', name: 'Home', component: HomeVue },
+    { path: '/', name: 'Home', component: HomeVue, meta: { title: 'teste' } },
     { path: '/comandos', name: 'Commands', component: CommandsVue },
     { path: '/tutoriais', name: 'Tutorials', component: TutorialsVue },
     { path: '/tutoriais/:tutorial', component: TutorialVue },
@@ -37,5 +37,17 @@ const router = createRouter({
     routes,
     linkActiveClass: 'link-active'
 })
+
+const unsignedRoutes = ['Login', 'Home', 'Tutorials', 'Commands', 'Tutorial', 'NotFound']
+router.beforeEach((to, from, next) => {
+    if (!unsignedRoutes.includes(to.name) && !localStorage.getItem('token')) {
+        next({ name: 'Login' })
+    }
+    else {
+        next()
+    }
+})
+
+
 
 export default router

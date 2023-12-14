@@ -222,6 +222,9 @@ export default {
                 this.validationErrors.step.state = false
                 this.validationErrors.step.actualMessage = ''
             }
+        },
+        removeComponent() {
+            eventEmitter.emit('remove-component', this.$refs['sheet-bar'])
         }
     },
     mounted() {
@@ -388,6 +391,14 @@ export default {
                     <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
+            <div class="sheet-bar-config-item">
+                <button v-if="!confirmComponentRemove" @click="confirmComponentRemove = true">Remover</button>
+                <p v-if="confirmComponentRemove">Tem certeza que deseja apagar este componente?</p>
+                <div class="sheet-bar-confirm-remove-component" v-if="confirmComponentRemove">
+                    <button class="sheet-bar-danger-alert" @click="removeComponent()">Confirmar</button>
+                    <button @click="confirmComponentRemove = false">Cancelar</button>
+                </div>
+            </div>
         </div>
         <div class="sheet-bar-controls" ref="sheet-bar-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
@@ -436,6 +447,49 @@ export default {
 .sheet-bar-config::-webkit-scrollbar-thumb {
     background-color: var(--background-secondary);
     border-radius: 10px;
+}
+
+.sheet-bar-confirm-remove-component {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 12em;
+    height: 5em;
+    margin-bottom: 5px;
+}
+
+.sheet-bar-config-item button {
+    margin: 5px 0;
+    padding: 5px 5px;
+    width: 10em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+    cursor: pointer;
+}
+
+.sheet-bar-config-item button:hover {
+    background-color: var(--background-secondary);
+}
+
+.sheet-bar-config-item p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text);
+    text-align: center;
+}
+
+.sheet-bar-danger-alert{
+    color: var(--cancel-secondary) !important;
 }
 
 .sheet-bar {

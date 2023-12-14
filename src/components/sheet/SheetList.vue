@@ -177,6 +177,9 @@ export default {
             }
 
             return `sheet-list-body-item-error-state-${state}`
+        },
+        removeComponent() {
+            eventEmitter.emit('remove-component', this.$refs['sheet-list'])
         }
     },
     mounted() {
@@ -339,6 +342,14 @@ export default {
                     <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
+            <div class="sheet-list-config-item">
+                <button v-if="!confirmComponentRemove" @click="confirmComponentRemove = true">Remover</button>
+                <p v-if="confirmComponentRemove">Tem certeza que deseja apagar este componente?</p>
+                <div class="sheet-list-confirm-remove-component" v-if="confirmComponentRemove">
+                    <button class="sheet-list-danger-alert" @click="removeComponent()">Confirmar</button>
+                    <button @click="confirmComponentRemove = false">Cancelar</button>
+                </div>
+            </div>
         </div>
         <div class="sheet-list-controls" ref="sheet-list-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
@@ -370,6 +381,70 @@ export default {
     width: 33em;
     color: var(--text);
     position: relative;
+}
+
+.sheet-list-config {
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sheet-list-config::-webkit-scrollbar-track {
+    background-color: var(--background);
+    border-radius: 10px;
+}
+
+.sheet-list-config::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--background);
+}
+
+.sheet-list-config::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary);
+    border-radius: 10px;
+}
+
+.sheet-list-confirm-remove-component {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 12em;
+    height: 5em;
+    margin-bottom: 5px;
+}
+
+.sheet-list-config-item button {
+    margin: 5px 0;
+    padding: 5px 5px;
+    width: 10em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+    cursor: pointer;
+}
+
+.sheet-list-config-item button:hover {
+    background-color: var(--background-secondary);
+}
+
+.sheet-list-config-item p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text);
+    text-align: center;
+}
+
+.sheet-list-danger-alert{
+    color: var(--cancel-secondary) !important;
 }
 
 .sheet-list-config-item {

@@ -33,6 +33,16 @@ export default {
       }
     }
   },
+  mounted() {
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1100) {
+        this.collapsed = false
+      }
+      else {
+        this.collapsed = true
+      }
+    })
+  },
   computed: {
     userState() {
       return this.$store.state.user
@@ -102,7 +112,7 @@ export default {
         this.$refs['signed-nav-bar'].style.zIndex = '4'
 
         this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--background-filter)'
-        
+
         this.$refs['signed-nav-bar'].style.width = '22em'
       }
     },

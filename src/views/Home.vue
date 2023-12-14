@@ -19,7 +19,7 @@ export default {
 
     fetch(`${config.API_URI}/info`, {
       method: 'GET',
-      cache: 'force-cache',
+      cache: 'default',
     })
       .then(async res => {
         data = await res.json()
@@ -29,6 +29,23 @@ export default {
         this.sheetsCount = data.sheetsCount
         this.commandsCount = data.commandsCount
       })
+  },
+  metaInfo: {
+    title: 'Kami - Home',
+    titleTemplate: '%s',
+    htmlAttrs: {
+      lang: 'pt-br'
+    },
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width,initial-scale=1' },
+      { name: 'theme-color', content: '#000000' },
+      { name: 'description', content: 'O Kami é um BOT para o aplicativo de mensagens Discord, criado com a intenção de ajudar jogadores e mestres de RPG\'s, facilitando algumas coisas durante as sessões e ajudando os mesmos a se organizarem, tendo como principais funções a criação de fichas de personagens e a rolagem de dados, entre diversas outras funções. E tem mais coisas vindo por ai!' },
+      { name: 'keywords', content: 'kami, bot, discord, rpg, ficha, ficha de personagem, ficha de rpg, ficha de personagem de rpg, ficha de rpg online, ficha de personagem online, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online, ficha de personagem online, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online, ficha de personagem online, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis' },
+      { name: 'robots', content: 'index, follow' },
+      { name: 'googlebot', content: 'index, follow' },
+      { name: 'google', content: 'nositelinkssearchbox' },
+    ]
   }
 }
 </script>
@@ -179,6 +196,6 @@ export default {
   .home-botinfo-item {
     margin: 10px 0 10px 0;
   }
-  
+
 }
 </style>
