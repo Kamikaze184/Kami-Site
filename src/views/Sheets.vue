@@ -134,7 +134,7 @@ export default {
                     :href="`/ficha/${sheet.user_id}/${sheet.sheet_name}`" />
                 <LoadWheel class="loading loading-sheets" v-if="!sheetsLoaded" />
             </div>
-            <!-- <h1>Seus templates de fichas</h1>
+            <h1>Seus templates de fichas</h1>
             <div class="list-category templates">
                 <img class="add-sheet-icon" src="../assets/img/add.svg">
                 <ItemVue type="4" description="teste" />
@@ -142,7 +142,7 @@ export default {
             <h1>Fichas dos jogadores em suas campanhas modificadas recentemente</h1>
             <div class="list-category templates">
                 <ItemVue type="13" description="teste" />
-            </div> -->
+            </div>
         </div>
         <div :class="`sheets-create-new-sheet ${menu == 'CreateSheet' ? '' : 'hidden-div'}`">
             <div class="sheets-create-new-sheet-list">
@@ -152,9 +152,10 @@ export default {
                     <input type="text" placeholder="Nome da ficha" @keyup="newSheetName = $event.target.value"
                         @change="newSheetName = $event.target.value" />
                     <button @click="createNewSheet()">Criar ficha</button>
+                    <button @click="menu = 'None'">Voltar</button>
                 </div>
                 <div class="sheets-create-new-sheet-box" v-else>
-                    <LoadWheel />
+                    <LoadWheel class="loading-new-sheet" />
                 </div>
             </div>
         </div>
@@ -307,5 +308,64 @@ export default {
     border-color: var(--primary) transparent var(--primary) transparent !important;
     width: 60px !important;
     height: 60px !important;
+}
+
+.loading-new-sheet {
+    border: 10px solid var(--background) !important;
+    border-color: var(--background) transparent var(--background) transparent !important;
+    width: 60px !important;
+    height: 60px !important;
+}
+
+@media (max-width: 800px) {
+    #Sheets {
+        margin-left: 0;
+        margin-top: 2em;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheets-list {
+        align-items: center;
+    }
+
+    .sheets-list h1 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .list-category {
+        justify-content: center !important;
+    }
+
+    .sheets-create-new-sheet {
+        margin-left: 0;
+        margin-top: 4em;
+        width: 100% !important;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheets-create-new-sheet-list {
+        align-items: center;
+        height: 100%;
+    }
+
+    .sheets-create-new-sheet-box {
+        width: 85% !important;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheets-create-new-sheet-box input {
+        width: 85% !important;
+        text-align: center;
+    }
+
+    .sheets-create-new-sheet-box p {
+        width: 100% !important;
+        text-align: center;
+    }
 }
 </style>

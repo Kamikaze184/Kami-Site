@@ -9,6 +9,7 @@ export default {
             section: 0,
             position: 0,
             mobile: false,
+            controls: false,
             config: false,
             validationErrors: {
                 name: {
@@ -43,15 +44,10 @@ export default {
     },
     methods: {
         toggleControlsOn() {
-            if (this.$refs['sheet-list-controls'].style.display == 'flex') {
-                return
-            }
-            else {
-                this.$refs['sheet-list-controls'].style.display = 'flex'
-            }
+            this.controls = true
         },
         toggleControlsOff() {
-            this.$refs['sheet-list-controls'].style.display = 'none'
+            this.controls = false
             this.config = false
         },
         toggleConfig() {
@@ -200,6 +196,13 @@ export default {
             this.maxPosition = positions
         })
         eventEmitter.emit('get-max-position')
+
+        eventEmitter.on('component-being-moved', (component) => {
+            if (component.getAttribute('name') == this.name) {
+                this.config = true
+                this.toggleControlsOn()
+            }
+        })
 
         if (window.innerWidth < 768) {
             this.mobile = true
@@ -351,13 +354,21 @@ export default {
                 </div>
             </div>
         </div>
-        <div class="sheet-list-controls" ref="sheet-list-controls">
+        <div :class="`sheet-list-controls ${controls ? 'sheet-list-show-controls' : 'sheet-list-hide-controls'}`" ref="sheet-list-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
     </div>
 </template>
 <style>
+.sheet-list-show-controls {
+    display: flex !important;
+}
+
+.sheet-list-hide-controls {
+    display: none !important;
+}
+
 .sheet-list-wrapper {
     display: flex;
     flex-direction: row;

@@ -8,6 +8,7 @@ export default {
             section: 0,
             position: 0,
             mobile: false,
+            controls: false,
             config: false,
             validationErrors: {
                 value: {
@@ -24,16 +25,10 @@ export default {
     },
     methods: {
         toggleControlsOn() {
-            if (this.$refs['sheet-image-controls'].style.display == 'flex') {
-                return
-            }
-            else {
-                this.$refs['sheet-image-controls'].style.display = 'flex'
-            }
+            this.controls = true
         },
         toggleControlsOff() {
-            this.$refs['sheet-image-controls'].style.display = 'none'
-            this.expandImage(true)
+            this.controls = false
             this.config = false
         },
         toggleConfig() {
@@ -108,6 +103,13 @@ export default {
             this.maxPosition = positions
         })
         eventEmitter.emit('get-max-position')
+
+        eventEmitter.on('component-being-moved', (component) => {
+            if (component.getAttribute('name') == this.name) {
+                this.config = true
+                this.toggleControlsOn()
+            }
+        })
 
         if (window.innerWidth < 768) {
             this.mobile = true
@@ -196,13 +198,21 @@ export default {
                 </div>
             </div>
         </div>
-        <div class="sheet-image-controls" ref="sheet-image-controls">
+        <div :class="`sheet-image-controls ${controls ? 'sheet-image-show-controls' : 'sheet-image-hide-controls'}`" ref="sheet-image-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
     </div>
 </template>
 <style>
+.sheet-image-show-controls {
+    display: flex !important;
+}
+
+.sheet-image-hide-controls {
+    display: none !important;
+}
+
 .sheet-image-wrapper {
     display: flex;
     flex-direction: row;

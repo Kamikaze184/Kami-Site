@@ -30,7 +30,7 @@ export default {
     <div id="Dashboard" ref="dashboard">
         <div class="dashboard-quick-access">
             <h1 style="text-align: center; width: 80%; align-self: center;">Em desenvolvimento, vá para Fichas</h1>
-            <!-- <h1>Notificações</h1>
+            <h1>Notificações</h1>
             <div class="quick-access-category notifications">
                 <ItemVue type="5" description="Sessão da campanha
                 Nome_da_Campanha
@@ -55,7 +55,7 @@ export default {
             <h1>Templates</h1>
             <div class="quick-access-category templates">
                 <ItemVue type="9" description="teste" />
-            </div> -->
+            </div>
         </div>
     </div>
 </template>
@@ -104,5 +104,29 @@ export default {
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+@media (max-width: 800px) {
+    #Dashboard {
+        margin-left: 0;
+        margin-top: 2em;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dashboard-quick-access {
+        justify-content: center;
+    }
+
+    .dashboard-quick-access h1 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .quick-access-category {
+        justify-content: center;
+    }
+
 }
 </style>

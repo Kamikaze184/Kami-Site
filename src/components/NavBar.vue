@@ -168,7 +168,7 @@ export default {
       </div>
     </div>
   </div>
-  <div id="nav-bar-mobile" ref="menu-mobile" v-if="!signedRoute">
+  <div id="nav-bar-mobile" ref="menu-mobile">
     <div id="menu-toggle">
       <input type="checkbox" ref="menu-toggle" />
       <span></span>
@@ -725,12 +725,22 @@ export default {
   background-color: var(--background-secondary);
 }
 
+
+
 @media screen and (max-width: 800px) {
   #nav-bar {
     display: none;
   }
 
   #nav-bar-mobile {
+    display: flex;
+  }
+
+  #signed-nav-bar {
+    display: none;
+  }
+
+  #signed-nav-bar-mobile {
     display: flex;
   }
 }

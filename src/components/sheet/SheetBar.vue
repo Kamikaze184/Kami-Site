@@ -9,6 +9,7 @@ export default {
             section: 0,
             position: 0,
             mobile: false,
+            controls: false,
             config: false,
             validationErrors: {
                 name: {
@@ -64,15 +65,10 @@ export default {
     },
     methods: {
         toggleControlsOn() {
-            if (this.$refs['sheet-bar-controls'].style.display == 'flex') {
-                return
-            }
-            else {
-                this.$refs['sheet-bar-controls'].style.display = 'flex'
-            }
+            this.controls = true
         },
         toggleControlsOff() {
-            this.$refs['sheet-bar-controls'].style.display = 'none'
+            this.controls = false
             this.config = false
         },
         toggleConfig() {
@@ -253,6 +249,13 @@ export default {
         })
         eventEmitter.emit('get-max-position')
 
+        eventEmitter.on('component-being-moved', (component) => {
+            if (component.getAttribute('name') == this.name) {
+                this.config = true
+                this.toggleControlsOn()
+            }
+        })
+
         if (window.innerWidth < 768) {
             this.mobile = true
         }
@@ -400,13 +403,22 @@ export default {
                 </div>
             </div>
         </div>
-        <div class="sheet-bar-controls" ref="sheet-bar-controls">
+        <div :class="`sheet-bar-controls ${controls ? 'sheet-bar-show-controls' : 'sheet-bar-hide-controls'}`"
+            ref="sheet-bar-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
     </div>
 </template>
 <style>
+.sheet-bar-show-controls {
+    display: flex !important;
+}
+
+.sheet-bar-hide-controls {
+    display: none !important;
+}
+
 .sheet-bar-wrapper {
     display: flex;
     flex-direction: row;
@@ -488,7 +500,7 @@ export default {
     text-align: center;
 }
 
-.sheet-bar-danger-alert{
+.sheet-bar-danger-alert {
     color: var(--cancel-secondary) !important;
 }
 
