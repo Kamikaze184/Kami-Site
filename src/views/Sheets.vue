@@ -3,6 +3,8 @@ import config from '../config/publicVars.js'
 import ItemVue from '../components/Item.vue'
 import LoadWheel from '../components/LoadWheel.vue'
 
+let observer = null
+
 export default {
     data() {
         return {
@@ -86,21 +88,22 @@ export default {
             }
         }
     },
-    mounted() {
+    setup() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
 
-        const observer = new MutationObserver(() => {
+        observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '4em'
-                this.$refs.sheets.style.width = 'calc(100% - 4em)'
+                document.getElementById('Sheets').style.marginLeft = '4em'
+                document.getElementById('Sheets').style.width = 'calc(100% - 4em)'
             }
             else {
-                this.$refs.sheets.style.marginLeft = '23em'
-                this.$refs.sheets.style.width = 'calc(100% - 24em)'
+                document.getElementById('Sheets').style.marginLeft = '23em'
+                document.getElementById('Sheets').style.width = 'calc(100% - 24em)'
             }
         })
 
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+
     },
     beforeMount() {
         fetch(`${config.API_URI}/sheet/all`, {
@@ -120,6 +123,10 @@ export default {
             this.newSheetName = this.newSheetName.trim()
             this.validateSheetName()
         }
+    },
+    beforeRouteLeave(to, from, next) {
+        observer.disconnect()
+        next()
     }
 }
 </script>
@@ -134,7 +141,7 @@ export default {
                     :href="`/ficha/${sheet.user_id}/${sheet.sheet_name}`" />
                 <LoadWheel class="loading loading-sheets" v-if="!sheetsLoaded" />
             </div>
-            <h1>Seus templates de fichas</h1>
+            <!-- <h1>Seus templates de fichas</h1>
             <div class="list-category templates">
                 <img class="add-sheet-icon" src="../assets/img/add.svg">
                 <ItemVue type="4" description="teste" />
@@ -142,7 +149,7 @@ export default {
             <h1>Fichas dos jogadores em suas campanhas modificadas recentemente</h1>
             <div class="list-category templates">
                 <ItemVue type="13" description="teste" />
-            </div>
+            </div> -->
         </div>
         <div :class="`sheets-create-new-sheet ${menu == 'CreateSheet' ? '' : 'hidden-div'}`">
             <div class="sheets-create-new-sheet-list">

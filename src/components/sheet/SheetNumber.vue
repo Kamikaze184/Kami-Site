@@ -36,6 +36,10 @@ export default {
             expanded: false,
             editMode: false,
             visualizeMode: true,
+            firstLoad: {
+                name: true,
+                value: true
+            }
         }
     },
     methods: {
@@ -116,16 +120,10 @@ export default {
         toggleVisualizeMode() {
             this.visualizeMode = true
             this.editMode = false
-
-            this.$refs['sheet-number-mobile-toggle-visualize-mode-button'].classList.add('sheet-number-mobile-expanded-button-active')
-            this.$refs['sheet-number-mobile-toggle-edit-mode-button'].classList.remove('sheet-number-mobile-expanded-button-active')
         },
         toggleEditMode() {
             this.visualizeMode = false
             this.editMode = true
-
-            this.$refs['sheet-number-mobile-toggle-visualize-mode-button'].classList.remove('sheet-number-mobile-expanded-button-active')
-            this.$refs['sheet-number-mobile-toggle-edit-mode-button'].classList.add('sheet-number-mobile-expanded-button-active')
         }
     },
     beforeMount() {
@@ -154,31 +152,49 @@ export default {
         })
         eventEmitter.emit('get-max-position')
 
-        eventEmitter.on('component-being-moved', (component) => {
+        eventEmitter.on('component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
-                this.config = true
-                this.toggleControlsOn()
+                if (this.mobile) {
+                    this.expanded = true
+                    this.toggleEditMode()
+                }
+                else {
+                    this.config = true
+                    this.toggleControlsOn()
+                }
             }
         })
     },
     watch: {
         name() {
+            if(this.firstLoad.name){
+                this.firstLoad.name = false
+                return
+            }
+
             this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('update-component', this.$refs['sheet-number'], this.name, this.value)
         },
         value() {
+            if(this.firstLoad.value){
+                this.firstLoad.value = false
+                return
+            }
+            
             this.value = this.value.trim()
 
-            if (this.value.length > 3 && this.value.length < 6) {
-                this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `${5 - (this.value.length - 3) * (0.1 + (0.1 * this.value.length))}em`
-            }
-            else if (this.value.length >= 6) {
-                this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `2.5em`
-                this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').classList.add('overflow')
-            }
-            else {
-                this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `4.5em`
+            if (this.mobile) {
+                if (this.value.length > 3 && this.value.length < 6) {
+                    this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `${5 - (this.value.length - 3) * (0.1 + (0.1 * this.value.length))}em`
+                }
+                else if (this.value.length >= 6) {
+                    this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `2.5em`
+                    this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').classList.add('overflow')
+                }
+                else {
+                    this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `4.5em`
+                }
             }
 
             this.validateValue()
@@ -280,9 +296,10 @@ export default {
                 <div class="sheet-number-mobile-expanded-controls">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-number-mobile-config-item-row">
-                        <button class="sheet-number-mobile-expanded-button-active" @click="toggleVisualizeMode()"
-                            ref="sheet-number-mobile-toggle-visualize-mode-button">Visualizar</button>
-                        <button @click="toggleEditMode()" ref="sheet-number-mobile-toggle-edit-mode-button">Editar</button>
+                        <button @click="toggleVisualizeMode()" ref="sheet-number-mobile-toggle-visualize-mode-button"
+                            :class="visualizeMode == true ? 'sheet-number-mobile-expanded-button-active' : ''">Visualizar</button>
+                        <button @click="toggleEditMode()" ref="sheet-number-mobile-toggle-edit-mode-button"
+                            :class="editMode == true ? 'sheet-number-mobile-expanded-button-active' : ''">Editar</button>
                     </div>
                     <p v-if="editMode && !visualizeMode">Seção</p>
                     <select :value="section" @change="section = $refs['sheet-number-mobile-section'].value"
@@ -303,7 +320,7 @@ export default {
                         <p>Tem certeza que deseja apagar esse componente?</p>
                         <div class="confirmation-pop-up-buttons">
                             <button
-                                @click="removeActualComponent(); confirmComponentRemove = false; expanded = false;">Apagar</button>
+                                @click="removeComponent(); confirmComponentRemove = false; expanded = false;">Apagar</button>
                             <button @click="confirmComponentRemove = false">Cancelar</button>
                         </div>
                     </div>
@@ -476,6 +493,7 @@ export default {
     text-align: center;
     font-size: 1.2em;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .sheet-number-config-item input::-webkit-outer-spin-button,
@@ -486,6 +504,7 @@ export default {
 
 .sheet-number-config-item input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .sheet-number-config-item-row {
@@ -883,6 +902,7 @@ export default {
     text-align: center;
     font-size: 1em;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .sheet-number-mobile-expanded input::-webkit-outer-spin-button,
@@ -893,6 +913,7 @@ export default {
 
 .sheet-number-mobile-expanded input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .sheet-number-mobile-config-item-row img {

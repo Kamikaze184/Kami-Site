@@ -60,7 +60,14 @@ export default {
                     }
                 }
             },
-            confirmComponentRemove: false
+            confirmComponentRemove: false,
+            expanded: false,
+            editMode: false,
+            visualizeMode: true,
+            firstLoad: {
+                name: true,
+                value: true
+            }
         }
     },
     methods: {
@@ -221,7 +228,22 @@ export default {
         },
         removeComponent() {
             eventEmitter.emit('remove-component', this.$refs['sheet-bar'])
+        },
+        toggleVisualizeMode() {
+            this.visualizeMode = true
+            this.editMode = false
+        },
+        toggleEditMode() {
+            this.visualizeMode = false
+            this.editMode = true
         }
+    },
+    beforeMount() {
+        this.mobile = window.innerWidth <= 800
+
+        window.addEventListener('resize', () => {
+            this.mobile = window.innerWidth <= 800
+        })
     },
     mounted() {
         this.name = this.$refs['sheet-bar'].getAttribute('name')
@@ -249,36 +271,36 @@ export default {
         })
         eventEmitter.emit('get-max-position')
 
-        eventEmitter.on('component-being-moved', (component) => {
+        eventEmitter.on('component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
-                this.config = true
-                this.toggleControlsOn()
-            }
-        })
-
-        if (window.innerWidth < 768) {
-            this.mobile = true
-        }
-        else {
-            this.mobile = false
-        }
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth < 768) {
-                this.mobile = true
-            }
-            else {
-                this.mobile = false
+                if (this.mobile) {
+                    this.expanded = true
+                    this.toggleEditMode()
+                }
+                else {
+                    this.config = true
+                    this.toggleControlsOn()
+                }
             }
         })
     },
     watch: {
         name() {
+            if(this.firstLoad.name){
+                this.firstLoad.name = false
+                return
+            }
+            
             this.validateName()
             eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
         },
         value: {
             handler() {
+                if(this.firstLoad.value){
+                    this.firstLoad.value = false
+                    return
+                }
+                
                 this.validateActual()
                 this.validateMax()
                 this.validateMin()
@@ -331,7 +353,7 @@ export default {
 </script>
 <template>
     <div class="sheet-bar-wrapper" ref="sheet-bar">
-        <div class="sheet-bar" @click="toggleControlsOn()" v-if="!config">
+        <div class="sheet-bar" @click="toggleControlsOn()" v-if="!mobile && !config">
             <div class="sheet-bar-header">
                 <input type="text" :value="name" class="sheet-bar-title" ref="sheet-bar-name"
                     @keyup="name = $refs['sheet-bar-name'].value">
@@ -358,7 +380,7 @@ export default {
                 <p v-if="validationErrors.step.state">{{ validationErrors.step.actualMessage }}</p>
             </div>
         </div>
-        <div class="sheet-bar-config" v-else>
+        <div class="sheet-bar-config" v-if="!mobile && config">
             <div class="sheet-bar-config-item">
                 <p>Valor atual</p>
                 <input type="number" :value="value.actual"
@@ -404,9 +426,108 @@ export default {
             </div>
         </div>
         <div :class="`sheet-bar-controls ${controls ? 'sheet-bar-show-controls' : 'sheet-bar-hide-controls'}`"
-            ref="sheet-bar-controls">
+            ref="sheet-bar-controls" v-if="!mobile">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
+        </div>
+        <!-- Mobile -->
+        <div class="sheet-bar-mobile" v-if="mobile">
+            <div class="sheet-bar-mobile-header" @click="expanded = true">
+                <input type="text" :value="name" class="sheet-bar-mobile-title" ref="sheet-bar-name">
+                <h4>{{ `${value.actual}/${value.max}` }}</h4>
+            </div>
+            <div class="sheet-bar-mobile-body" @click="expanded = true">
+                <div class="sheet-bar-mobile-outer-display" v-if="value.actual > 0">
+                    <div class="sheet-bar-mobile-inner-display"
+                        :style="{ width: ((value.actual / value.max) * 100) + '%' }"></div>
+                </div>
+                <div class="sheet-bar-mobile-outer-display negative-outer-display" v-else>
+                    <div class="sheet-bar-mobile-inner-display negative-inner-display"
+                        :style="{ width: Math.abs(((value.actual / value.min) * 100)) + '%' }"></div>
+                </div>
+            </div>
+            <div class="sheet-bar-mobile-buttons">
+                <img src="../../assets/img/plus.svg" @click="increaseValue()">
+                <img src="../../assets/img/minus.svg" @click="decreaseValue()">
+            </div>
+        </div>
+        <div class="sheet-bar-mobile-expanded" v-if="mobile && expanded">
+            <div class="sheet-bar-mobile-expanded-box">
+                <div class="sheet-bar-mobile-expanded-controls">
+                    <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                    <div class="sheet-bar-mobile-config-item-row">
+                        <button @click="toggleVisualizeMode()"
+                            ref="sheet-bar-mobile-toggle-visualize-mode-button"
+                            :class="visualizeMode == true ? 'sheet-bar-mobile-expanded-button-active' : ''">Visualizar</button>
+                        <button @click="toggleEditMode()" ref="sheet-bar-mobile-toggle-edit-mode-button"
+                            :class="editMode == true ? 'sheet-bar-mobile-expanded-button-active' : ''">Editar</button>
+                    </div>
+                    <p v-if="editMode && !visualizeMode">Seção</p>
+                    <select :value="section" @change="section = $refs['sheet-bar-mobile-section'].value"
+                        ref="sheet-bar-mobile-section" v-if="editMode && !visualizeMode">
+                        <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}
+                        </option>
+                    </select>
+                    <p v-if="editMode && !visualizeMode">Posição</p>
+                    <div class="sheet-bar-mobile-config-item-row" v-if="editMode && !visualizeMode">
+                        <img src="../../assets/img/navigateIcon.svg" @click="previousPosition()">
+                        <input type="number" :value="position" disabled />
+                        <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
+                    </div>
+                    <button class="sheet-bar-mobile-expanded-remove-button" v-if="editMode && !visualizeMode"
+                        @click="confirmComponentRemove = true">Remover
+                        componente</button>
+                    <div class="confirmation-pop-up" v-if="confirmComponentRemove">
+                        <p>Tem certeza que deseja apagar esse componente?</p>
+                        <div class="confirmation-pop-up-buttons">
+                            <button
+                                @click="removeComponent(); confirmComponentRemove = false; expanded = false;">Apagar</button>
+                            <button @click="confirmComponentRemove = false">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="sheet-bar-mobile-expanded-visualize-body" v-if="visualizeMode && !editMode">
+                    <div class="sheet-bar-mobile-header" @click="expanded = true">
+                        <input type="text" :value="name" class="sheet-bar-mobile-title" ref="sheet-bar-name">
+                        <h4>{{ `${value.actual}/${value.max}` }}</h4>
+                    </div>
+                    <div class="sheet-bar-mobile-body" @click="expanded = true">
+                        <div class="sheet-bar-mobile-outer-display" v-if="value.actual > 0">
+                            <div class="sheet-bar-mobile-inner-display"
+                                :style="{ width: ((value.actual / value.max) * 100) + '%' }"></div>
+                        </div>
+                        <div class="sheet-bar-mobile-outer-display negative-outer-display" v-else>
+                            <div class="sheet-bar-mobile-inner-display negative-inner-display"
+                                :style="{ width: Math.abs(((value.actual / value.min) * 100)) + '%' }"></div>
+                        </div>
+                    </div>
+                    <div class="sheet-bar-mobile-buttons">
+                        <img src="../../assets/img/plus.svg" @click="increaseValue()">
+                        <img src="../../assets/img/minus.svg" @click="decreaseValue()">
+                    </div>
+                </div>
+                <div class="sheet-bar-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode">
+                    <div class="sheet-bar-mobile-expanded-name">
+                        <input v-model="name" placeholder="Insira um nome para o atributo" @keyup="validateName()"
+                            @change="validateName()">
+                    </div>
+                    <div class="sheet-bar-mobile-expanded-value">
+                        <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
+                        <label>Valor mínimo</label>
+                        <p v-if="validationErrors.min.state">{{ validationErrors.min.actualMessage }}</p>
+                        <input type="number" v-model="value.min" @keyup="validateAll()" @change="validateAll()">
+                        <label>Valor máximo</label>
+                        <p v-if="validationErrors.max.state">{{ validationErrors.max.actualMessage }}</p>
+                        <input type="number" v-model="value.max" @keyup="validateAll()" @change="validateAll()">
+                        <label>Valor atual</label>
+                        <p v-if="validationErrors.actual.state">{{ validationErrors.actual.actualMessage }}</p>
+                        <input type="number" v-model="value.actual" @keyup="validateAll()" @change="validateAll()">
+                        <label>Passo dos botões + e -</label>
+                        <p v-if="validationErrors.step.state">{{ validationErrors.step.actualMessage }}</p>
+                        <input type="number" v-model="value.step" @keyup="validateAll()" @change="validateAll()">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -764,11 +885,11 @@ export default {
 }
 
 .negative-outer-display {
-    justify-content: flex-end;
+    justify-content: flex-end !important;
 }
 
 .negative-inner-display {
-    background-color: #910000;
+    background-color: #910000 !important;
 }
 
 .sheet-bar-buttons {
@@ -789,5 +910,454 @@ export default {
     margin: 5px;
     box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.5);
     cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    .sheet-bar-wrapper {
+        width: 48%;
+        height: 9em;
+        margin: 4px 2px;
+    }
+}
+
+.sheet-bar-mobile {
+    width: 100%;
+    height: 9em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 2px 2px;
+    transition: 0.3s;
+}
+
+.sheet-bar-mobile-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 2em;
+}
+
+.sheet-bar-mobile-value {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.sheet-bar-mobile-header input {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--text);
+    text-align: left !important;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+    text-align: left;
+    width: 60%;
+}
+
+.sheet-bar-mobile-value input {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    border: none;
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+}
+
+.sheet-bar-mobile-value input::-webkit-outer-spin-button,
+.sheet-bar-mobile-header input::-webkit-outer-spin-button,
+.sheet-bar-mobile-value input::-webkit-inner-spin-button,
+.sheet-bar-mobile-header input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sheet-bar-mobile-value input[type=number],
+.sheet-bar-mobile-header input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.sheet-bar-mobile-header h4 {
+    grid-area: divisor;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--text);
+    text-align: center;
+}
+
+.sheet-bar-mobile-title {
+    grid-area: title;
+}
+
+.sheet-bar-mobile-actual-value {
+    grid-area: actual;
+}
+
+.sheet-bar-mobile-max-value {
+    grid-area: max;
+}
+
+.sheet-bar-mobile-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.sheet-bar-mobile-outer-display {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 95%;
+    height: 1em;
+    border-radius: 5px;
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    margin: 0;
+    padding: 0;
+}
+
+.sheet-bar-mobile-inner-display {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 0%;
+    height: 100%;
+    border-radius: 5px;
+    background-color: var(--background);
+    margin: 0;
+    padding: 0;
+    transition: all 0.5s linear;
+}
+
+.sheet-bar-mobile-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 2em;
+    margin-top: 10px;
+}
+
+.sheet-bar-mobile-buttons img {
+    width: 2.5em;
+    height: 2.5em;
+    background-color: var(--primary);
+    border-radius: 50%;
+    margin: 5px;
+    margin-right: 10px;
+    box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.sheet-bar-mobile-expanded {
+    position: fixed;
+    top: 66px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background);
+    z-index: 2;
+    padding-top: 5px;
+    overflow-y: scroll;
+}
+
+.sheet-bar-mobile-expanded-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.sheet-bar-mobile-expanded-controls {
+    width: 90%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.sheet-bar-mobile-expanded-controls button {
+    width: 100%;
+    height: 3em;
+    background-color: var(--primary);
+    border: 2px solid var(--background);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.sheet-bar-mobile-config-item-row {
+    width: 100%;
+    height: 3em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sheet-bar-mobile-expanded-config-item-row button {
+    width: 48%;
+    height: 3em;
+    background-color: var(--primary);
+    border: 2px solid var(--background);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.sheet-bar-mobile-expanded-button-active {
+    background-color: var(--background) !important;
+    border: 2px solid var(--primary) !important;
+    color: var(--text) !important;
+}
+
+.sheet-bar-mobile-expanded p {
+    width: 100%;
+    text-align: center;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 10px 0;
+    padding: 0;
+}
+
+.sheet-bar-mobile-expanded select {
+    width: 100%;
+    height: 3em;
+    background-color: var(--primary);
+    border: 2px solid var(--background);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.sheet-bar-mobile-expanded input {
+    width: 100%;
+    height: 3em;
+    background-color: var(--primary);
+    border: 2px solid var(--background);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 5px 0;
+    padding: 0;
+    text-align: center;
+}
+
+.sheet-bar-mobile-expanded input[type=number] {
+    width: 3em;
+    height: 3em;
+    text-align: center;
+    font-size: 1em;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.sheet-bar-mobile-expanded input::-webkit-outer-spin-button,
+.sheet-bar-mobile-expanded input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sheet-bar-mobile-expanded input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.sheet-bar-mobile-config-item-row img {
+    width: 3em;
+    height: 3em;
+    margin: 0 50px;
+    cursor: pointer;
+    filter: var(--primary-filter);
+}
+
+.sheet-bar-mobile-config-item-row img:first-of-type {
+    rotate: 180deg;
+}
+
+.sheet-bar-mobile-expanded-remove-button {
+    margin: 15px 0 !important;
+}
+
+.sheet-bar-mobile-expanded-visualize-body {
+    width: 90%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.sheet-bar-mobile-expanded-visualize-body .sheet-bar-mobile-title {
+    background-color: unset !important;
+}
+
+.sheet-bar-mobile-expanded-name {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 3em;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: normal;
+    color: var(--text);
+    margin: 0;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.sheet-bar-mobile-expanded-edit-body .sheet-bar-mobile-expanded-value p {
+    font-size: 0.9em;
+    color: red;
+    font-weight: bold;
+    margin: 0;
+    width: 100%;
+    height: min-content;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    text-align: center !important;
+}
+
+.sheet-bar-mobile-expanded-name h4 {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.sheet-bar-mobile-expanded-value {
+    height: max-content;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    background-color: var(--primary);
+    border-radius: 0 0 10px 10px;
+    margin-bottom: 70px;
+}
+
+.sheet-bar-mobile-expanded-value p {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0px 15px;
+    width: 90%;
+    height: 100%;
+    border: none;
+    color: var(--text);
+    text-align: justify !important;
+    padding: 5px;
+    overflow: hidden;
+    word-break: break-all;
+}
+
+.sheet-bar-mobile-expanded-value input {
+    width: 85% !important;
+    border-radius: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.sheet-bar-mobile-expanded-value label {
+    width: 85% !important;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+    margin-top: 5px;
+    padding: 0;
+    color: var(--text);
+    text-align: center;
+}
+
+.sheet-bar-mobile-expanded-edit-body {
+    width: 90%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.sheet-bar-mobile-expanded-edit-body input {
+    width: 100%;
+    height: 100%;
+    background-color: var(--background);
+    border: none;
+    border-radius: 10px 10px 0 0;
+    outline: none;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0 5px;
+    text-align: center;
+}
+
+.sheet-bar-mobile-expanded-edit-body textarea {
+    width: 95%;
+    height: 50vmax;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 0 0 10px 10px;
+    outline: none;
+    color: var(--text);
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+    padding: 5px;
+    text-align: justify;
+    resize: none;
 }
 </style>

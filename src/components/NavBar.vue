@@ -99,9 +99,11 @@ export default {
           this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
         }
 
-        setTimeout(() => {
-          this.$refs['signed-nav-bar'].style.width = '50px'
-        }, 450)
+        if (window.innerWidth > 800) {
+          setTimeout(() => {
+            this.$refs['signed-nav-bar'].style.width = '50px'
+          }, 450)
+        }
       }
       else {
         this.$refs['toggle-signed-nav-bar'].style.left = '19em'
@@ -407,9 +409,9 @@ export default {
 #menu-toggle {
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: fixed;
   top: 1.5em;
-  left: 0em;
+  left: 20px;
   z-index: 1;
   -webkit-user-select: none;
   user-select: none;
@@ -421,6 +423,8 @@ export default {
   width: 40px;
   height: 32px;
   position: absolute;
+  top: -7px;
+  left: -5px;
   cursor: pointer;
   opacity: 0;
   z-index: 2;
@@ -476,6 +480,9 @@ export default {
   border-radius: 10px;
   list-style-type: none;
   width: 12em;
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #menu-content li {

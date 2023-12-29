@@ -33,9 +33,13 @@ export default {
                 }
             },
             confirmComponentRemove: false,
-            expanded: true,
+            expanded: false,
             editMode: false,
-            visualizeMode: true
+            visualizeMode: true,
+            firstLoad: {
+                name: true,
+                value: true
+            }
         }
     },
     methods: {
@@ -116,16 +120,10 @@ export default {
         toggleVisualizeMode() {
             this.visualizeMode = true
             this.editMode = false
-
-            this.$refs['sheet-longtext-mobile-toggle-visualize-mode-button'].classList.add('sheet-longtext-mobile-expanded-button-active')
-            this.$refs['sheet-longtext-mobile-toggle-edit-mode-button'].classList.remove('sheet-longtext-mobile-expanded-button-active')
         },
         toggleEditMode() {
             this.visualizeMode = false
             this.editMode = true
-
-            this.$refs['sheet-longtext-mobile-toggle-visualize-mode-button'].classList.remove('sheet-longtext-mobile-expanded-button-active')
-            this.$refs['sheet-longtext-mobile-toggle-edit-mode-button'].classList.add('sheet-longtext-mobile-expanded-button-active')
         }
     },
     beforeMount() {
@@ -154,20 +152,36 @@ export default {
         })
         eventEmitter.emit('get-max-position')
 
-        eventEmitter.on('component-being-moved', (component) => {
+        eventEmitter.on('component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
-                this.config = true
-                this.toggleControlsOn()
+                if (this.mobile) {
+                    this.expanded = true
+                    this.toggleEditMode()
+                }
+                else {
+                    this.config = true
+                    this.toggleControlsOn()
+                }
             }
         })
     },
     watch: {
         name() {
+            if(this.firstLoad.name){
+                this.firstLoad.name = false
+                return
+            }
+
             this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('update-component', this.$refs['sheet-longtext'], this.name, this.value)
         },
         value() {
+            if(this.firstLoad.value){
+                this.firstLoad.value = false
+                return
+            }
+
             this.value = this.value.trim()
             this.validateValue()
             eventEmitter.emit('update-component', this.$refs['sheet-longtext'], this.name, this.value)
@@ -246,7 +260,6 @@ export default {
         </div>
         <div :class="`sheet-longtext-controls ${controls ? 'sheet-longtext-show-controls' : 'sheet-longtext-hide-controls'}`"
             v-if="!mobile" ref="sheet-longtext-controls">
-            ref="sheet-longtext-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
@@ -267,10 +280,11 @@ export default {
                 <div class="sheet-longtext-mobile-expanded-controls">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-longtext-mobile-config-item-row">
-                        <button class="sheet-longtext-mobile-expanded-button-active" @click="toggleVisualizeMode()"
-                            ref="sheet-longtext-mobile-toggle-visualize-mode-button">Visualizar</button>
-                        <button @click="toggleEditMode()"
-                            ref="sheet-longtext-mobile-toggle-edit-mode-button">Editar</button>
+                        <button @click="toggleVisualizeMode()"
+                            ref="sheet-longtext-mobile-toggle-visualize-mode-button"
+                            :class="visualizeMode == true ? 'sheet-longtext-mobile-expanded-button-active' : ''">Visualizar</button>
+                        <button @click="toggleEditMode()" ref="sheet-longtext-mobile-toggle-edit-mode-button"
+                            :class="editMode == true ? 'sheet-longtext-mobile-expanded-button-active' : ''">Editar</button>
                     </div>
                     <p v-if="editMode && !visualizeMode">Seção</p>
                     <select :value="section" @change="section = $refs['sheet-longtext-mobile-section'].value"
@@ -291,7 +305,7 @@ export default {
                         <p>Tem certeza que deseja apagar esse componente?</p>
                         <div class="confirmation-pop-up-buttons">
                             <button
-                                @click="removeActualComponent(); confirmComponentRemove = false; expanded = false;">Apagar</button>
+                                @click="removeComponent(); confirmComponentRemove = false; expanded = false;">Apagar</button>
                             <button @click="confirmComponentRemove = false">Cancelar</button>
                         </div>
                     </div>
@@ -413,6 +427,7 @@ export default {
     text-align: center;
     font-size: 1.2em;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .sheet-longtext-confirm-remove-component {
@@ -462,6 +477,7 @@ export default {
 
 .sheet-longtext-config-item input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .sheet-longtext-config-item-row {
@@ -864,6 +880,7 @@ export default {
     text-align: center;
     font-size: 1em;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .sheet-longtext-mobile-expanded input::-webkit-outer-spin-button,
@@ -874,6 +891,7 @@ export default {
 
 .sheet-longtext-mobile-expanded input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .sheet-longtext-mobile-config-item-row img {

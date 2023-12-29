@@ -297,4 +297,16 @@ export default {
     background-color: var(--cancel-secondary) !important;
     color: var(--text) !important;
 }
+
+@media (max-width: 800px) {
+    #sheet-add-comp-menu {
+        margin-bottom: 0;
+    }
+
+    .sheet-add-comp-menu-box {
+        width: 80%;
+        height: 70%;
+        text-align: center;
+    }
+}
 </style>

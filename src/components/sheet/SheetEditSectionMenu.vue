@@ -287,4 +287,16 @@ export default {
     background-color: var(--cancel-secondary) !important;
     color: var(--text) !important;
 }
+
+@media (max-width: 800px) {
+    #sheet-edit-section-menu {
+        margin-bottom: 0;
+    }
+
+    .sheet-edit-section-menu-box {
+        width: 80%;
+        height: 70%;
+        text-align: center;
+    }
+}
 </style>

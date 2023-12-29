@@ -16,6 +16,8 @@ import config from '../config/publicVars.js'
 
 const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
+let observer = null
+
 export default {
     data() {
         return {
@@ -34,19 +36,19 @@ export default {
         }
     },
     components: {
-    ItemVue,
-    LoadWheel,
-    SheetBar,
-    SheetNumber,
-    SheetLongText,
-    SheetList,
-    SheetImage,
-    SheetConfigMenu,
-    SheetAddSectionMenu,
-    SheetAddCompMenu,
-    SheetEditSectionMenu,
-    SheetLongText
-},
+        ItemVue,
+        LoadWheel,
+        SheetBar,
+        SheetNumber,
+        SheetLongText,
+        SheetList,
+        SheetImage,
+        SheetConfigMenu,
+        SheetAddSectionMenu,
+        SheetAddCompMenu,
+        SheetEditSectionMenu,
+        SheetLongText
+    },
     beforeMount() {
         const { userId, sheetName } = this.$route.params
 
@@ -96,23 +98,9 @@ export default {
                 console.log(error)
             })
 
-        if (window.innerWidth <= 800) {
-            this.mobile = true
-        }
-        else {
-            this.mobile = false
-        }
+        this.mobile = window.innerWidth <= 800
 
-        window.addEventListener('resize', () => {
-            if (window.innerWidth <= 800) {
-                this.mobile = true
-            }
-            else {
-                this.mobile = false
-            }
-        })
-
-        console.log(this.mobile)
+        window.addEventListener('resize', this.handleResize)
     },
     watch: {
         sheetLoaded() {
@@ -120,7 +108,7 @@ export default {
                 this.actualSectionIndex = 0
                 this.actualSectionName = this.sheet.attributes.sections[0].name
 
-                this.seactions = this.getSheetSections()
+                this.sections = this.getSheetSections()
                 this.loadAttributes()
             }
         },
@@ -136,7 +124,6 @@ export default {
     },
     methods: {
         loadAttributes() {
-            return 
             render(null, this.$refs['sheet-body'])
             this.$refs['sheet-body'].innerHTML = ''
 
@@ -260,7 +247,6 @@ export default {
             this.reDefinePosition()
         },
         async saveSheet() {
-            return
             const errors = []
             const editedComponents = {}
 
@@ -392,7 +378,6 @@ export default {
             }
         },
         async deleteSheet() {
-            return
             const res = await fetch(`${config.API_URI}/sheet/delete?id=${this.sheet.id}`, {
                 method: 'DELETE',
                 headers: {
@@ -412,28 +397,42 @@ export default {
                 this.sheetValidationErrors = ['Erro desconhecido ao tentar deletar a ficha, tente novamente mais tarde']
                 this.menu = 'ShowErrors'
             }
+        },
+        handleResize() {
+            this.mobile = window.innerWidth <= 800
+            setTimeout(() => { eventEmitter.emit('resize') }, 100)
         }
     },
-    mounted() {
+    setup() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
 
-        const observer = new MutationObserver(() => {
+        observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '0em'
-                this.$refs.sheets.style.width = '100%'
+                document.getElementById('Sheet').style.marginLeft = '0em'
+                document.getElementById('Sheet').style.width = '100%'
 
-                this.$refs['sheet-body'].style.marginLeft = '50px'
+                if (window.innerWidth > 800) {
+                    setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '50px' }, 150)
+                }
             }
             else {
-                this.$refs.sheets.style.marginLeft = '22em'
-                this.$refs.sheets.style.width = 'calc(100% - 22em)'
+                document.getElementById('Sheet').style.marginLeft = '22em'
+                document.getElementById('Sheet').style.width = 'calc(100% - 22em)'
 
-                this.$refs['sheet-body'].style.marginLeft = '0px'
+                if (window.innerWidth > 800) {
+                    setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '0px' }, 150)
+                }
             }
         })
 
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
-        return
+    },
+    mounted() {
+        eventEmitter.on('resize', () => {
+            if (this.mobile && window.innerWidth < 800 || !this.mobile && window.innerWidth >= 800) {
+                this.loadAttributes()
+            }
+        })
 
         eventEmitter.on('remove-component', (component) => {
             const sectionIndex = component.getAttribute('position').split('-')[0]
@@ -556,12 +555,18 @@ export default {
         eventEmitter.on('delete-sheet', () => {
             this.deleteSheet()
         })
+    },
+    beforeRouteLeave(to, from, next) {
+        window.removeEventListener('resize', this.handleResize)
+        observer.disconnect()
+        eventEmitter.off('resize')
+        next()
     }
 }
 </script>
 
 <template>
-    <div id="Sheet" ref="sheets">
+    <div id="Sheet" ref="sheet">
         <div class="sheet" ref="sheet" v-if="!mobile" :class="menu == 'None' ? '' : 'hidden-div'">
             <div class="sheet-tool-bar">
                 <h2>Ficha: {{ sheetName }}</h2>
@@ -604,7 +609,7 @@ export default {
                 <SheetBar name="teste" value='{"actual":35,"max":100}' /> -->
             </div>
         </div>
-        <div class="sheet-mobile" v-else>
+        <div class="sheet-mobile" ref="sheet" :class="menu == 'None' ? '' : 'hidden-div'" v-else>
             <div class="sheet-title-mobile">
                 <h2>Ficha: {{ sheetName }}</h2>
             </div>
@@ -625,21 +630,23 @@ export default {
                     <img src="../assets/img/add-component.svg">
                 </button>
             </div>
-            <div class="sheet-section-mobile">
+            <div class="sheet-section-mobile" index="0" ref="section">
                 <img src="../assets/img/navigateIcon.svg" class="previous-section" @click="previousSection()">
                 <h1 @click="openEditSectionMenu()">{{ actualSectionName }}</h1>
                 <p @click="openEditSectionMenu()">Clique para Editar</p>
                 <img src="../assets/img/navigateIcon.svg" class="next-section" @click="nextSection()">
             </div>
             <div class="sheet-body-mobile" ref="sheet-body">
-                <SheetNumber name="teste" value="20" position="0-0" />
-                <SheetLongText name="teste2" value="teste teste testetestetesteteste teste teste teste testetestetesteteste" position="0-1"/>
-                <SheetNumber name="teste" value="20" position="0-1" />
-                <SheetNumber name="teste" value="20" position="0-1" />
-                <SheetNumber name="teste" value="20" position="0-1" />
+                <!-- <SheetNumber name="teste" value="20" position="0-0" />
+                <SheetLongText name="teste2" value="teste teste testetestetesteteste teste teste teste testetestetesteteste"
+                    position="0-1" />
+                <SheetImage value="https://cdn.discordapp.com/attachments/836291199140102195/1094793290387292180/morte.jpg"
+                    position="0-1" />
+                <SheetBar name="teste" value='{"actual":35,"max":100,"min":-10,"step":10}' position="0-1"  />
                 <SheetList name="teste"
-                    value='{"itens":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}]}'
+                    value='{"items":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}, {"name": "teste", "quantity": 1}]}'
                     position="0-2" />
+                <SheetNumber name="teste" value="20" position="0-1" /> -->
             </div>
         </div>
         <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName" />
@@ -955,7 +962,7 @@ export default {
     align-items: center;
     width: 100%;
     margin: 0;
-    margin-top: 2em;
+    margin-top: calc(3.5em + 2px);
     padding: 0;
     overflow: hidden;
     z-index: 2 !important;
@@ -1103,6 +1110,8 @@ export default {
     align-content: space-between;
     width: 100%;
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 @media (max-width: 800px) {
