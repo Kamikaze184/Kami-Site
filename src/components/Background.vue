@@ -28,8 +28,10 @@ export default {
     },
     mounted() {
         window.addEventListener('resize', () => {
-            if(this.width === window.innerWidth) return
-            this.imagePosition(window.innerWidth)
+            if (this.width != window.innerWidth) {
+                this.imagePosition()
+                this.width = window.innerWidth
+            }
         })
 
         this.imagePosition()
