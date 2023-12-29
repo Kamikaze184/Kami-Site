@@ -93,12 +93,24 @@ export default {
 
         observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                document.getElementById('Sheets').style.marginLeft = '4em'
-                document.getElementById('Sheets').style.width = 'calc(100% - 4em)'
+                if (window.innerWidth > 800) {
+                    document.getElementById('Sheets').style.marginLeft = '4em'
+                    document.getElementById('Sheets').style.width = 'calc(100% - 4em)'
+                }
+                else {
+                    document.getElementById('Sheets').style.marginLeft = '0'
+                    document.getElementById('Sheets').style.width = '100%'
+                }
             }
             else {
-                document.getElementById('Sheets').style.marginLeft = '23em'
-                document.getElementById('Sheets').style.width = 'calc(100% - 24em)'
+                if (window.innerWidth > 800) {
+                    document.getElementById('Sheets').style.marginLeft = '23em'
+                    document.getElementById('Sheets').style.width = 'calc(100% - 24em)'
+                }
+                else {
+                    document.getElementById('Sheets').style.marginLeft = '0'
+                    document.getElementById('Sheets').style.width = '100%'
+                }
             }
         })
 
@@ -326,9 +338,9 @@ export default {
 
 @media (max-width: 800px) {
     #Sheets {
-        margin-left: 0;
+        margin-left: 0 !important;
         margin-top: 2em;
-        width: 100%;
+        width: 100% !important;
         justify-content: center;
         align-items: center;
     }

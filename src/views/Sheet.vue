@@ -22,6 +22,7 @@ export default {
     data() {
         return {
             mobile: false,
+            lastWindowWidth: window.innerWidth,
             sheetName: this.$route.params.sheetName,
             userId: this.$route.params.userId,
             sheet: {},
@@ -399,8 +400,10 @@ export default {
             }
         },
         handleResize() {
-            this.mobile = window.innerWidth <= 800
-            setTimeout(() => { eventEmitter.emit('resize') }, 100)
+            if (this.lastWindowWidth != window.innerWidth) {
+                this.mobile = window.innerWidth <= 800
+                setTimeout(() => { eventEmitter.emit('resize') }, 100)
+            }
         }
     },
     setup() {

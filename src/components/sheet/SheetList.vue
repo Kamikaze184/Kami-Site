@@ -380,16 +380,14 @@ export default {
             <div class="sheet-list-mobile-value">
                 <div v-for="item of value.items" :key="item" class="sheet-list-mobile-body-item">
                     <div class="sheet-list-mobile-body-item-wrapper" v-if="value.items.indexOf(item) < 2">
-                        <input type="number" :value="item.quantity"
-                            :ref="`sheet-list-quantity-${value.items.indexOf(item)}`"
-                            @keyup="value.items[value.items.indexOf(item)].quantity = $refs[`sheet-list-quantity-${value.items.indexOf(item)}`][0].value">
-                        <input type="text" :value="item.name" :ref="`sheet-list-name-${value.items.indexOf(item)}`"
-                            @keyup="value.items[value.items.indexOf(item)].name = $refs[`sheet-list-name-${value.items.indexOf(item)}`][0].value">
+                        <h4 class="sheet-list-mobile-body-item-quantity">{{ item.quantity }}</h4>
+                        <h4 class="sheet-list-mobile-body-item-name">{{ item.name }}</h4>
                     </div>
                 </div>
             </div>
             <div class="sheet-list-mobile-footer">
-                <p v-if="value.items.length > 2">Mais {{ value.items.length - 2 }} ite{{ (value.items.length - 2) > 1 ? 'ns' : 'm' }}. Clique para
+                <p v-if="value.items.length > 2">Mais {{ value.items.length - 2 }} ite{{ (value.items.length - 2) > 1 ? 'ns'
+                    : 'm' }}. Clique para
                     expandir</p>
                 <p v-else>Clique para expandir</p>
             </div>
@@ -399,8 +397,7 @@ export default {
                 <div class="sheet-list-mobile-expanded-controls">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-list-mobile-config-item-row">
-                        <button @click="toggleVisualizeMode()"
-                            ref="sheet-list-mobile-toggle-visualize-mode-button"
+                        <button @click="toggleVisualizeMode()" ref="sheet-list-mobile-toggle-visualize-mode-button"
                             :class="visualizeMode == true ? 'sheet-list-mobile-expanded-button-active' : ''">Visualizar</button>
                         <button @click="toggleEditMode()" ref="sheet-list-mobile-toggle-edit-mode-button"
                             :class="editMode == true ? 'sheet-list-mobile-expanded-button-active' : ''">Editar</button>
@@ -462,9 +459,11 @@ export default {
                                     {{ validationErrors.value.indexes[value.items.indexOf(item)].actualMessage }}</p>
                             </div>
                             <div class="sheet-list-body-item-wrapper">
-                                <input type="number" :value="item.quantity" :ref="`sheet-list-mobile-quantity-${value.items.indexOf(item)}`"
+                                <input type="number" :value="item.quantity"
+                                    :ref="`sheet-list-mobile-quantity-${value.items.indexOf(item)}`"
                                     @keyup="value.items[value.items.indexOf(item)].quantity = $refs[`sheet-list-mobile-quantity-${value.items.indexOf(item)}`][0].value">
-                                <input type="text" :value="item.name" :ref="`sheet-list-mobile-name-${value.items.indexOf(item)}`"
+                                <input type="text" :value="item.name"
+                                    :ref="`sheet-list-mobile-name-${value.items.indexOf(item)}`"
                                     @keyup="value.items[value.items.indexOf(item)].name = $refs[`sheet-list-mobile-name-${value.items.indexOf(item)}`][0].value">
                                 <img src="../../assets/img/trash.svg" @click="removeItem(value.items.indexOf(item))">
                             </div>
@@ -885,9 +884,9 @@ export default {
 
 @media (max-width: 800px) {
     .sheet-list-wrapper {
-        width: 97%;
+        width: 98%;
         height: 9em;
-        margin: 4px 2px;
+        margin: 4px 4px;
     }
 
     .sheet-list {
@@ -982,6 +981,43 @@ export default {
     width: 100%;
 }
 
+.sheet-list-mobile-body-item-quantity {
+    width: 3em;
+    max-height: 2em;
+    font-size: 1em;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    margin: 0;
+    padding: 0.5em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sheet-list-mobile-body-item-name {
+    width: 100%;
+    max-height: 2em;
+    font-size: 1em;
+    border: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin: 0px 3px !important;
+    background-color: var(--background);
+    color: var(--text);
+    font-weight: bold;
+    text-align: center !important;
+    vertical-align: middle;
+    margin: 0;
+    padding:0.5em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .sheet-list-mobile-body-item-wrapper {
     display: flex;
     flex-direction: row;
@@ -989,46 +1025,6 @@ export default {
     align-items: center;
     width: 98%;
     margin: 2px 0px;
-}
-
-.sheet-list-mobile-body-item input {
-    background-color: var(--background);
-    border: none;
-    text-align: center;
-    font-weight: bold;
-    color: var(--text);
-    resize: none;
-    outline: none;
-    overflow-y: auto;
-}
-
-.sheet-list-mobile-body-item input:nth-child(1) {
-    width: 3em;
-    height: 2em !important;
-    font-size: 1em;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.sheet-list-mobile-body-item input:nth-child(1)::-webkit-outer-spin-button,
-.sheet-list-mobile-body-item input:nth-child(1)::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.sheet-list-mobile-body-item input:nth-child(1)[type=number] {
-    -moz-appearance: textfield;
-    appearance: textfield;
-}
-
-.sheet-list-mobile-body-item input:nth-child(2) {
-    width: 100%;
-    height: 2em !important;
-    font-size: 1em;
-    border: none;
-    margin: 0 3px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
 .sheet-list-mobile-footer {
