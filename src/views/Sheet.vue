@@ -16,9 +16,12 @@ import config from '../config/publicVars.js'
 
 const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
+let observer = null
+
 export default {
     data() {
         return {
+            mobile: false,
             sheetName: this.$route.params.sheetName,
             userId: this.$route.params.userId,
             sheet: {},
@@ -43,7 +46,8 @@ export default {
         SheetConfigMenu,
         SheetAddSectionMenu,
         SheetAddCompMenu,
-        SheetEditSectionMenu
+        SheetEditSectionMenu,
+        SheetLongText
     },
     beforeMount() {
         const { userId, sheetName } = this.$route.params
@@ -93,6 +97,10 @@ export default {
             .catch(error => {
                 console.log(error)
             })
+
+        this.mobile = window.innerWidth <= 800
+
+        window.addEventListener('resize', this.handleResize)
     },
     watch: {
         sheetLoaded() {
@@ -100,7 +108,7 @@ export default {
                 this.actualSectionIndex = 0
                 this.actualSectionName = this.sheet.attributes.sections[0].name
 
-                this.seactions = this.getSheetSections()
+                this.sections = this.getSheetSections()
                 this.loadAttributes()
             }
         },
@@ -389,27 +397,42 @@ export default {
                 this.sheetValidationErrors = ['Erro desconhecido ao tentar deletar a ficha, tente novamente mais tarde']
                 this.menu = 'ShowErrors'
             }
+        },
+        handleResize() {
+            this.mobile = window.innerWidth <= 800
+            setTimeout(() => { eventEmitter.emit('resize') }, 100)
         }
     },
-    mounted() {
+    setup() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
 
-        const observer = new MutationObserver(() => {
+        observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '0em'
-                this.$refs.sheets.style.width = '100%'
+                document.getElementById('Sheet').style.marginLeft = '0em'
+                document.getElementById('Sheet').style.width = '100%'
 
-                this.$refs['sheet-body'].style.marginLeft = '50px'
+                if (window.innerWidth > 800) {
+                    setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '50px' }, 150)
+                }
             }
             else {
-                this.$refs.sheets.style.marginLeft = '22em'
-                this.$refs.sheets.style.width = 'calc(100% - 22em)'
+                document.getElementById('Sheet').style.marginLeft = '22em'
+                document.getElementById('Sheet').style.width = 'calc(100% - 22em)'
 
-                this.$refs['sheet-body'].style.marginLeft = '0px'
+                if (window.innerWidth > 800) {
+                    setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '0px' }, 150)
+                }
             }
         })
 
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+    },
+    mounted() {
+        eventEmitter.on('resize', () => {
+            if (this.mobile && window.innerWidth < 800 || !this.mobile && window.innerWidth >= 800) {
+                this.loadAttributes()
+            }
+        })
 
         eventEmitter.on('remove-component', (component) => {
             const sectionIndex = component.getAttribute('position').split('-')[0]
@@ -467,6 +490,10 @@ export default {
             }
 
             this.reDefinePosition()
+
+            if (position != componentIndex) {
+                eventEmitter.emit('component-being-moved', component)
+            }
         })
 
         eventEmitter.on('invalid-component', (component, errors) => {
@@ -528,13 +555,19 @@ export default {
         eventEmitter.on('delete-sheet', () => {
             this.deleteSheet()
         })
+    },
+    beforeRouteLeave(to, from, next) {
+        window.removeEventListener('resize', this.handleResize)
+        observer.disconnect()
+        eventEmitter.off('resize')
+        next()
     }
 }
 </script>
 
 <template>
-    <div id="Sheet" ref="sheets">
-        <div class="sheet" ref="sheet" :class="menu == 'None' ? '' : 'hidden-div'">
+    <div id="Sheet" ref="sheet">
+        <div class="sheet" ref="sheet" v-if="!mobile" :class="menu == 'None' ? '' : 'hidden-div'">
             <div class="sheet-tool-bar">
                 <h2>Ficha: {{ sheetName }}</h2>
                 <div class="sheet-tool-bar-buttons">
@@ -574,6 +607,46 @@ export default {
                 <SheetList name="teste"
                     value='{"itens":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}]}' />
                 <SheetBar name="teste" value='{"actual":35,"max":100}' /> -->
+            </div>
+        </div>
+        <div class="sheet-mobile" ref="sheet" :class="menu == 'None' ? '' : 'hidden-div'" v-else>
+            <div class="sheet-title-mobile">
+                <h2>Ficha: {{ sheetName }}</h2>
+            </div>
+            <div class="sheet-tool-bar-mobile">
+                <button class="sheet-tool-bar-mobile-item" @click="menu = 'Config'">
+                    <img src="../assets/img/setting.svg">
+                </button>
+                <button class="sheet-tool-bar-mobile-item" @click="saveSheet()" v-if="!savingSheet">
+                    <img src="../assets/img/save.svg">
+                </button>
+                <button class="sheet-tool-bar-mobile-item" disabled v-else>
+                    <LoadWheel class="loading loading-saving-sheet-mobile" />
+                </button>
+                <button class="sheet-tool-bar-mobile-item" @click="openAddNewSectionMenu()">
+                    <img src="../assets/img/add-section.svg">
+                </button>
+                <button class="sheet-tool-bar-mobile-item" @click="openAddCompMenu()">
+                    <img src="../assets/img/add-component.svg">
+                </button>
+            </div>
+            <div class="sheet-section-mobile" index="0" ref="section">
+                <img src="../assets/img/navigateIcon.svg" class="previous-section" @click="previousSection()">
+                <h1 @click="openEditSectionMenu()">{{ actualSectionName }}</h1>
+                <p @click="openEditSectionMenu()">Clique para Editar</p>
+                <img src="../assets/img/navigateIcon.svg" class="next-section" @click="nextSection()">
+            </div>
+            <div class="sheet-body-mobile" ref="sheet-body">
+                <!-- <SheetNumber name="teste" value="20" position="0-0" />
+                <SheetLongText name="teste2" value="teste teste testetestetesteteste teste teste teste testetestetesteteste"
+                    position="0-1" />
+                <SheetImage value="https://cdn.discordapp.com/attachments/836291199140102195/1094793290387292180/morte.jpg"
+                    position="0-1" />
+                <SheetBar name="teste" value='{"actual":35,"max":100,"min":-10,"step":10}' position="0-1"  />
+                <SheetList name="teste"
+                    value='{"items":[{"name": "Notebook", "quantity":1}, {"name": "Smartphone", "quantity": 1}, {"name": "teste", "quantity": 1}]}'
+                    position="0-2" />
+                <SheetNumber name="teste" value="20" position="0-1" /> -->
             </div>
         </div>
         <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName" />
@@ -880,5 +953,212 @@ export default {
     width: 25px !important;
     border: 7px solid var(--primary) !important;
     border-color: var(--primary) transparent var(--primary) transparent !important;
+}
+
+.sheet-mobile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    margin-top: calc(3.5em + 2px);
+    padding: 0;
+    overflow: hidden;
+    z-index: 2 !important;
+}
+
+.sheet-title-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    height: 3.5em;
+    padding: 8px 0 0 0;
+    background-color: var(--background);
+    border-bottom: 2px solid var(--primary);
+    margin: 0;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0;
+    z-index: 2;
+}
+
+.sheet-title-mobile h2 {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    margin-right: 1em;
+}
+
+.sheet-tool-bar-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    height: 3em;
+    background-color: var(--background);
+    border-top: 2px solid var(--primary);
+    margin: 0;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0;
+    z-index: 2;
+}
+
+.sheet-tool-bar-mobile-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 3em;
+    height: 3em;
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 25%;
+    margin: 0;
+    padding: 2px;
+    box-shadow: 0px 0px 3px 0px var(--primary);
+}
+
+.sheet-tool-bar-mobile-item img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    filter: var(--background-filter);
+    transition: 0.3s all linear;
+}
+
+.loading-saving-sheet-mobile {
+    height: 20px !important;
+    width: 20px !important;
+    border: 5px solid var(--background) !important;
+    border-color: var(--background) transparent var(--background) transparent !important;
+}
+
+.sheet-section-mobile {
+    display: grid;
+    grid-template-columns: 15% 70% 15%;
+    grid-template-rows: 70% 30%;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    grid-template-areas:
+        "previous title next"
+        "previous expand next"
+    ;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    height: 3em;
+    background-color: var(--primary);
+    margin: 0;
+    margin-bottom: 1em;
+}
+
+.sheet-section-mobile h1 {
+    grid-area: title;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.sheet-section-mobile p {
+    grid-area: expand;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    background-color: var(--background);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 2px 10px;
+    cursor: pointer;
+}
+
+.sheet-section-mobile img {
+    grid-area: previous;
+    width: 100%;
+    height: 2.5em;
+    margin: 0;
+    padding: 0;
+    rotate: 180deg;
+    filter: var(--background-filter);
+    cursor: pointer;
+    transition: 0.3s all linear;
+}
+
+.sheet-section-mobile img.next-section {
+    grid-area: next;
+    rotate: 0deg;
+}
+
+.sheet-body-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    align-content: space-between;
+    width: 100%;
+    margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media (max-width: 800px) {
+    #Sheet {
+        margin-left: 0;
+        margin-top: 7px;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheet-tool-bar {
+        justify-content: center;
+    }
+
+    .sheet-tool-bar-buttons {
+        justify-content: center;
+    }
+
+    .sheet-section {
+        grid-template-columns: 10% 80% 10%;
+    }
+
+    .sheet-section h1 {
+        font-size: 1.2em;
+    }
+
+    .sheet-section p {
+        font-size: 0.7em;
+    }
+
+    .sheet-section img {
+        width: 100%;
+        height: 2em;
+    }
+
+    .sheet-body {
+        margin-left: 0;
+    }
+
+    .sheet-body-components {
+        width: 100%;
+    }
+
+    .sheet-show-validation-errors-box {
+        width: 90%;
+        height: 90%;
+    }
 }
 </style>

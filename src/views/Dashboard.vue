@@ -105,4 +105,28 @@ export default {
     margin: 0;
     padding: 0;
 }
+
+@media (max-width: 800px) {
+    #Dashboard {
+        margin-left: 0;
+        margin-top: 2em;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dashboard-quick-access {
+        justify-content: center;
+    }
+
+    .dashboard-quick-access h1 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .quick-access-category {
+        justify-content: center;
+    }
+
+}
 </style>

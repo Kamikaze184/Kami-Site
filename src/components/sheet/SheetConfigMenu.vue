@@ -290,4 +290,16 @@ export default {
     border: 7px solid var(--primary);
     border-color: var(--primary) transparent var(--primary) transparent;
 }
+
+@media (max-width: 800px) {
+    #sheet-config-menu {
+        margin-bottom: 0;
+    }
+
+    .sheet-config-menu-box {
+        width: 80%;
+        height: 70%;
+        text-align: center;
+    }
+}
 </style>

@@ -3,6 +3,8 @@ import config from '../config/publicVars.js'
 import ItemVue from '../components/Item.vue'
 import LoadWheel from '../components/LoadWheel.vue'
 
+let observer = null
+
 export default {
     data() {
         return {
@@ -86,21 +88,22 @@ export default {
             }
         }
     },
-    mounted() {
+    setup() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
 
-        const observer = new MutationObserver(() => {
+        observer = new MutationObserver(() => {
             if (sideMenu.getAttribute('collapsed') == 'true') {
-                this.$refs.sheets.style.marginLeft = '4em'
-                this.$refs.sheets.style.width = 'calc(100% - 4em)'
+                document.getElementById('Sheets').style.marginLeft = '4em'
+                document.getElementById('Sheets').style.width = 'calc(100% - 4em)'
             }
             else {
-                this.$refs.sheets.style.marginLeft = '23em'
-                this.$refs.sheets.style.width = 'calc(100% - 24em)'
+                document.getElementById('Sheets').style.marginLeft = '23em'
+                document.getElementById('Sheets').style.width = 'calc(100% - 24em)'
             }
         })
 
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+
     },
     beforeMount() {
         fetch(`${config.API_URI}/sheet/all`, {
@@ -120,6 +123,10 @@ export default {
             this.newSheetName = this.newSheetName.trim()
             this.validateSheetName()
         }
+    },
+    beforeRouteLeave(to, from, next) {
+        observer.disconnect()
+        next()
     }
 }
 </script>
@@ -152,9 +159,10 @@ export default {
                     <input type="text" placeholder="Nome da ficha" @keyup="newSheetName = $event.target.value"
                         @change="newSheetName = $event.target.value" />
                     <button @click="createNewSheet()">Criar ficha</button>
+                    <button @click="menu = 'None'">Voltar</button>
                 </div>
                 <div class="sheets-create-new-sheet-box" v-else>
-                    <LoadWheel />
+                    <LoadWheel class="loading-new-sheet" />
                 </div>
             </div>
         </div>
@@ -307,5 +315,64 @@ export default {
     border-color: var(--primary) transparent var(--primary) transparent !important;
     width: 60px !important;
     height: 60px !important;
+}
+
+.loading-new-sheet {
+    border: 10px solid var(--background) !important;
+    border-color: var(--background) transparent var(--background) transparent !important;
+    width: 60px !important;
+    height: 60px !important;
+}
+
+@media (max-width: 800px) {
+    #Sheets {
+        margin-left: 0;
+        margin-top: 2em;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheets-list {
+        align-items: center;
+    }
+
+    .sheets-list h1 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .list-category {
+        justify-content: center !important;
+    }
+
+    .sheets-create-new-sheet {
+        margin-left: 0;
+        margin-top: 4em;
+        width: 100% !important;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheets-create-new-sheet-list {
+        align-items: center;
+        height: 100%;
+    }
+
+    .sheets-create-new-sheet-box {
+        width: 85% !important;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sheets-create-new-sheet-box input {
+        width: 85% !important;
+        text-align: center;
+    }
+
+    .sheets-create-new-sheet-box p {
+        width: 100% !important;
+        text-align: center;
+    }
 }
 </style>

@@ -1,15 +1,22 @@
 <script>
 export default {
     data() {
-        return {}
+        return {
+            mobile: false
+        }
     },
-    methods: {
-    }
+    beforeMount() {
+        this.mobile = window.innerWidth <= 800
+
+        window.addEventListener('resize', () => {
+            this.mobile = window.innerWidth <= 800
+        })
+    },
 }
 </script>
 
 <template>
-    <div id="footer">
+    <div id="footer" v-if="!mobile">
         <h4>{{ new Date().getFullYear() }} © Kami</h4>
     </div>
 </template>

@@ -43,4 +43,10 @@ export default {
 .not-found button:hover {
     background-color: var(--secondary);
 }
+
+@media (max-width: 800px) {
+    .not-found {
+        text-align: center;
+    }
+}
 </style>

@@ -10,6 +10,22 @@ class EventEmitter {
     this.events[eventName].push(callback)
   }
 
+  off(eventName, callback) {
+    if (this.events[eventName]) {
+      this.events[eventName] = this.events[eventName].filter((fn) => {
+        return fn !== callback
+      })
+    }
+  }
+
+  once(eventName, callback) {
+    const fn = () => {
+      callback()
+      this.off(eventName, fn)
+    }
+    this.on(eventName, fn)
+  }
+
   emit(eventName, ...args) {
     const event = this.events[eventName]
     if (event) {
