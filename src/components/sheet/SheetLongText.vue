@@ -35,11 +35,7 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true,
-            firstLoad: {
-                name: true,
-                value: true
-            }
+            visualizeMode: true
         }
     },
     methods: {

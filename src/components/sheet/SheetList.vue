@@ -389,8 +389,9 @@ export default {
                 </div>
             </div>
             <div class="sheet-list-mobile-footer">
-                <p>Mais {{ value.items.length - 2 }} ite{{ (value.items.length - 2) > 1 ? 'ns' : 'm' }}. Clique para
+                <p v-if="value.items.length > 2">Mais {{ value.items.length - 2 }} ite{{ (value.items.length - 2) > 1 ? 'ns' : 'm' }}. Clique para
                     expandir</p>
+                <p v-else>Clique para expandir</p>
             </div>
         </div>
         <div class="sheet-list-mobile-expanded" v-if="mobile && expanded">
@@ -450,7 +451,6 @@ export default {
                     </div>
                     <div class="sheet-list-mobile-expanded-value">
                         <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
-                        <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
                         <div v-for="item of value.items" :key="item"
                             :class="'sheet-list-body-item ' + getListErrorState(item)">
                             <div class="sheet-list-body-item-error-wrapper">
@@ -462,11 +462,10 @@ export default {
                                     {{ validationErrors.value.indexes[value.items.indexOf(item)].actualMessage }}</p>
                             </div>
                             <div class="sheet-list-body-item-wrapper">
-                                <input type="number" :value="item.quantity"
-                                    :ref="`sheet-list-quantity-${value.items.indexOf(item)}`"
-                                    @keyup="value.items[value.items.indexOf(item)].quantity = $refs[`sheet-list-quantity-${value.items.indexOf(item)}`][0].value">
-                                <input type="text" :value="item.name" :ref="`sheet-list-name-${value.items.indexOf(item)}`"
-                                    @keyup="value.items[value.items.indexOf(item)].name = $refs[`sheet-list-name-${value.items.indexOf(item)}`][0].value">
+                                <input type="number" :value="item.quantity" :ref="`sheet-list-mobile-quantity-${value.items.indexOf(item)}`"
+                                    @keyup="value.items[value.items.indexOf(item)].quantity = $refs[`sheet-list-mobile-quantity-${value.items.indexOf(item)}`][0].value">
+                                <input type="text" :value="item.name" :ref="`sheet-list-mobile-name-${value.items.indexOf(item)}`"
+                                    @keyup="value.items[value.items.indexOf(item)].name = $refs[`sheet-list-mobile-name-${value.items.indexOf(item)}`][0].value">
                                 <img src="../../assets/img/trash.svg" @click="removeItem(value.items.indexOf(item))">
                             </div>
                         </div>

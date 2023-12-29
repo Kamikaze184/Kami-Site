@@ -322,15 +322,15 @@ export default {
                                             value: parseInt(attribute.value)
                                         }
                                     }
-                                    else if (attribute.type == 4) {
-                                        return {
-                                            ...attribute,
-                                            value: JSON.stringify({
-                                                actual: attribute.value.actual,
-                                                max: attribute.value.max,
-                                                min: attribute.value.min,
-                                                step: attribute.value.step
-                                            })
+                                    else if (attribute.type == 3 || attribute.type == 4) {
+                                        if (typeof attribute.value == 'string') {
+                                            return {
+                                                ...attribute,
+                                                value: JSON.parse(attribute.value)
+                                            }
+                                        }
+                                        else {
+                                            return attribute
                                         }
                                     }
                                     else {
