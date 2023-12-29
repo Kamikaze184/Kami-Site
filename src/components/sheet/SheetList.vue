@@ -234,22 +234,12 @@ export default {
     },
     watch: {
         name() {
-            if(this.firstLoad.name) {
-                this.firstLoad.name = false
-                return
-            }
-
             this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('update-component', this.$refs['sheet-list'], this.name, this.value)
         },
         value: {
             handler() {
-                if(this.firstLoad.value) {
-                    this.firstLoad.value = false
-                    return
-                }
-                
                 this.validateQuantity()
                 this.validateValue()
                 eventEmitter.emit('update-component', this.$refs['sheet-list'], this.name, this.value)
