@@ -63,11 +63,7 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true,
-            firstLoad: {
-                name: true,
-                value: true
-            }
+            visualizeMode: true
         }
     },
     methods: {
@@ -290,7 +286,7 @@ export default {
             eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
         },
         value: {
-            handler() {                
+            handler() {             
                 this.validateActual()
                 this.validateMax()
                 this.validateMin()

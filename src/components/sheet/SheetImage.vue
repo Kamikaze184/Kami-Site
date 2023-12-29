@@ -23,10 +23,7 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true,
-            firstLoad: {
-                value: true
-            }
+            visualizeMode: true
         }
     },
     methods: {
