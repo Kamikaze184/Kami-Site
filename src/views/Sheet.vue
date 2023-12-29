@@ -560,7 +560,7 @@ export default {
         window.removeEventListener('resize', this.handleResize)
         observer.disconnect()
         eventEmitter.off('resize')
-        next()
+        window.location.href = to.path
     }
 }
 </script>

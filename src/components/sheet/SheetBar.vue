@@ -286,21 +286,11 @@ export default {
     },
     watch: {
         name() {
-            if(this.firstLoad.name){
-                this.firstLoad.name = false
-                return
-            }
-            
             this.validateName()
             eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
         },
         value: {
-            handler() {
-                if(this.firstLoad.value){
-                    this.firstLoad.value = false
-                    return
-                }
-                
+            handler() {                
                 this.validateActual()
                 this.validateMax()
                 this.validateMin()

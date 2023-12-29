@@ -167,21 +167,11 @@ export default {
     },
     watch: {
         name() {
-            if(this.firstLoad.name){
-                this.firstLoad.name = false
-                return
-            }
-
             this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('update-component', this.$refs['sheet-number'], this.name, this.value)
         },
         value() {
-            if(this.firstLoad.value){
-                this.firstLoad.value = false
-                return
-            }
-            
             this.value = this.value.trim()
 
             if (this.mobile) {
