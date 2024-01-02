@@ -38,12 +38,13 @@ const router = createRouter({
     linkActiveClass: 'link-active'
 })
 
-const unsignedRoutes = ['Login', 'Home', 'Tutorials', 'Commands', 'Tutorial', 'NotFound']
+const unsignedRoutes = ['Login', 'Home', 'Tutorials', 'Commands', 'Tutorial', 'NotFound', 'Sheet']
 router.beforeEach((to, from, next) => {
     if (!unsignedRoutes.includes(to.name) && !localStorage.getItem('token')) {
         next({ name: 'Login' })
     }
     else {
+        // console.log(document.head.querySelectorAll('meta'))
         next()
     }
 })

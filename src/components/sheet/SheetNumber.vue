@@ -35,7 +35,8 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true
+            visualizeMode: true,
+            readonly: false
         }
     },
     methods: {
@@ -138,6 +139,8 @@ export default {
         this.section = position.split('-')[0]
         this.position = position.split('-')[1]
 
+        this.readonly = this.$refs['sheet-number'].getAttribute('readonly') == ''
+
         eventEmitter.on('set-sections', (sections) => {
             this.sections = sections
         })
@@ -222,19 +225,19 @@ export default {
         <div class="sheet-number" @click="toggleControlsOn()" v-if="!mobile && !config">
             <div class="sheet-number-header">
                 <textarea :value="name" placeholder="Insira um nome" ref="sheet-number-name"
-                    @keyup="name = $refs['sheet-number-name'].value" />
+                    @keyup="name = $refs['sheet-number-name'].value" :disabled="readonly" />
             </div>
             <div class="sheet-number-body">
                 <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
                 <p v-if="validationErrors.value.state">{{ validationErrors.value.actualMessage }}</p>
                 <textarea :value="value" placeholder="Insira um valor" ref="sheet-number-value"
-                    @keyup="value = $refs['sheet-number-value'].value" />
+                    @keyup="value = $refs['sheet-number-value'].value" :disabled="readonly" />
             </div>
             <div class="sheet-number-footer" v-if="mobile">
                 <p>Clique para expandir</p>
             </div>
         </div>
-        <div class="sheet-number-config" v-if="!mobile && config">
+        <div class="sheet-number-config" v-if="!mobile && config && !readonly">
             <div class="sheet-number-config-item">
                 <p>Seção</p>
                 <select :value="section" @change="section = $refs['sheet-number-config-section'].value"
@@ -261,7 +264,7 @@ export default {
             </div>
         </div>
         <div :class="`sheet-number-controls ${controls ? 'sheet-number-show-controls' : 'sheet-number-hide-controls'}`"
-            ref="sheet-number-controls" v-if="!mobile">
+            ref="sheet-number-controls" v-if="!mobile && !readonly">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
@@ -279,7 +282,8 @@ export default {
         </div>
         <div class="sheet-number-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-number-mobile-expanded-box">
-                <div class="sheet-number-mobile-expanded-controls">
+                <button class="sheet-number-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <div class="sheet-number-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-number-mobile-config-item-row">
                         <button @click="toggleVisualizeMode()" ref="sheet-number-mobile-toggle-visualize-mode-button"
@@ -319,7 +323,7 @@ export default {
                         <p>{{ value }}</p>
                     </div>
                 </div>
-                <div class="sheet-number-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode">
+                <div class="sheet-number-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
                     <div class="sheet-number-mobile-expanded-name">
                         <input v-model="name" placeholder="Insira um nome para o atributo" @keyup="validateName()"
                             @change="validateName()">
@@ -804,7 +808,7 @@ export default {
     align-items: center;
 }
 
-.sheet-number-mobile-expanded-controls button {
+.sheet-number-mobile-expanded-controls button, .sheet-number-mobile-back-button {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -815,6 +819,10 @@ export default {
     font-weight: bold;
     margin: 5px 0;
     padding: 0;
+}
+
+.sheet-number-mobile-back-button {
+    width: 90% !important;
 }
 
 .sheet-number-mobile-config-item-row {

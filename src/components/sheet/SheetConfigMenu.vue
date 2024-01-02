@@ -6,6 +6,7 @@ export default {
     data() {
         return {
             sheetName: '',
+            sheetPublic: false,
             sheetDeleteConfirm: false,
             validationErrors: {
                 sheetName: {
@@ -23,6 +24,7 @@ export default {
     },
     mounted() {
         this.sheetName = this.$refs['sheet-config-menu'].getAttribute('sheet-name')
+        this.sheetPublic = this.$refs['sheet-config-menu'].getAttribute('sheet-visibility') === 'true'
     },
     methods: {
         closeMenu() {
@@ -62,6 +64,14 @@ export default {
                 eventEmitter.emit('edit-sheet-name', this.sheetName)
             }
         },
+        toggleSheetVisibility() {
+            if (typeof this.sheetPublic !== 'boolean') {
+                return
+            }
+            else {
+                eventEmitter.emit('toggle-sheet-visibility', this.sheetPublic)
+            }
+        },
         deleteSheet() {
             if (this.sheetDeleteConfirm) {
                 this.deletingSheet = true
@@ -72,6 +82,9 @@ export default {
     watch: {
         sheetName() {
             this.validateSheetName()
+        },
+        sheetPublic() {
+            this.toggleSheetVisibility()
         }
     },
     components: {
@@ -98,9 +111,26 @@ export default {
                             @keyup="sheetName = $event.target.value" @change="sheetName = $event.target.value" />
                     </div>
                     <div class="sheet-config-menu-item-value">
-                        <button @click="saveSheetName()">Salvar Alterações</button>
+                        <button @click="saveSheetName()">Confirmar nome</button>
                     </div>
                 </div>
+                <div class="sheet-config-menu-item">
+                    <div class="sheet-config-menu-item-title">
+                        <h2>Visibilidade da ficha</h2>
+                    </div>
+                    <div class="sheet-config-menu-item-value">
+                        <div class="sheet-config-menu-item-row">
+                            <h4>Privada</h4>
+                            <div class="sheet-config-menu-toggle-switch">
+                                <input class="toggle-button" type="checkbox" v-model="sheetPublic">
+                                <span class="thumb" :class="sheetPublic ? 'checked' : ''"
+                                    @click="sheetPublic ? sheetPublic = false : sheetPublic = true"></span>
+                            </div>
+                            <h4>Pública</h4>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="sheet-config-menu-item">
                     <button class="danger-alert-button" v-if="!sheetDeleteConfirm" @click="sheetDeleteConfirm = true">Apagar
                         ficha</button>
@@ -123,6 +153,45 @@ export default {
     </div>
 </template>
 <style>
+.sheet-config-menu-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 4em;
+    height: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+.sheet-config-menu-toggle-switch .toggle-button {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 4em;
+    height: 31px;
+    background: var(--background);
+    outline: none;
+    border-radius: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.sheet-config-menu-toggle-switch .thumb {
+    width: 25px;
+    height: 25px;
+    z-index: 1;
+    border-radius: 100%;
+    background-color: var(--primary);
+    position: absolute;
+    margin: 0;
+    top: 3px;
+    left: 2px;
+    transition: all 0.5s linear;
+}
+
+.sheet-config-menu-toggle-switch .checked {
+    left: unset !important;
+    right: 2px !important;
+}
+
 #sheet-config-menu {
     display: flex;
     flex-direction: column;
@@ -168,6 +237,22 @@ export default {
     align-items: center;
     width: 100%;
     margin: 1em 0;
+}
+
+.sheet-config-menu-item-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.sheet-config-menu-item-row h4 {
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--text);
+    margin: 0 15px;
+    margin-top: 5px;
 }
 
 .sheet-config-menu-item-title {

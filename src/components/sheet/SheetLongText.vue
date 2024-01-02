@@ -35,7 +35,8 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true
+            visualizeMode: true,
+            readonly: false
         }
     },
     methods: {
@@ -138,6 +139,8 @@ export default {
         this.section = position.split('-')[0]
         this.position = position.split('-')[1]
 
+        this.readonly = this.$refs['sheet-longtext'].getAttribute('readonly') == ''
+
         eventEmitter.on('set-sections', (sections) => {
             this.sections = sections
         })
@@ -207,19 +210,19 @@ export default {
         <div class="sheet-longtext" @click="toggleControlsOn()" v-if="!mobile && !config">
             <div class="sheet-longtext-header">
                 <textarea :value="name" placeholder="Insira um nome" ref="sheet-longtext-name"
-                    @keyup="name = $refs['sheet-longtext-name'].value" />
+                    @keyup="name = $refs['sheet-longtext-name'].value" :disabled="readonly" />
             </div>
             <div class="sheet-longtext-body">
                 <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
                 <p v-if="validationErrors.value.state">{{ validationErrors.value.actualMessage }}</p>
                 <textarea :value="value" placeholder="Insira um valor" ref="sheet-longtext-value"
-                    @keyup="value = $refs['sheet-longtext-value'].value" />
+                    @keyup="value = $refs['sheet-longtext-value'].value" :disabled="readonly" />
             </div>
             <div class="sheet-longtext-footer" v-if="mobile">
                 <p>Clique para expandir</p>
             </div>
         </div>
-        <div class="sheet-longtext-config" v-if="!mobile && config">
+        <div class="sheet-longtext-config" v-if="!mobile && config && !readonly">
             <div class="sheet-longtext-config-item">
                 <p>Seção</p>
                 <select :value="section" @change="section = $refs['sheet-longtext-config-section'].value"
@@ -245,7 +248,7 @@ export default {
             </div>
         </div>
         <div :class="`sheet-longtext-controls ${controls ? 'sheet-longtext-show-controls' : 'sheet-longtext-hide-controls'}`"
-            v-if="!mobile" ref="sheet-longtext-controls">
+            v-if="!mobile && !readonly" ref="sheet-longtext-controls">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
@@ -263,11 +266,12 @@ export default {
         </div>
         <div class="sheet-longtext-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-longtext-mobile-expanded-box">
-                <div class="sheet-longtext-mobile-expanded-controls">
+                <button class="sheet-longtext-mobile-back-button"
+                    @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <div class="sheet-longtext-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-longtext-mobile-config-item-row">
-                        <button @click="toggleVisualizeMode()"
-                            ref="sheet-longtext-mobile-toggle-visualize-mode-button"
+                        <button @click="toggleVisualizeMode()" ref="sheet-longtext-mobile-toggle-visualize-mode-button"
                             :class="visualizeMode == true ? 'sheet-longtext-mobile-expanded-button-active' : ''">Visualizar</button>
                         <button @click="toggleEditMode()" ref="sheet-longtext-mobile-toggle-edit-mode-button"
                             :class="editMode == true ? 'sheet-longtext-mobile-expanded-button-active' : ''">Editar</button>
@@ -304,7 +308,7 @@ export default {
                         <p>{{ value }}</p>
                     </div>
                 </div>
-                <div class="sheet-longtext-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode">
+                <div class="sheet-longtext-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
                     <div class="sheet-longtext-mobile-expanded-name">
                         <input v-model="name" placeholder="Insira um nome para o atributo" @keyup="validateName()"
                             @change="validateName()">
@@ -782,7 +786,7 @@ export default {
     align-items: center;
 }
 
-.sheet-longtext-mobile-expanded-controls button {
+.sheet-longtext-mobile-expanded-controls button, .sheet-longtext-mobile-back-button  {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -793,6 +797,10 @@ export default {
     font-weight: bold;
     margin: 5px 0;
     padding: 0;
+}
+
+.sheet-longtext-mobile-back-button {
+    width: 90% !important;
 }
 
 .sheet-longtext-mobile-config-item-row {

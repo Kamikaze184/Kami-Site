@@ -63,7 +63,8 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true
+            visualizeMode: true,
+            readonly: false
         }
     },
     methods: {
@@ -257,6 +258,8 @@ export default {
         this.section = position.split('-')[0]
         this.position = position.split('-')[1]
 
+        this.readonly = this.$refs['sheet-bar'].getAttribute('readonly') == ''
+
         eventEmitter.on('set-sections', (sections) => {
             this.sections = sections
         })
@@ -342,7 +345,7 @@ export default {
         <div class="sheet-bar" @click="toggleControlsOn()" v-if="!mobile && !config">
             <div class="sheet-bar-header">
                 <input type="text" :value="name" class="sheet-bar-title" ref="sheet-bar-name"
-                    @keyup="name = $refs['sheet-bar-name'].value">
+                    @keyup="name = $refs['sheet-bar-name'].value" :disabled="readonly">
                 <h4>{{ `${value.actual}/${value.max}` }}</h4>
             </div>
             <div class="sheet-bar-body">
@@ -354,7 +357,7 @@ export default {
                         :style="{ width: Math.abs(((value.actual / value.min) * 100)) + '%' }"></div>
                 </div>
             </div>
-            <div class="sheet-bar-buttons">
+            <div class="sheet-bar-buttons" v-if="!readonly">
                 <img src="../../assets/img/plus.svg" @click="increaseValue()">
                 <img src="../../assets/img/minus.svg" @click="decreaseValue()">
             </div>
@@ -366,7 +369,7 @@ export default {
                 <p v-if="validationErrors.step.state">{{ validationErrors.step.actualMessage }}</p>
             </div>
         </div>
-        <div class="sheet-bar-config" v-if="!mobile && config">
+        <div class="sheet-bar-config" v-if="!mobile && config && !readonly">
             <div class="sheet-bar-config-item">
                 <p>Valor atual</p>
                 <input type="number" :value="value.actual"
@@ -412,7 +415,7 @@ export default {
             </div>
         </div>
         <div :class="`sheet-bar-controls ${controls ? 'sheet-bar-show-controls' : 'sheet-bar-hide-controls'}`"
-            ref="sheet-bar-controls" v-if="!mobile">
+            ref="sheet-bar-controls" v-if="!mobile && !readonly">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
@@ -432,14 +435,15 @@ export default {
                         :style="{ width: Math.abs(((value.actual / value.min) * 100)) + '%' }"></div>
                 </div>
             </div>
-            <div class="sheet-bar-mobile-buttons">
+            <div class="sheet-bar-mobile-buttons" v-if="!readonly">
                 <img src="../../assets/img/plus.svg" @click="increaseValue()">
                 <img src="../../assets/img/minus.svg" @click="decreaseValue()">
             </div>
         </div>
         <div class="sheet-bar-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-bar-mobile-expanded-box">
-                <div class="sheet-bar-mobile-expanded-controls">
+                <button class="sheet-bar-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <div class="sheet-bar-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-bar-mobile-config-item-row">
                         <button @click="toggleVisualizeMode()"
@@ -474,7 +478,7 @@ export default {
                 </div>
                 <div class="sheet-bar-mobile-expanded-visualize-body" v-if="visualizeMode && !editMode">
                     <div class="sheet-bar-mobile-header" @click="expanded = true">
-                        <input type="text" :value="name" class="sheet-bar-mobile-title" ref="sheet-bar-name">
+                        <input type="text" :value="name" class="sheet-bar-mobile-title" ref="sheet-bar-name" :disabled="readonly">
                         <h4>{{ `${value.actual}/${value.max}` }}</h4>
                     </div>
                     <div class="sheet-bar-mobile-body" @click="expanded = true">
@@ -487,12 +491,12 @@ export default {
                                 :style="{ width: Math.abs(((value.actual / value.min) * 100)) + '%' }"></div>
                         </div>
                     </div>
-                    <div class="sheet-bar-mobile-buttons">
+                    <div class="sheet-bar-mobile-buttons" v-if="!readonly">
                         <img src="../../assets/img/plus.svg" @click="increaseValue()">
                         <img src="../../assets/img/minus.svg" @click="decreaseValue()">
                     </div>
                 </div>
-                <div class="sheet-bar-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode">
+                <div class="sheet-bar-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
                     <div class="sheet-bar-mobile-expanded-name">
                         <input v-model="name" placeholder="Insira um nome para o atributo" @keyup="validateName()"
                             @change="validateName()">
@@ -1088,7 +1092,7 @@ export default {
     align-items: center;
 }
 
-.sheet-bar-mobile-expanded-controls button {
+.sheet-bar-mobile-expanded-controls button, .sheet-bar-mobile-back-button {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -1099,6 +1103,10 @@ export default {
     font-weight: bold;
     margin: 5px 0;
     padding: 0;
+}
+
+.sheet-bar-mobile-back-button {
+    width: 90% !important;
 }
 
 .sheet-bar-mobile-config-item-row {

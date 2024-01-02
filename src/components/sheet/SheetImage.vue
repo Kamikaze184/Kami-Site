@@ -23,7 +23,8 @@ export default {
             confirmComponentRemove: false,
             expanded: false,
             editMode: false,
-            visualizeMode: true
+            visualizeMode: true,
+            readonly: false
         }
     },
     methods: {
@@ -112,6 +113,8 @@ export default {
         this.section = position.split('-')[0]
         this.position = position.split('-')[1]
 
+        this.readonly = this.$refs['sheet-image'].getAttribute('readonly') == ''
+
         eventEmitter.on('set-sections', (sections) => {
             this.sections = sections
         })
@@ -178,7 +181,7 @@ export default {
                 <p>Clique para expandir</p>
             </div>
         </div>
-        <div class="sheet-image-config" v-if="!mobile && config">
+        <div class="sheet-image-config" v-if="!mobile && config && !readonly">
             <div class="sheet-image-config-item">
                 <p>Link da imagem</p>
                 <input class="sheet-image-config-link" ref="sheet-image-config-value" type="text" :value="value"
@@ -210,7 +213,7 @@ export default {
             </div>
         </div>
         <div :class="`sheet-image-controls ${controls ? 'sheet-image-show-controls' : 'sheet-image-hide-controls'}`"
-            ref="sheet-image-controls" v-if="!mobile">
+            ref="sheet-image-controls" v-if="!mobile && !readonly">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
@@ -225,7 +228,8 @@ export default {
         </div>
         <div class="sheet-image-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-image-mobile-expanded-box">
-                <div class="sheet-image-mobile-expanded-controls">
+                <button class="sheet-image-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <div class="sheet-image-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-image-mobile-config-item-row">
                         <button @click="toggleVisualizeMode()" ref="sheet-image-mobile-toggle-visualize-mode-button"
@@ -265,7 +269,7 @@ export default {
                         <img :src="value">
                     </div>
                 </div>
-                <div class="sheet-image-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode">
+                <div class="sheet-image-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
                     <div class="sheet-image-mobile-expanded-name">
                         <input v-model="value" placeholder="Insira um nome para o atributo" @keyup="validateValue()"
                             @change="validateValue()">
@@ -681,7 +685,7 @@ export default {
     align-items: center;
 }
 
-.sheet-image-mobile-expanded-controls button {
+.sheet-image-mobile-expanded-controls button, .sheet-image-mobile-back-button {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -694,6 +698,9 @@ export default {
     padding: 0;
 }
 
+.sheet-image-mobile-back-button {
+    width: 90% !important;
+}
 .sheet-image-mobile-config-item-row {
     width: 100%;
     height: 3em;
