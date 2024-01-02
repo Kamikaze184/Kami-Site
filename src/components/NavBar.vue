@@ -87,35 +87,37 @@ export default {
       }
     },
     collapsed() {
-      if (this.collapsed) {
-        this.$refs['toggle-signed-nav-bar'].style.left = '0px'
-        this.$refs['toggle-signed-nav-bar'].style.transform = 'rotate(180deg)'
+      if (this.signedRoute && this.sign) {
+        if (this.collapsed) {
+          this.$refs['toggle-signed-nav-bar'].style.left = '0px'
+          this.$refs['toggle-signed-nav-bar'].style.transform = 'rotate(180deg)'
 
-        this.$refs['collapsable-menu'].style.transform = 'translateX(-100%)'
+          this.$refs['collapsable-menu'].style.transform = 'translateX(-100%)'
 
-        this.$refs['signed-nav-bar'].style.zIndex = '4'
+          this.$refs['signed-nav-bar'].style.zIndex = '4'
 
-        if (this.$route.name != 'Sheet') {
-          this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
+          if (this.$route.name != 'Sheet') {
+            this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
+          }
+
+          if (window.innerWidth > 800) {
+            setTimeout(() => {
+              this.$refs['signed-nav-bar'].style.width = '50px'
+            }, 450)
+          }
         }
+        else {
+          this.$refs['toggle-signed-nav-bar'].style.left = '19em'
+          this.$refs['toggle-signed-nav-bar'].style.transform = 'rotate(0deg)'
 
-        if (window.innerWidth > 800) {
-          setTimeout(() => {
-            this.$refs['signed-nav-bar'].style.width = '50px'
-          }, 450)
+          this.$refs['collapsable-menu'].style.transform = 'translateX(0%)'
+
+          this.$refs['signed-nav-bar'].style.zIndex = '4'
+
+          this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--background-filter)'
+
+          this.$refs['signed-nav-bar'].style.width = '22em'
         }
-      }
-      else {
-        this.$refs['toggle-signed-nav-bar'].style.left = '19em'
-        this.$refs['toggle-signed-nav-bar'].style.transform = 'rotate(0deg)'
-
-        this.$refs['collapsable-menu'].style.transform = 'translateX(0%)'
-
-        this.$refs['signed-nav-bar'].style.zIndex = '4'
-
-        this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--background-filter)'
-
-        this.$refs['signed-nav-bar'].style.width = '22em'
       }
     },
     userState(newValue) {
@@ -202,7 +204,7 @@ export default {
       </ul>
     </div>
   </div>
-  <div id="signed-nav-bar" v-if="signedRoute" ref="signed-nav-bar">
+  <div id="signed-nav-bar" v-if="signedRoute && this.sign" ref="signed-nav-bar">
     <img id="toggle-signed-nav-bar" src="../assets/img/side-menu.svg" @click="toggleSideMenu()"
       ref="toggle-signed-nav-bar">
     <div class="collapsable-menu" ref="collapsable-menu" :collapsed="collapsed">

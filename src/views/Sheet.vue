@@ -17,10 +17,14 @@ import config from '../config/publicVars.js'
 const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
 let observer = null
+let unsigned = null
+let isSheetOwner = null
 
 export default {
     data() {
         return {
+            unsigned: false,
+            isSheetOwner: false,
             mobile: false,
             lastWindowWidth: window.innerWidth,
             sheetName: this.$route.params.sheetName,
@@ -62,37 +66,53 @@ export default {
         })
             .then(response => response.json())
             .then(data => {
-                if (data.sheet.legacy == true) {
-                    const sheet = {
-                        attributes: { sections: [{ attributes: [], name: 'Info', position: 0, type: 0 }] },
-                        id: data.sheet.id,
-                        sheet_name: data.sheet.sheet_name,
-                        user_id: data.sheet.user_id,
-                        sheet_name: data.sheet.sheet_name,
-                        sheet_passoword: data.sheet.sheet_password,
-                        is_public: data.sheet.is_public,
-                        legacy: false,
-                        user: data.sheet.user
+                if (data.sheet) {
+                    if (this.$store.state.user.id == userId) {
+                        isSheetOwner = true
+                    }
+                    else {
+                        isSheetOwner = false
                     }
 
-                    let position = 0
-                    for (let attribute of Object.keys(data.sheet.attributes)) {
-                        sheet.attributes.sections[0].attributes.push({
-                            name: attribute,
-                            value: data.sheet.attributes[attribute],
-                            type: isNaN(Number(data.sheet.attributes[attribute])) ? 0 : 1,
-                            position: position
-                        })
+                    this.isSheetOwner = isSheetOwner
+                    this.unsigned = unsigned
 
-                        position++
+
+                    if (data.sheet.legacy == true) {
+                        const sheet = {
+                            attributes: { sections: [{ attributes: [], name: 'Info', position: 0, type: 0 }] },
+                            id: data.sheet.id,
+                            sheet_name: data.sheet.sheet_name,
+                            user_id: data.sheet.user_id,
+                            sheet_name: data.sheet.sheet_name,
+                            sheet_passoword: data.sheet.sheet_password,
+                            is_public: data.sheet.is_public,
+                            legacy: false,
+                            user: data.sheet.user
+                        }
+
+                        let position = 0
+                        for (let attribute of Object.keys(data.sheet.attributes)) {
+                            sheet.attributes.sections[0].attributes.push({
+                                name: attribute,
+                                value: data.sheet.attributes[attribute],
+                                type: isNaN(Number(data.sheet.attributes[attribute])) ? 0 : 1,
+                                position: position
+                            })
+
+                            position++
+                        }
+
+                        this.sheet = sheet
+                        this.sheetLoaded = true
                     }
-
-                    this.sheet = sheet
-                    this.sheetLoaded = true
+                    else {
+                        this.sheet = data.sheet
+                        this.sheetLoaded = true
+                    }
                 }
                 else {
-                    this.sheet = data.sheet
-                    this.sheetLoaded = true
+                    window.location.href = '/login'
                 }
             })
             .catch(error => {
@@ -141,6 +161,7 @@ export default {
                         name: attribute.type == 2 ? undefined : attribute.name,
                         value: attribute.value,
                         position: `${this.actualSectionIndex}-${index}`,
+                        readonly: !isSheetOwner,
                     }
                 )
 
@@ -213,16 +234,22 @@ export default {
             eventEmitter.emit('set-sections', this.sections)
         },
         openAddNewSectionMenu() {
-            eventEmitter.emit('set-sections', this.sections)
-            this.menu = 'AddSection'
+            if (this.isSheetOwner) {
+                eventEmitter.emit('set-sections', this.sections)
+                this.menu = 'AddSection'
+            }
         },
         openEditSectionMenu() {
-            eventEmitter.emit('set-section', this.sections)
-            this.menu = 'EditSection'
+            if (this.isSheetOwner) {
+                eventEmitter.emit('set-section', this.sections)
+                this.menu = 'EditSection'
+            }
         },
         openAddCompMenu() {
-            eventEmitter.emit('set-section-attributes', this.sheet.attributes.sections[this.actualSectionIndex].attributes)
-            this.menu = 'AddComp'
+            if (this.isSheetOwner) {
+                eventEmitter.emit('set-section-attributes', this.sheet.attributes.sections[this.actualSectionIndex].attributes)
+                this.menu = 'AddComp'
+            }
         },
         createNewComponent(component) {
             let value = 'Clique para alterar'
@@ -248,155 +275,165 @@ export default {
             this.reDefinePosition()
         },
         async saveSheet() {
-            const errors = []
-            const editedComponents = {}
-
-            Object.keys(this.componentsErrorState).forEach((key) => {
-                if (this.componentsErrorState[key].state) {
-                    Object.keys(this.componentsErrorState[key]).forEach((errorKey) => {
-                        if (errorKey != 'state') {
-                            errors.push({
-                                type: 'component',
-                                position: key,
-                                message: this.componentsErrorState[key][errorKey]
-                            })
-                        }
-                    })
-                }
-                else {
-                    const sectionIndex = key.split('-')[0]
-                    const componentIndex = key.split('-')[1]
-
-                    if (this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].type == 1) {
-                        editedComponents[key] = {
-                            type: 'number',
-                            value: this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value
-                        }
-                    }
-                    else if (this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].type == 4) {
-                        editedComponents[key] = {
-                            type: 'bar',
-                            value: JSON.stringify(this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value)
-                        }
-                    }
-                    else {
-                        editedComponents[key] = {
-                            type: 'text',
-                            value: this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value
-                        }
-                    }
-                }
-            })
-
-            if (errors.length > 0) {
-                errors.forEach(error => {
-                    if (error.type == 'component') {
-                        const sectionIndex = error.position.split('-')[0]
-                        const componentIndex = error.position.split('-')[1]
-
-                        this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name
-
-                        Object.keys(error.message).forEach(errorKey => {
-                            if (error.message[errorKey].state) {
-                                this.sheetValidationErrors.push(`No componente "${this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name}": ${error.message[errorKey].actualMessage}`)
-                            }
-                        })
-                    }
-                })
-
-                this.menu = 'ShowErrors'
+            if (this.isSheetOwner == false) {
                 return
             }
             else {
-                this.savingSheet = true
-                const updatedSheet = {
-                    ...this.sheet,
-                    sheet_name: this.sheetName,
-                    attributes: {
-                        sections: this.sheet.attributes.sections.map((section) => {
-                            return {
-                                ...section,
-                                attributes: section.attributes.map((attribute) => {
-                                    if (attribute.type == 1) {
-                                        return {
-                                            ...attribute,
-                                            value: parseInt(attribute.value)
-                                        }
-                                    }
-                                    else if (attribute.type == 3 || attribute.type == 4) {
-                                        if (typeof attribute.value == 'string') {
+                const errors = []
+                const editedComponents = {}
+
+                Object.keys(this.componentsErrorState).forEach((key) => {
+                    if (this.componentsErrorState[key].state) {
+                        Object.keys(this.componentsErrorState[key]).forEach((errorKey) => {
+                            if (errorKey != 'state') {
+                                errors.push({
+                                    type: 'component',
+                                    position: key,
+                                    message: this.componentsErrorState[key][errorKey]
+                                })
+                            }
+                        })
+                    }
+                    else {
+                        const sectionIndex = key.split('-')[0]
+                        const componentIndex = key.split('-')[1]
+
+                        if (this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].type == 1) {
+                            editedComponents[key] = {
+                                type: 'number',
+                                value: this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value
+                            }
+                        }
+                        else if (this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].type == 4) {
+                            editedComponents[key] = {
+                                type: 'bar',
+                                value: JSON.stringify(this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value)
+                            }
+                        }
+                        else {
+                            editedComponents[key] = {
+                                type: 'text',
+                                value: this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].value
+                            }
+                        }
+                    }
+                })
+
+                if (errors.length > 0) {
+                    errors.forEach(error => {
+                        if (error.type == 'component') {
+                            const sectionIndex = error.position.split('-')[0]
+                            const componentIndex = error.position.split('-')[1]
+
+                            this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name
+
+                            Object.keys(error.message).forEach(errorKey => {
+                                if (error.message[errorKey].state) {
+                                    this.sheetValidationErrors.push(`No componente "${this.sheet.attributes.sections[sectionIndex].attributes[componentIndex].name}": ${error.message[errorKey].actualMessage}`)
+                                }
+                            })
+                        }
+                    })
+
+                    this.menu = 'ShowErrors'
+                    return
+                }
+                else {
+                    this.savingSheet = true
+                    const updatedSheet = {
+                        ...this.sheet,
+                        sheet_name: this.sheetName,
+                        attributes: {
+                            sections: this.sheet.attributes.sections.map((section) => {
+                                return {
+                                    ...section,
+                                    attributes: section.attributes.map((attribute) => {
+                                        if (attribute.type == 1) {
                                             return {
                                                 ...attribute,
-                                                value: JSON.parse(attribute.value)
+                                                value: parseInt(attribute.value)
+                                            }
+                                        }
+                                        else if (attribute.type == 3 || attribute.type == 4) {
+                                            if (typeof attribute.value == 'string') {
+                                                return {
+                                                    ...attribute,
+                                                    value: JSON.parse(attribute.value)
+                                                }
+                                            }
+                                            else {
+                                                return attribute
                                             }
                                         }
                                         else {
                                             return attribute
                                         }
-                                    }
-                                    else {
-                                        return attribute
-                                    }
-                                })
-                            }
-                        })
-                    },
-                    legacy: false
-                }
+                                    })
+                                }
+                            })
+                        },
+                        legacy: false
+                    }
 
-                const res = await fetch(`${config.API_URI}/sheet/update`, {
-                    method: 'PUT',
+                    const res = await fetch(`${config.API_URI}/sheet/update`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': localStorage.getItem('token')
+                        },
+                        body: JSON.stringify(updatedSheet)
+                    })
+
+                    if (res.status == 200) {
+                        if (this.sheet.sheet_name != updatedSheet.sheet_name) {
+                            window.location.href = `/ficha/${this.userId}/${this.sheetName}`
+                        }
+
+                        this.sheetSavedSuccess = true
+                    }
+                    else if (res.status == 400) {
+                        const data = await res.json()
+
+                        this.sheetValidationErrors = data.errors.map(error => error.message)
+                        this.menu = 'ShowErrors'
+                    }
+                    else if (res.status == 401) {
+                        localStorage.removeItem('token')
+                        window.location.href = '/login'
+                    }
+                    else {
+                        this.sheetValidationErrors = ['Erro desconhecido ao tentar salvar a ficha, tente novamente mais tarde']
+                        this.menu = 'ShowErrors'
+                    }
+
+                    this.savingSheet = false
+                }
+            }
+        },
+        async deleteSheet() {
+            if (this.isSheetOwner == false) {
+                return
+            }
+            else {
+                const res = await fetch(`${config.API_URI}/sheet/delete?id=${this.sheet.id}`, {
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': localStorage.getItem('token')
-                    },
-                    body: JSON.stringify(updatedSheet)
+                    }
                 })
 
                 if (res.status == 200) {
-                    if (this.sheet.sheet_name != updatedSheet.sheet_name) {
-                        window.location.href = `/ficha/${this.userId}/${this.sheetName}`
-                    }
-
-                    this.sheetSavedSuccess = true
-                }
-                else if (res.status == 400) {
-                    const data = await res.json()
-
-                    this.sheetValidationErrors = data.errors.map(error => error.message)
-                    this.menu = 'ShowErrors'
+                    window.location.href = `/fichas`
                 }
                 else if (res.status == 401) {
                     localStorage.removeItem('token')
                     window.location.href = '/login'
                 }
                 else {
-                    this.sheetValidationErrors = ['Erro desconhecido ao tentar salvar a ficha, tente novamente mais tarde']
+                    this.sheetValidationErrors = ['Erro desconhecido ao tentar deletar a ficha, tente novamente mais tarde']
                     this.menu = 'ShowErrors'
                 }
-
-                this.savingSheet = false
-            }
-        },
-        async deleteSheet() {
-            const res = await fetch(`${config.API_URI}/sheet/delete?id=${this.sheet.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': localStorage.getItem('token')
-                }
-            })
-
-            if (res.status == 200) {
-                window.location.href = `/fichas`
-            }
-            else if (res.status == 401) {
-                localStorage.removeItem('token')
-                window.location.href = '/login'
-            }
-            else {
-                this.sheetValidationErrors = ['Erro desconhecido ao tentar deletar a ficha, tente novamente mais tarde']
-                this.menu = 'ShowErrors'
             }
         },
         handleResize() {
@@ -407,28 +444,30 @@ export default {
         }
     },
     setup() {
-        const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
+        if (!unsigned) {
+            const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
 
-        observer = new MutationObserver(() => {
-            if (sideMenu.getAttribute('collapsed') == 'true') {
-                document.getElementById('Sheet').style.marginLeft = '0em'
-                document.getElementById('Sheet').style.width = '100%'
+            observer = new MutationObserver(() => {
+                if (sideMenu.getAttribute('collapsed') == 'true') {
+                    document.getElementById('Sheet').style.marginLeft = '0em'
+                    document.getElementById('Sheet').style.width = '100%'
 
-                if (window.innerWidth > 800) {
-                    setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '50px' }, 150)
+                    if (window.innerWidth > 800) {
+                        setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '50px' }, 150)
+                    }
                 }
-            }
-            else {
-                document.getElementById('Sheet').style.marginLeft = '22em'
-                document.getElementById('Sheet').style.width = 'calc(100% - 22em)'
+                else {
+                    document.getElementById('Sheet').style.marginLeft = '22em'
+                    document.getElementById('Sheet').style.width = 'calc(100% - 22em)'
 
-                if (window.innerWidth > 800) {
-                    setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '0px' }, 150)
+                    if (window.innerWidth > 800) {
+                        setTimeout(() => { document.querySelector('.sheet-body').style.marginLeft = '0px' }, 150)
+                    }
                 }
-            }
-        })
+            })
 
-        observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+            observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
+        }
     },
     mounted() {
         eventEmitter.on('resize', () => {
@@ -558,22 +597,45 @@ export default {
         eventEmitter.on('delete-sheet', () => {
             this.deleteSheet()
         })
+
+        eventEmitter.on('toggle-sheet-visibility', (sheet_visibility) => {
+            this.sheet.is_public = sheet_visibility
+        })
+
+        if (unsigned) {
+            document.getElementById('Sheet').style.marginLeft = '0 !important'
+            document.getElementById('Sheet').style.width = '100% !important'
+        }
+    },
+    beforeRouteEnter(to, from, next) {
+        if (localStorage.getItem('token')) {
+            unsigned = false
+        }
+        else {
+            unsigned = true
+            isSheetOwner = false
+        }
+
+        next()
     },
     beforeRouteLeave(to, from, next) {
-        window.removeEventListener('resize', this.handleResize)
-        observer.disconnect()
-        eventEmitter.off('resize')
+        try {
+            window.removeEventListener('resize', this.handleResize)
+            observer.disconnect()
+            eventEmitter.off('resize')
+        }
+        catch(err){}
         window.location.href = to.path
     }
 }
 </script>
 
 <template>
-    <div id="Sheet" ref="sheet">
+    <div id="Sheet" ref="sheet" :style="unsigned ? 'margin-left: 0 !important; width: 100% !important;' : ''">
         <div class="sheet" ref="sheet" v-if="!mobile" :class="menu == 'None' ? '' : 'hidden-div'">
             <div class="sheet-tool-bar">
                 <h2>Ficha: {{ sheetName }}</h2>
-                <div class="sheet-tool-bar-buttons">
+                <div class="sheet-tool-bar-buttons" v-if="isSheetOwner">
                     <button class="sheet-tool-bar-item" @click="menu = 'Config'">
                         <img src="../assets/img/setting.svg">
                         <h4>Configurações</h4>
@@ -594,11 +656,17 @@ export default {
                         <h4>Adicionar componente</h4>
                     </button>
                 </div>
+                <div class="sheet-tool-bar-buttons" v-else="isSheetOwner">
+                    <router-link to="/">Inicio</router-link>
+                    <router-link to="/comandos">Comandos</router-link>
+                    <router-link to="/tutoriais">Tutoriais</router-link>
+                    <router-link to="/login">Login</router-link>
+                </div>
             </div>
             <div class="sheet-section" index="0" ref="section">
                 <img src="../assets/img/navigateIcon.svg" class="previous-section" @click="previousSection()">
                 <h1 @click="openEditSectionMenu()">{{ actualSectionName }}</h1>
-                <p @click="openEditSectionMenu()">Clique para Editar</p>
+                <p @click="openEditSectionMenu()" v-if="isSheetOwner">Clique para Editar</p>
                 <img src="../assets/img/navigateIcon.svg" class="next-section" @click="nextSection()">
             </div>
             <div class="sheet-body" ref="sheet-body">
@@ -616,7 +684,7 @@ export default {
             <div class="sheet-title-mobile">
                 <h2>Ficha: {{ sheetName }}</h2>
             </div>
-            <div class="sheet-tool-bar-mobile">
+            <div class="sheet-tool-bar-mobile" v-if="isSheetOwner">
                 <button class="sheet-tool-bar-mobile-item" @click="menu = 'Config'">
                     <img src="../assets/img/setting.svg">
                 </button>
@@ -636,7 +704,7 @@ export default {
             <div class="sheet-section-mobile" index="0" ref="section">
                 <img src="../assets/img/navigateIcon.svg" class="previous-section" @click="previousSection()">
                 <h1 @click="openEditSectionMenu()">{{ actualSectionName }}</h1>
-                <p @click="openEditSectionMenu()">Clique para Editar</p>
+                <p @click="openEditSectionMenu()" v-if="isSheetOwner">Clique para Editar</p>
                 <img src="../assets/img/navigateIcon.svg" class="next-section" @click="nextSection()">
             </div>
             <div class="sheet-body-mobile" ref="sheet-body">
@@ -652,11 +720,11 @@ export default {
                 <SheetNumber name="teste" value="20" position="0-1" /> -->
             </div>
         </div>
-        <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName" />
-        <SheetAddSectionMenu :class="menu == 'AddSection' ? '' : 'hidden-div'" />
-        <SheetAddCompMenu :class="menu == 'AddComp' ? '' : 'hidden-div'" />
-        <SheetEditSectionMenu :class="menu == 'EditSection' ? '' : 'hidden-div'" />
-        <div :class="`sheet-show-validation-errors ${menu == 'ShowErrors' ? '' : 'hidden-div'}`">
+        <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName" :sheet-visibility="sheet.is_public" v-if="isSheetOwner" />
+        <SheetAddSectionMenu :class="menu == 'AddSection' ? '' : 'hidden-div'" v-if="isSheetOwner" />
+        <SheetAddCompMenu :class="menu == 'AddComp' ? '' : 'hidden-div'" v-if="isSheetOwner" />
+        <SheetEditSectionMenu :class="menu == 'EditSection' ? '' : 'hidden-div'" v-if="isSheetOwner" />
+        <div :class="`sheet-show-validation-errors ${menu == 'ShowErrors' ? '' : 'hidden-div'}`" v-if="isSheetOwner">
             <div class="sheet-show-validation-errors-list">
                 <div class="sheet-show-validation-errors-box">
                     <h1>Erros de validação ao tentar salvar a ficha</h1>
@@ -749,6 +817,31 @@ export default {
     cursor: pointer;
     transition: 0.3s all linear;
     position: relative;
+}
+
+.sheet-tool-bar-buttons a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 8em;
+    height: 2em;
+    background-color: var(--background);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s all linear;
+    position: relative;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.sheet-tool-bar-buttons a:hover {
+    background-color: var(--background-secondary);
 }
 
 .sheet-tool-bar-item h4 {

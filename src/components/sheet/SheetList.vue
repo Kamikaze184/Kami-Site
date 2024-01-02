@@ -43,10 +43,7 @@ export default {
             expanded: false,
             editMode: false,
             visualizeMode: true,
-            firstLoad: {
-                name: true,
-                value: true
-            }
+            readonly: false
         }
     },
     methods: {
@@ -209,6 +206,8 @@ export default {
         this.section = position.split('-')[0]
         this.position = position.split('-')[1]
 
+        this.readonly = this.$refs['sheet-list'].getAttribute('readonly') == ''
+
         eventEmitter.on('set-sections', (sections) => {
             this.sections = sections
         })
@@ -314,7 +313,7 @@ export default {
         <div class="sheet-list" @click="toggleControlsOn()" v-if="!mobile && !config">
             <div class="sheet-list-header">
                 <textarea :value="name" placeholder="Insira um nome" ref="sheet-list-name"
-                    @keyup="name = $refs['sheet-list-name'].value" />
+                    @keyup="name = $refs['sheet-list-name'].value" :disabled="readonly" />
             </div>
             <div class="sheet-list-body">
                 <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
@@ -330,19 +329,22 @@ export default {
                     <div class="sheet-list-body-item-wrapper">
                         <input type="number" :value="item.quantity"
                             :ref="`sheet-list-quantity-${value.items.indexOf(item)}`"
-                            @keyup="value.items[value.items.indexOf(item)].quantity = $refs[`sheet-list-quantity-${value.items.indexOf(item)}`][0].value">
+                            @keyup="value.items[value.items.indexOf(item)].quantity = $refs[`sheet-list-quantity-${value.items.indexOf(item)}`][0].value"
+                            :disabled="readonly">
                         <input type="text" :value="item.name" :ref="`sheet-list-name-${value.items.indexOf(item)}`"
-                            @keyup="value.items[value.items.indexOf(item)].name = $refs[`sheet-list-name-${value.items.indexOf(item)}`][0].value">
-                        <img src="../../assets/img/trash.svg" @click="removeItem(value.items.indexOf(item))">
+                            @keyup="value.items[value.items.indexOf(item)].name = $refs[`sheet-list-name-${value.items.indexOf(item)}`][0].value"
+                            :disabled="readonly">
+                        <img src="../../assets/img/trash.svg" @click="removeItem(value.items.indexOf(item))"
+                            v-if="!readonly">
                     </div>
                 </div>
-                <img class="sheet-list-body-add-item" src="../../assets/img/plus.svg" @click="addItem()">
+                <img class="sheet-list-body-add-item" src="../../assets/img/plus.svg" @click="addItem()" v-if="!readonly">
             </div>
             <div class="sheet-list-footer" v-if="mobile">
                 <p>Clique para expandir</p>
             </div>
         </div>
-        <div class="sheet-list-config" v-if="!mobile && config">
+        <div class="sheet-list-config" v-if="!mobile && config && !readonly">
             <div class="sheet-list-config-item">
                 <p>Seção</p>
                 <select :value="section" @change="section = $refs['sheet-list-config-section'].value"
@@ -368,7 +370,7 @@ export default {
             </div>
         </div>
         <div :class="`sheet-list-controls ${controls ? 'sheet-list-show-controls' : 'sheet-list-hide-controls'}`"
-            ref="sheet-list-controls" v-if="!mobile">
+            ref="sheet-list-controls" v-if="!mobile && !readonly">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
@@ -394,7 +396,9 @@ export default {
         </div>
         <div class="sheet-list-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-list-mobile-expanded-box">
-                <div class="sheet-list-mobile-expanded-controls">
+                <button class="sheet-list-mobile-back-button"
+                    @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <div class="sheet-list-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-list-mobile-config-item-row">
                         <button @click="toggleVisualizeMode()" ref="sheet-list-mobile-toggle-visualize-mode-button"
@@ -441,7 +445,7 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div class="sheet-list-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode">
+                <div class="sheet-list-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
                     <div class="sheet-list-mobile-expanded-name">
                         <input v-model="name" placeholder="Insira um nome para o atributo" @keyup="validateName()"
                             @change="validateName()">
@@ -1012,7 +1016,7 @@ export default {
     text-align: center !important;
     vertical-align: middle;
     margin: 0;
-    padding:0.5em;
+    padding: 0.5em;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -1082,7 +1086,8 @@ export default {
     align-items: center;
 }
 
-.sheet-list-mobile-expanded-controls button {
+.sheet-list-mobile-expanded-controls button,
+.sheet-list-mobile-back-button {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -1093,6 +1098,10 @@ export default {
     font-weight: bold;
     margin: 5px 0;
     padding: 0;
+}
+
+.sheet-list-mobile-back-button {
+    width: 90% !important;
 }
 
 .sheet-list-mobile-config-item-row {
@@ -1351,5 +1360,4 @@ export default {
     padding: 5px;
     text-align: justify;
     resize: none;
-}
-</style>
+}</style>
