@@ -13,6 +13,7 @@ import SheetAddCompMenu from '../components/sheet/SheetAddCompMenu.vue'
 import SheetEditSectionMenu from '../components/sheet/SheetEditSectionMenu.vue'
 import { eventEmitter } from '../utils/EventEmitter.js'
 import config from '../config/publicVars.js'
+import socket from '../services/websocket.service'
 
 const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
@@ -37,7 +38,8 @@ export default {
             componentsErrorState: {},
             sheetValidationErrors: [],
             menu: 'None', // None, AddSection, AddComp, Config, EditSection, ShowErrors
-            savingSheet: false
+            savingSheet: false,
+            sentSheetUpdate: false,
         }
     },
     components: {
@@ -77,7 +79,6 @@ export default {
                     this.isSheetOwner = isSheetOwner
                     this.unsigned = unsigned
 
-
                     if (data.sheet.legacy == true) {
                         const sheet = {
                             attributes: { sections: [{ attributes: [], name: 'Info', position: 0, type: 0 }] },
@@ -110,6 +111,8 @@ export default {
                         this.sheet = data.sheet
                         this.sheetLoaded = true
                     }
+
+                    socket.emit('open-sheet', this.sheet.id)
                 }
                 else {
                     window.location.href = '/login'
@@ -375,6 +378,8 @@ export default {
                         legacy: false
                     }
 
+                    updatedSheet.socketIdentifier = socket.id
+
                     const res = await fetch(`${config.API_URI}/sheet/update`, {
                         method: 'PUT',
                         headers: {
@@ -602,6 +607,41 @@ export default {
             this.sheet.is_public = sheet_visibility
         })
 
+        socket.on('sheet-updated', (sheet, socketIdentifier) => {
+            if (sheet.id == this.sheet.id && socketIdentifier != socket.id) {
+                this.sheet = sheet
+
+                if (sheet.sheet_name != this.sheetName) {
+                    window.location.href = `/ficha/${this.userId}/${sheet.sheet_name}`
+                }
+                else if (!sheet.is_public && !this.isSheetOwner){
+                    if(this.unsigned){
+                        window.location.href = '/login'
+                    }
+                    else{
+                        window.location.href = '/fichas'
+                    }
+                }
+                else {
+                    if(sheet.attributes.sections[this.actualSectionIndex] == undefined){
+                        this.actualSectionIndex = 0
+                    }
+                    else if (sheet.attributes.sections[this.actualSectionIndex].name != this.actualSectionName) {
+                        this.actualSectionName = sheet.attributes.sections[this.actualSectionIndex].name
+                    }
+
+                    this.sections = this.getSheetSections()
+                    this.loadAttributes()
+                }
+            }
+        })
+
+        socket.on('sheet-deleted', (sheetId) => {
+            if (sheetId == this.sheet.id) {
+                window.location.href = '/fichas'
+            }
+        })
+
         if (unsigned) {
             document.getElementById('Sheet').style.marginLeft = '0 !important'
             document.getElementById('Sheet').style.width = '100% !important'
@@ -623,8 +663,9 @@ export default {
             window.removeEventListener('resize', this.handleResize)
             observer.disconnect()
             eventEmitter.off('resize')
+            socket.emit('close-sheet', this.sheet.id)
         }
-        catch(err){}
+        catch (err) { }
         window.location.href = to.path
     }
 }
@@ -720,7 +761,8 @@ export default {
                 <SheetNumber name="teste" value="20" position="0-1" /> -->
             </div>
         </div>
-        <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName" :sheet-visibility="sheet.is_public" v-if="isSheetOwner" />
+        <SheetConfigMenu :class="menu == 'Config' ? '' : 'hidden-div'" :sheet-name="sheetName"
+            :sheet-visibility="sheet.is_public" v-if="isSheetOwner" />
         <SheetAddSectionMenu :class="menu == 'AddSection' ? '' : 'hidden-div'" v-if="isSheetOwner" />
         <SheetAddCompMenu :class="menu == 'AddComp' ? '' : 'hidden-div'" v-if="isSheetOwner" />
         <SheetEditSectionMenu :class="menu == 'EditSection' ? '' : 'hidden-div'" v-if="isSheetOwner" />

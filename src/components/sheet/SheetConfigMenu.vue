@@ -25,6 +25,24 @@ export default {
     mounted() {
         this.sheetName = this.$refs['sheet-config-menu'].getAttribute('sheet-name')
         this.sheetPublic = this.$refs['sheet-config-menu'].getAttribute('sheet-visibility') === 'true'
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes') {
+                    if (mutation.attributeName === 'sheet-name') {
+                        this.sheetName = mutation.target.getAttribute('sheet-name')
+                    }
+                    else if (mutation.attributeName === 'sheet-visibility') {
+                        this.sheetPublic = mutation.target.getAttribute('sheet-visibility') === 'true'
+                    }
+                }
+            })
+        })
+
+        observer.observe(this.$refs['sheet-config-menu'], {
+            attributes: true,
+            attributeFilter: ['sheet-name', 'sheet-visibility']
+        })
     },
     methods: {
         closeMenu() {

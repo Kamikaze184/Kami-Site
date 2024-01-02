@@ -125,7 +125,7 @@ export default {
     }
   },
   beforeMount() {
-    socket.on('userPasswordChanged', () => {
+    socket.on('user-password-changed', () => {
       if (!this.$store.state.config.changedPasswordNow) {
         localStorage.removeItem('token')
         this.$store.commit('setUser', {})
@@ -133,7 +133,7 @@ export default {
       }
     })
 
-    socket.on('userChanged', (data) => {
+    socket.on('user-changed', (data) => {
       if (data.user.id == this.$store.state.user.id) {
         this.$store.commit('setUser', data.user)
       }
