@@ -24,7 +24,9 @@ export default {
                         alreadyExists: 'Já existe uma seção com esse nome'
                     }
                 },
-            }
+            },
+            confirmSectionRemove: false,
+            confirmSectionClear: false
         }
     },
     methods: {
@@ -68,6 +70,19 @@ export default {
 
             eventEmitter.emit('edit-section', this.newSection.name)
             this.newSection.name = this.actualSection.name
+        },
+        deleteSection() {
+            if (this.sections.length == 1) {
+                return
+            }
+            else {
+                eventEmitter.emit('delete-section', this.actualSection)
+                this.confirmSectionRemove = false
+            }
+        },
+        clearSection() {
+            eventEmitter.emit('clear-section', this.actualSection)
+            this.confirmSectionClear = false
         }
     },
     mounted() {
@@ -116,6 +131,37 @@ export default {
                     </div>
                     <div class="sheet-edit-section-menu-item-value">
                         <button @click="editSection()">Confirmar</button>
+                    </div>
+                </div>
+                <div class="sheet-edit-section-menu-item" v-if="this.sections.length > 1">
+                    <div class="sheet-edit-section-menu-item-title">
+                        <h2>Remover seção</h2>
+                    </div>
+                    <div class="sheet-edit-section-menu-item-value">
+                        <button class="danger-alert-button" @click="confirmSectionRemove = true"
+                            v-if="confirmSectionRemove == false">Remover seção</button>
+                        <div class="sheet-edit-section-menu-item-value" v-if="confirmSectionRemove">
+                            <p class="sheet-edit-section-menu-item-info">Tem certeza que deseja remover esta seção? Todos os
+                                componentes dentro dela também serão removidos</p>
+                            <button class="danger-alert-button" @click="deleteSection()"
+                                style="margin: 5px;">Confirmar</button>
+                            <button @click="confirmSectionRemove = false">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="sheet-edit-section-menu-item" v-if="this.sections.length == 1">
+                    <div class="sheet-edit-section-menu-item-title">
+                        <h2>Remover todos os componentes da seção</h2>
+                    </div>
+                    <div class="sheet-edit-section-menu-item-value">
+                        <button class="danger-alert-button" @click="confirmSectionClear = true"
+                            v-if="confirmSectionClear == false">Remover</button>
+                        <div class="sheet-edit-section-menu-item-value" v-if="confirmSectionClear">
+                            <p class="sheet-edit-section-menu-item-info">Tem certeza que deseja remover todos os componentes desta seção?</p>
+                            <button class="danger-alert-button" @click="clearSection()"
+                                style="margin: 5px;">Confirmar</button>
+                            <button @click="confirmSectionClear = false">Cancelar</button>
+                        </div>
                     </div>
                 </div>
                 <div class="sheet-edit-section-menu-item">
@@ -191,11 +237,20 @@ export default {
     margin: 5px
 }
 
+.sheet-edit-section-menu-item-info {
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--text) !important;
+    margin: 0;
+    text-align: center;
+}
+
 .sheet-edit-section-menu-item-title h1 {
     font-size: 2em;
     font-weight: 700;
     color: var(--text);
     margin: 0;
+    text-align: center;
 }
 
 .sheet-edit-section-menu-item-title h2 {
@@ -203,6 +258,7 @@ export default {
     font-weight: 700;
     color: var(--text);
     margin: 0;
+    text-align: center;
 }
 
 .sheet-edit-section-menu-item-value input {
@@ -298,5 +354,4 @@ export default {
         height: 70%;
         text-align: center;
     }
-}
-</style>
+}</style>

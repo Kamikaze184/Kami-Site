@@ -2,6 +2,7 @@
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import Background from './components/Background.vue';
+import Notification from './components/Notification.vue';
 
 export default {
   data() {
@@ -10,7 +11,8 @@ export default {
   components: {
     NavBar,
     Footer,
-    Background
+    Background,
+    Notification
   },
   mounted() {
     let touchstartX = 0;
@@ -65,6 +67,7 @@ export default {
 
 <template>
   <NavBar ref="nav-bar" />
+  <Notification />
   <router-view></router-view>
   <Footer />
   <Background />
