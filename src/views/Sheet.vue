@@ -391,10 +391,13 @@ export default {
 
                     if (res.status == 200) {
                         if (this.sheet.sheet_name != updatedSheet.sheet_name) {
+                            eventEmitter.emit('add-notification', `Ficha ${this.sheetName} renomeada e salva`, 'As altereções foram salvas com sucesso', 'Trivial')
                             window.location.href = `/ficha/${this.userId}/${this.sheetName}`
                         }
-
-                        this.sheetSavedSuccess = true
+                        else {
+                            eventEmitter.emit('add-notification', `Ficha ${this.sheetName} salva`, 'As altereções foram salvas com sucesso', 'Trivial')
+                            this.sheetSavedSuccess = true
+                        }
                     }
                     else if (res.status == 400) {
                         const data = await res.json()
@@ -403,6 +406,7 @@ export default {
                         this.menu = 'ShowErrors'
                     }
                     else if (res.status == 401) {
+                        eventEmitter.emit('add-notification', 'Erro ao salvar a ficha', 'Você não tem permissão para salvar essa ficha', 'Trivial')
                         localStorage.removeItem('token')
                         window.location.href = '/login'
                     }
@@ -429,9 +433,11 @@ export default {
                 })
 
                 if (res.status == 200) {
+                    eventEmitter.emit('add-notification', `Ficha ${this.sheetName} apagar`, 'A ficha foi apagada com sucesso', 'Trivial')
                     window.location.href = `/fichas`
                 }
                 else if (res.status == 401) {
+                    eventEmitter.emit('add-notification', 'Erro ao apgar a ficha', 'Você não tem permissão para apagar essa ficha', 'Trivial')
                     localStorage.removeItem('token')
                     window.location.href = '/login'
                 }
@@ -607,6 +613,22 @@ export default {
             this.sheet.is_public = sheet_visibility
         })
 
+        eventEmitter.on('delete-section', (section) => {
+            this.menu = 'None'
+            this.sheet.attributes.sections.splice(section.position, 1)
+            this.actualSectionIndex = 0
+            this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
+            this.sections = this.getSheetSections()
+            eventEmitter.emit('set-sections', this.sections)
+            this.reDefinePosition()
+        })
+
+        eventEmitter.on('clear-section', (section) => {
+            this.menu = 'None'
+            this.sheet.attributes.sections[section.position].attributes = []
+            this.reDefinePosition()
+        })
+
         socket.on('sheet-updated', (sheet, socketIdentifier) => {
             if (sheet.id == this.sheet.id && socketIdentifier != socket.id) {
                 this.sheet = sheet
@@ -614,16 +636,17 @@ export default {
                 if (sheet.sheet_name != this.sheetName) {
                     window.location.href = `/ficha/${this.userId}/${sheet.sheet_name}`
                 }
-                else if (!sheet.is_public && !this.isSheetOwner){
-                    if(this.unsigned){
+                else if (!sheet.is_public && !this.isSheetOwner) {
+                    if (this.unsigned) {
                         window.location.href = '/login'
                     }
-                    else{
+                    else {
                         window.location.href = '/fichas'
                     }
                 }
                 else {
-                    if(sheet.attributes.sections[this.actualSectionIndex] == undefined){
+                    eventEmitter.emit('add-notification', 'Ficha atualizada', 'A ficha foi atualizada em outro dispositivo', 'Trivial')
+                    if (sheet.attributes.sections[this.actualSectionIndex] == undefined) {
                         this.actualSectionIndex = 0
                     }
                     else if (sheet.attributes.sections[this.actualSectionIndex].name != this.actualSectionName) {
