@@ -318,8 +318,9 @@ export default {
 
                     if (res.status == 200) {
                         if (this.macro.macro_name != updatedMacro.macro_name) {
-                            eventEmitter.emit('add-notification', `Macro ${this.macroName} renomeada e salvo`, 'As alterações foram salvas com sucesso', 'Trivial')
-                            window.location.href = `/ficha/${this.userId}/${this.macroName}`
+                            lastUseStore.delete('macros', `${this.macro.user_id}-${this.macro.macro_name}`)
+                            eventEmitter.emit('add-notification', `Macro ${this.macroName} renomeado e salvo`, 'As alterações foram salvas com sucesso', 'Trivial')
+                            window.location.href = `/macro/${this.userId}/${this.macroName}`
                         }
                         else {
                             eventEmitter.emit('add-notification', `Macro ${this.macroName} salvo`, 'As alterações foram salvas com sucesso', 'Trivial')
