@@ -1,11 +1,38 @@
 <script>
 import ItemVue from '../components/Item.vue'
+import lastUseStore from '../utils/LastUseStore.js'
 
 export default {
-    setup() {
+    data() {
+        return {
+            sheets: [],
+            macros: []
+        }
     },
     components: {
         ItemVue
+    },
+    methods: {
+        loadLastUse() {
+            const lastUsedSheets = lastUseStore.get('sheets')
+            const lastUsedMacros = lastUseStore.get('macros')
+
+            if (lastUsedSheets) {
+                let sheets = Object.values(lastUsedSheets)
+
+                sheets = sheets.sort((a, b) => {
+                    return b.lastUse - a.lastUse
+                })
+
+                sheets = sheets.slice(0, 5)
+
+                this.sheets = sheets
+            }
+
+            if (lastUsedMacros) {
+                this.macros = Object.values(lastUsedMacros)
+            }
+        }
     },
     mounted() {
         const sideMenu = document.querySelector('#signed-nav-bar .collapsable-menu')
@@ -22,40 +49,37 @@ export default {
         })
 
         observer.observe(sideMenu, { attributes: true, attributeFilter: ['collapsed'] })
-    }
+
+        this.loadLastUse()
+    },
 }
 </script>
 
 <template>
     <div id="Dashboard" ref="dashboard">
         <div class="dashboard-quick-access">
-            <h1 style="text-align: center; width: 80%; align-self: center;">Em desenvolvimento, vá para Fichas</h1>
+            <h1>Acesso Rápido</h1>
             <!-- <h1>Notificações</h1>
             <div class="quick-access-category notifications">
                 <ItemVue type="5" description="Sessão da campanha
                 Nome_da_Campanha
                 marcada para:
                 dd/MM às hh:mm" />
-            </div>
+            </div> -->
             <h1>Fichas</h1>
+            <h2 v-if="sheets.length == 0">Nenhuma ficha acessada recentemente</h2>
             <div class="quick-access-category sheets">
-                <ItemVue type="6" description="teste" href="teste" />
-                <ItemVue type="6" description="teste" />
-                <ItemVue type="6" description="teste" />
-                <ItemVue type="6" description="teste" />
-            </div>
-            <h1>Campanhas</h1>
-            <div class="quick-access-category campaings">
-                <ItemVue type="7" description="teste" />
+                <ItemVue type="6" v-for="sheet of sheets" :key="sheet"
+                    :description="`Ficha ${sheet.name} do usuário ${sheet.username}`"
+                    :href="`ficha/${sheet.userid}/${sheet.name}`" />
             </div>
             <h1>Macros</h1>
+            <h2 v-if="macros.length == 0">Nenhum macro acessado recentemente</h2>
             <div class="quick-access-category macros">
-                <ItemVue type="8" description="teste" />
+                <ItemVue type="8" v-for="macro of macros" :key="macro"
+                    :description="`Macro ${macro.name} do usuário ${macro.username}`"
+                    :href="`macro/${macro.userid}/${macro.name}`" />
             </div>
-            <h1>Templates</h1>
-            <div class="quick-access-category templates">
-                <ItemVue type="9" description="teste" />
-            </div> -->
         </div>
     </div>
 </template>
@@ -89,6 +113,13 @@ export default {
 
 .dashboard-quick-access h1 {
     font-size: 2em;
+    font-weight: bold;
+    margin: 0.5em 0;
+    color: var(--text);
+}
+
+.dashboard-quick-access h2 {
+    font-size: 1.5em;
     font-weight: bold;
     margin: 0.5em 0;
     color: var(--text);

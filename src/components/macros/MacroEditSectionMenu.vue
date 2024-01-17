@@ -31,7 +31,7 @@ export default {
     },
     methods: {
         closeMenu() {
-            eventEmitter.emit('close-sheet-menu')
+            eventEmitter.emit('close-macro-menu')
         },
         validateSection() {
             const sectionName = this.newSection.name.trim()
@@ -68,7 +68,7 @@ export default {
                 return
             }
 
-            eventEmitter.emit('sheet-edit-section', this.newSection.name)
+            eventEmitter.emit('macro-edit-section', this.newSection.name)
             this.newSection.name = this.actualSection.name
         },
         deleteSection() {
@@ -76,33 +76,33 @@ export default {
                 return
             }
             else {
-                eventEmitter.emit('sheet-delete-section', this.actualSection)
+                eventEmitter.emit('macro-delete-section', this.actualSection)
                 this.confirmSectionRemove = false
             }
         },
         clearSection() {
-            eventEmitter.emit('sheet-clear-section', this.actualSection)
+            eventEmitter.emit('macro-clear-section', this.actualSection)
             this.confirmSectionClear = false
         }
     },
     mounted() {
-        eventEmitter.on('sheet-set-sections', (sections) => {
+        eventEmitter.on('macro-set-sections', (sections) => {
             this.sections = sections
         })
-        eventEmitter.emit('sheet-get-sections')
+        eventEmitter.emit('macro-get-sections')
 
-        const sheetEditSectionMenu = document.getElementById('sheet-edit-section-menu')
+        const macroEditSectionMenu = document.getElementById('macro-edit-section-menu')
         const observer = new MutationObserver((mutations) => {
-            if (!sheetEditSectionMenu.classList.contains('hidden-div')) {
-                eventEmitter.on('sheet-set-actual-section', (section) => {
+            if (!macroEditSectionMenu.classList.contains('hidden-div')) {
+                eventEmitter.on('macro-set-actual-section', (section) => {
                     this.actualSection = section
                     this.newSection.name = section.name
                 })
-                eventEmitter.emit('sheet-get-actual-section')
+                eventEmitter.emit('macro-get-actual-section')
             }
         })
 
-        observer.observe(sheetEditSectionMenu, {
+        observer.observe(macroEditSectionMenu, {
             attributes: true,
             attributeFilter: ['class'],
             childList: false,
@@ -112,36 +112,36 @@ export default {
 }
 </script>
 <template>
-    <div id="sheet-edit-section-menu" ref="sheet-edit-section-menu">
-        <div class="sheet-edit-section-menu-list">
-            <div class="sheet-edit-section-menu-box">
-                <div class="sheet-edit-section-menu-item">
-                    <div class="sheet-edit-section-menu-item-title">
+    <div id="macro-edit-section-menu" ref="macro-edit-section-menu">
+        <div class="macro-edit-section-menu-list">
+            <div class="macro-edit-section-menu-box">
+                <div class="macro-edit-section-menu-item">
+                    <div class="macro-edit-section-menu-item-title">
                         <h1>Editar seção</h1>
                     </div>
                 </div>
-                <div class="sheet-edit-section-menu-item">
-                    <div class="sheet-edit-section-menu-item-title">
+                <div class="macro-edit-section-menu-item">
+                    <div class="macro-edit-section-menu-item-title">
                         <h2>Nome da seção</h2>
                     </div>
-                    <div class="sheet-edit-section-menu-item-value">
+                    <div class="macro-edit-section-menu-item-value">
                         <input v-model="newSection.name" type="text" placeholder="Não pode ser vazio"
                             @keyup="validateSection()" @change="validateSection()" />
                         <p v-if="validationErrors.section.state">{{ validationErrors.section.actualMessage }}</p>
                     </div>
-                    <div class="sheet-edit-section-menu-item-value">
+                    <div class="macro-edit-section-menu-item-value">
                         <button @click="editSection()">Confirmar</button>
                     </div>
                 </div>
-                <div class="sheet-edit-section-menu-item" v-if="this.sections.length > 1">
-                    <div class="sheet-edit-section-menu-item-title">
+                <div class="macro-edit-section-menu-item" v-if="this.sections.length > 1">
+                    <div class="macro-edit-section-menu-item-title">
                         <h2>Remover seção</h2>
                     </div>
-                    <div class="sheet-edit-section-menu-item-value">
+                    <div class="macro-edit-section-menu-item-value">
                         <button class="danger-alert-button" @click="confirmSectionRemove = true"
                             v-if="confirmSectionRemove == false">Remover seção</button>
-                        <div class="sheet-edit-section-menu-item-value" v-if="confirmSectionRemove">
-                            <p class="sheet-edit-section-menu-item-info">Tem certeza que deseja remover esta seção? Todos os
+                        <div class="macro-edit-section-menu-item-value" v-if="confirmSectionRemove">
+                            <p class="macro-edit-section-menu-item-info">Tem certeza que deseja remover esta seção? Todos os
                                 componentes dentro dela também serão removidos</p>
                             <button class="danger-alert-button" @click="deleteSection()"
                                 style="margin: 5px;">Confirmar</button>
@@ -149,22 +149,22 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div class="sheet-edit-section-menu-item" v-if="this.sections.length == 1">
-                    <div class="sheet-edit-section-menu-item-title">
+                <div class="macro-edit-section-menu-item" v-if="this.sections.length == 1">
+                    <div class="macro-edit-section-menu-item-title">
                         <h2>Remover todos os componentes da seção</h2>
                     </div>
-                    <div class="sheet-edit-section-menu-item-value">
+                    <div class="macro-edit-section-menu-item-value">
                         <button class="danger-alert-button" @click="confirmSectionClear = true"
                             v-if="confirmSectionClear == false">Remover</button>
-                        <div class="sheet-edit-section-menu-item-value" v-if="confirmSectionClear">
-                            <p class="sheet-edit-section-menu-item-info">Tem certeza que deseja remover todos os componentes desta seção?</p>
+                        <div class="macro-edit-section-menu-item-value" v-if="confirmSectionClear">
+                            <p class="macro-edit-section-menu-item-info">Tem certeza que deseja remover todos os componentes desta seção?</p>
                             <button class="danger-alert-button" @click="clearSection()"
                                 style="margin: 5px;">Confirmar</button>
                             <button @click="confirmSectionClear = false">Cancelar</button>
                         </div>
                     </div>
                 </div>
-                <div class="sheet-edit-section-menu-item">
+                <div class="macro-edit-section-menu-item">
                     <button @click="closeMenu()">Voltar</button>
                 </div>
             </div>
@@ -172,7 +172,7 @@ export default {
     </div>
 </template>
 <style>
-#sheet-edit-section-menu {
+#macro-edit-section-menu {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -185,7 +185,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheet-edit-section-menu-list {
+.macro-edit-section-menu-list {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -197,7 +197,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheet-edit-section-menu-box {
+.macro-edit-section-menu-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -210,7 +210,7 @@ export default {
     height: 40em;
 }
 
-.sheet-edit-section-menu-item {
+.macro-edit-section-menu-item {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -219,7 +219,7 @@ export default {
     margin: 1em 0;
 }
 
-.sheet-edit-section-menu-item-title {
+.macro-edit-section-menu-item-title {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -228,7 +228,7 @@ export default {
     margin: 5px
 }
 
-.sheet-edit-section-menu-item-value {
+.macro-edit-section-menu-item-value {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -237,7 +237,7 @@ export default {
     margin: 5px
 }
 
-.sheet-edit-section-menu-item-info {
+.macro-edit-section-menu-item-info {
     font-size: 1em;
     font-weight: bold;
     color: var(--text) !important;
@@ -245,7 +245,7 @@ export default {
     text-align: center;
 }
 
-.sheet-edit-section-menu-item-title h1 {
+.macro-edit-section-menu-item-title h1 {
     font-size: 2em;
     font-weight: 700;
     color: var(--text);
@@ -253,7 +253,7 @@ export default {
     text-align: center;
 }
 
-.sheet-edit-section-menu-item-title h2 {
+.macro-edit-section-menu-item-title h2 {
     font-size: 1.5em;
     font-weight: 700;
     color: var(--text);
@@ -261,7 +261,7 @@ export default {
     text-align: center;
 }
 
-.sheet-edit-section-menu-item-value input {
+.macro-edit-section-menu-item-value input {
     font-size: 1em;
     width: 70%;
     height: 40px;
@@ -271,7 +271,7 @@ export default {
     outline: none;
 }
 
-.sheet-edit-section-menu-item-value p {
+.macro-edit-section-menu-item-value p {
     font-size: 1.1em;
     font-weight: bold;
     color: var(--cancel-secondary);
@@ -279,7 +279,7 @@ export default {
     text-align: center;
 }
 
-.sheet-edit-section-menu-item button {
+.macro-edit-section-menu-item button {
     font-size: 1em;
     font-weight: bold;
     width: 70%;
@@ -294,32 +294,32 @@ export default {
     transition: all 0.2s linear;
 }
 
-.sheet-edit-section-menu-item button:hover {
+.macro-edit-section-menu-item button:hover {
     background-color: var(--background-secondary);
 }
 
-.sheet-delete-confirm {
+.macro-delete-confirm {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.sheet-delete-confirm p {
+.macro-delete-confirm p {
     font-size: 1em;
     font-weight: bold;
     color: var(--text);
     margin: 0;
 }
 
-.sheet-delete-confirm-buttons {
+.macro-delete-confirm-buttons {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.sheet-delete-confirm-buttons button {
+.macro-delete-confirm-buttons button {
     font-size: 1em;
     font-weight: bold;
     width: 45%;
@@ -345,11 +345,11 @@ export default {
 }
 
 @media (max-width: 800px) {
-    #sheet-edit-section-menu {
+    #macro-edit-section-menu {
         margin-bottom: 0;
     }
 
-    .sheet-edit-section-menu-box {
+    .macro-edit-section-menu-box {
         width: 80%;
         height: 70%;
         text-align: center;

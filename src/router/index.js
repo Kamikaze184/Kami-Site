@@ -12,6 +12,7 @@ import SheetsVue from '../views/Sheets.vue'
 import CampaignsVue from '../views/Campaigns.vue'
 import MacrosVue from '../views/Macros.vue'
 import SheetVue from '../views/Sheet.vue'
+import MacroVue from '../views/Macro.vue'
 import ConfigVue from '../views/Config.vue'
 import NotFoundVue from '../views/NotFound.vue'
 
@@ -27,7 +28,8 @@ const routes = [
     { path: '/fichas', name: 'Sheets', component: SheetsVue },
     { path: '/ficha/:userId/:sheetName', name: 'Sheet', component: SheetVue },
     // { path: '/campanhas', name: 'Campaigns', component: CampaignsVue },
-    // { path: '/macros', name: 'Macros', component: MacrosVue },
+    { path: '/macros', name: 'Macros', component: MacrosVue },
+    { path: '/macro/:userId/:macroName', name: 'Macro', component: MacroVue },
     { path: '/configuracoes', name: 'Config', component: ConfigVue },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundVue }
 ]
@@ -38,7 +40,7 @@ const router = createRouter({
     linkActiveClass: 'link-active'
 })
 
-const unsignedRoutes = ['Login', 'Home', 'Tutorials', 'Commands', 'Tutorial', 'NotFound', 'Sheet']
+const unsignedRoutes = ['Login', 'Home', 'Tutorials', 'Commands', 'Tutorial', 'NotFound', 'Sheet', 'Macro']
 router.beforeEach((to, from, next) => {
     if (!unsignedRoutes.includes(to.name) && !localStorage.getItem('token')) {
         next({ name: 'Login' })

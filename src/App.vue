@@ -35,7 +35,7 @@ export default {
       const y = touchendY - touchstartY;
 
       if (Math.abs(x) > Math.abs(y)) {
-        if (x > 0) {
+        if (x > 0 && this.$route.name !== 'Macro') {
           navBar.toggleMenuMobile('open')
         } else {
           navBar.toggleMenuMobile('close')

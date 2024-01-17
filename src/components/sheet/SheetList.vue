@@ -179,7 +179,7 @@ export default {
             return `sheet-list-body-item-error-state-${state}`
         },
         removeComponent() {
-            eventEmitter.emit('remove-component', this.$refs['sheet-list'])
+            eventEmitter.emit('sheet-remove-component', this.$refs['sheet-list'])
         },
         toggleVisualizeMode() {
             this.visualizeMode = true
@@ -208,17 +208,17 @@ export default {
 
         this.readonly = this.$refs['sheet-list'].getAttribute('readonly') == ''
 
-        eventEmitter.on('set-sections', (sections) => {
+        eventEmitter.on('sheet-set-sections', (sections) => {
             this.sections = sections
         })
-        eventEmitter.emit('get-sections')
+        eventEmitter.emit('sheet-get-sections')
 
-        eventEmitter.on('set-max-position', (positions) => {
+        eventEmitter.on('sheet-set-max-position', (positions) => {
             this.maxPosition = positions
         })
-        eventEmitter.emit('get-max-position')
+        eventEmitter.emit('sheet-get-max-position')
 
-        eventEmitter.on('component-being-moved', async (component) => {
+        eventEmitter.on('sheet-component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
                 if (this.mobile) {
                     this.expanded = true
@@ -235,21 +235,21 @@ export default {
         name() {
             this.name = this.name.trim()
             this.validateName()
-            eventEmitter.emit('update-component', this.$refs['sheet-list'], this.name, this.value)
+            eventEmitter.emit('sheet-update-component', this.$refs['sheet-list'], this.name, this.value)
         },
         value: {
             handler() {
                 this.validateQuantity()
                 this.validateValue()
-                eventEmitter.emit('update-component', this.$refs['sheet-list'], this.name, this.value)
+                eventEmitter.emit('sheet-update-component', this.$refs['sheet-list'], this.name, this.value)
             },
             deep: true
         },
         section() {
-            eventEmitter.emit('move-component', this.$refs['sheet-list'], this.section, this.position)
+            eventEmitter.emit('sheet-move-component', this.$refs['sheet-list'], this.section, this.position)
         },
         position() {
-            eventEmitter.emit('move-component', this.$refs['sheet-list'], this.section, this.position)
+            eventEmitter.emit('sheet-move-component', this.$refs['sheet-list'], this.section, this.position)
         },
         validationErrors: {
             handler() {
@@ -297,10 +297,10 @@ export default {
                 }
 
                 if (errorState) {
-                    eventEmitter.emit('invalid-component', this.$refs['sheet-list'], errors)
+                    eventEmitter.emit('sheet-invalid-component', this.$refs['sheet-list'], errors)
                 }
                 else {
-                    eventEmitter.emit('valid-component', this.$refs['sheet-list'])
+                    eventEmitter.emit('sheet-valid-component', this.$refs['sheet-list'])
                 }
             },
             deep: true
@@ -397,7 +397,7 @@ export default {
         <div class="sheet-list-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-list-mobile-expanded-box">
                 <button class="sheet-list-mobile-back-button"
-                    @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                    @click="toggleVisualizeMode(); expanded = false;" v-if="readonly">Voltar</button>
                 <div class="sheet-list-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-list-mobile-config-item-row">

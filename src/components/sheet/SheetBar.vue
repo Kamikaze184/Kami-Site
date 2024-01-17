@@ -224,7 +224,7 @@ export default {
             }
         },
         removeComponent() {
-            eventEmitter.emit('remove-component', this.$refs['sheet-bar'])
+            eventEmitter.emit('sheet-remove-component', this.$refs['sheet-bar'])
         },
         toggleVisualizeMode() {
             this.visualizeMode = true
@@ -260,17 +260,17 @@ export default {
 
         this.readonly = this.$refs['sheet-bar'].getAttribute('readonly') == ''
 
-        eventEmitter.on('set-sections', (sections) => {
+        eventEmitter.on('sheet-set-sections', (sections) => {
             this.sections = sections
         })
-        eventEmitter.emit('get-sections')
+        eventEmitter.emit('sheet-get-sections')
 
-        eventEmitter.on('set-max-position', (positions) => {
+        eventEmitter.on('sheet-set-max-position', (positions) => {
             this.maxPosition = positions
         })
-        eventEmitter.emit('get-max-position')
+        eventEmitter.emit('sheet-get-max-position')
 
-        eventEmitter.on('component-being-moved', async (component) => {
+        eventEmitter.on('sheet-component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
                 if (this.mobile) {
                     this.expanded = true
@@ -286,7 +286,7 @@ export default {
     watch: {
         name() {
             this.validateName()
-            eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
+            eventEmitter.emit('sheet-update-component', this.$refs['sheet-bar'], this.name, this.value)
         },
         value: {
             handler() {             
@@ -294,15 +294,15 @@ export default {
                 this.validateMax()
                 this.validateMin()
                 this.validateStep()
-                eventEmitter.emit('update-component', this.$refs['sheet-bar'], this.name, this.value)
+                eventEmitter.emit('sheet-update-component', this.$refs['sheet-bar'], this.name, this.value)
             },
             deep: true
         },
         section() {
-            eventEmitter.emit('move-component', this.$refs['sheet-bar'], this.section, this.position)
+            eventEmitter.emit('sheet-move-component', this.$refs['sheet-bar'], this.section, this.position)
         },
         position() {
-            eventEmitter.emit('move-component', this.$refs['sheet-bar'], this.section, this.position)
+            eventEmitter.emit('sheet-move-component', this.$refs['sheet-bar'], this.section, this.position)
         },
         validationErrors: {
             handler() {
@@ -329,10 +329,10 @@ export default {
                             actualMessage: this.validationErrors.step.actualMessage
                         }
                     }
-                    eventEmitter.emit('invalid-component', this.$refs['sheet-bar'], errors)
+                    eventEmitter.emit('sheet-invalid-component', this.$refs['sheet-bar'], errors)
                 }
                 else {
-                    eventEmitter.emit('valid-component', this.$refs['sheet-bar'])
+                    eventEmitter.emit('sheet-valid-component', this.$refs['sheet-bar'])
                 }
             },
             deep: true
@@ -442,7 +442,7 @@ export default {
         </div>
         <div class="sheet-bar-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-bar-mobile-expanded-box">
-                <button class="sheet-bar-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <button class="sheet-bar-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;" v-if="readonly">Voltar</button>
                 <div class="sheet-bar-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-bar-mobile-config-item-row">

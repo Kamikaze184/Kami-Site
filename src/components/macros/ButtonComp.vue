@@ -1,5 +1,6 @@
 <script>
 import { eventEmitter } from '../../utils/EventEmitter.js'
+import { validateDiceString } from '../..//utils/DiceRoller.js'
 
 export default {
     data() {
@@ -16,19 +17,19 @@ export default {
                     state: false,
                     actualMessage: '',
                     messages: {
-                        empty: 'O nome do atributo não pode ser vazio',
-                        tooLong: 'O nome do atributo não pode ter mais de 32 caracteres',
-                        invalidChars: 'O nome do atributo não pode conter caracteres especiais',
-                        alreadyExists: 'O nome do atributo já existe',
+                        empty: 'O nome do componente não pode ser vazio',
+                        tooLong: 'O nome do componente não pode ter mais de 32 caracteres',
+                        invalidChars: 'O nome do componente não pode conter caracteres especiais',
+                        alreadyExists: 'O nome do componente já existe',
                     }
                 },
                 value: {
                     state: false,
                     actualMessage: '',
                     messages: {
-                        empty: 'O valor do atributo não pode ser vazio',
-                        tooLong: 'O valor do atributo não pode ter mais de 1024 caracteres',
-                        invalidChars: 'O valor do atributo não pode conter caracteres especiais',
+                        empty: 'O valor do componente não pode ser vazio',
+                        tooLong: 'O valor do componente não pode ter mais de 256 caracteres',
+                        invalidFormat: 'O formato do valor do componente é inválido, siga o exemplo: 1d6+2',
                     }
                 }
             },
@@ -98,13 +99,13 @@ export default {
                 this.validationErrors.value.state = true
                 this.validationErrors.value.actualMessage = this.validationErrors.value.messages.empty
             }
-            else if (value.length > 1024) {
+            else if (value.length > 256) {
                 this.validationErrors.value.state = true
                 this.validationErrors.value.actualMessage = this.validationErrors.value.messages.tooLong
             }
-            else if (!value.match(/^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]{1,}(?: [a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ+#@$%&*{}()/.,;:?!'"-_| ]+){0,}$/gim)) {
+            else if (!validateDiceString(value)) {
                 this.validationErrors.value.state = true
-                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.invalidChars
+                this.validationErrors.value.actualMessage = this.validationErrors.value.messages.invalidFormat
             }
             else {
                 this.validationErrors.value.state = false
@@ -112,7 +113,7 @@ export default {
             }
         },
         removeComponent() {
-            eventEmitter.emit('sheet-remove-component', this.$refs['sheet-longtext'])
+            eventEmitter.emit('macro-remove-component', this.$refs['macro-button'])
         },
         toggleVisualizeMode() {
             this.visualizeMode = true
@@ -121,6 +122,9 @@ export default {
         toggleEditMode() {
             this.visualizeMode = false
             this.editMode = true
+        },
+        roll() {
+            eventEmitter.emit('macro-roll-dice', this.value, this.name)
         }
     },
     beforeMount() {
@@ -131,27 +135,27 @@ export default {
         })
     },
     mounted() {
-        this.name = this.$refs['sheet-longtext'].getAttribute('name')
-        this.value = this.$refs['sheet-longtext'].getAttribute('value')
+        this.name = this.$refs['macro-button'].getAttribute('name')
+        this.value = this.$refs['macro-button'].getAttribute('value')
 
-        const position = this.$refs['sheet-longtext'].getAttribute('position')
+        const position = this.$refs['macro-button'].getAttribute('position')
 
         this.section = position.split('-')[0]
         this.position = position.split('-')[1]
 
-        this.readonly = this.$refs['sheet-longtext'].getAttribute('readonly') == ''
+        this.readonly = this.$refs['macro-button'].getAttribute('readonly') == ''
 
-        eventEmitter.on('sheet-set-sections', (sections) => {
+        eventEmitter.on('macro-set-sections', (sections) => {
             this.sections = sections
         })
-        eventEmitter.emit('sheet-get-sections')
+        eventEmitter.emit('macro-get-sections')
 
-        eventEmitter.on('sheet-set-max-position', (positions) => {
+        eventEmitter.on('macro-set-max-position', (positions) => {
             this.maxPosition = positions
         })
-        eventEmitter.emit('sheet-get-max-position')
+        eventEmitter.emit('macro-get-max-position')
 
-        eventEmitter.on('sheet-component-being-moved', async (component) => {
+        eventEmitter.on('macro-component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
                 if (this.mobile) {
                     this.expanded = true
@@ -168,18 +172,19 @@ export default {
         name() {
             this.name = this.name.trim()
             this.validateName()
-            eventEmitter.emit('sheet-update-component', this.$refs['sheet-longtext'], this.name, this.value)
+            eventEmitter.emit('macro-update-component', this.$refs['macro-button'], this.name, this.value)
         },
         value() {
             this.value = this.value.trim()
+
             this.validateValue()
-            eventEmitter.emit('sheet-update-component', this.$refs['sheet-longtext'], this.name, this.value)
+            eventEmitter.emit('macro-update-component', this.$refs['macro-button'], this.name, this.value)
         },
         section() {
-            eventEmitter.emit('sheet-move-component', this.$refs['sheet-longtext'], this.section, this.position)
+            eventEmitter.emit('macro-move-component', this.$refs['macro-button'], this.section, this.position)
         },
         position() {
-            eventEmitter.emit('sheet-move-component', this.$refs['sheet-longtext'], this.section, this.position)
+            eventEmitter.emit('macro-move-component', this.$refs['macro-button'], this.section, this.position)
         },
         validationErrors: {
             handler() {
@@ -194,101 +199,106 @@ export default {
                             actualMessage: this.validationErrors.value.actualMessage
                         }
                     }
-                    eventEmitter.emit('sheet-invalid-component', this.$refs['sheet-longtext'], errors)
+                    eventEmitter.emit('macro-invalid-component', this.$refs['macro-button'], errors)
                 }
                 else {
-                    eventEmitter.emit('sheet-valid-component', this.$refs['sheet-longtext'])
+                    eventEmitter.emit('macro-valid-component', this.$refs['macro-button'])
                 }
             },
             deep: true
         }
     }
+
 }
 </script>
 <template>
-    <div class="sheet-longtext-wrapper" ref="sheet-longtext">
-        <div class="sheet-longtext" @click="toggleControlsOn()" v-if="!mobile && !config">
-            <div class="sheet-longtext-header">
-                <textarea :value="name" placeholder="Insira um nome" ref="sheet-longtext-name"
-                    @keyup="name = $refs['sheet-longtext-name'].value" :disabled="readonly" />
+    <div class="macro-button-wrapper" ref="macro-button">
+        <div class="macro-button" @click="toggleControlsOn()" v-if="!mobile && !config">
+            <div class="macro-button-header">
+                <textarea :value="name" placeholder="Insira um nome" ref="macro-button-name"
+                    @keyup="name = $refs['macro-button-name'].value" :disabled="readonly" />
             </div>
-            <div class="sheet-longtext-body">
+            <div class="macro-button-body">
                 <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
                 <p v-if="validationErrors.value.state">{{ validationErrors.value.actualMessage }}</p>
-                <textarea :value="value" placeholder="Insira um valor" ref="sheet-longtext-value"
-                    @keyup="value = $refs['sheet-longtext-value'].value" :disabled="readonly" />
-            </div>
-            <div class="sheet-longtext-footer" v-if="mobile">
-                <p>Clique para expandir</p>
+                <textarea :value="value" placeholder="Insira um valor" ref="macro-button-value"
+                    @keyup="value = $refs['macro-button-value'].value" :disabled="readonly" />
+                <div class="macro-button-roll-button">
+                    <button @click="roll()">Jogar dado</button>
+                </div>
             </div>
         </div>
-        <div class="sheet-longtext-config" v-if="!mobile && config && !readonly">
-            <div class="sheet-longtext-config-item">
+        <div class="macro-button-config" v-if="!mobile && config && !readonly">
+            <div class="macro-button-config-item">
                 <p>Seção</p>
-                <select :value="section" @change="section = $refs['sheet-longtext-config-section'].value"
-                    ref="sheet-longtext-config-section">
-                    <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}</option>
+                <select :value="section" @change="section = $refs['macro-button-config-section'].value"
+                    ref="macro-button-config-section">
+                    <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}
+                    </option>
                 </select>
             </div>
-            <div class="sheet-longtext-config-item">
+            <div class="macro-button-config-item">
                 <p>Posição</p>
-                <div class="sheet-longtext-config-item-row">
+                <div class="macro-button-config-item-row">
                     <img src="../../assets/img/navigateIcon.svg" @click="previousPosition()">
                     <input type="number" :value="position" disabled />
                     <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                 </div>
             </div>
-            <div class="sheet-longtext-config-item">
+            <div class="macro-button-config-item">
                 <button v-if="!confirmComponentRemove" @click="confirmComponentRemove = true">Remover</button>
                 <p v-if="confirmComponentRemove">Tem certeza que deseja apagar este componente?</p>
-                <div class="sheet-longtext-confirm-remove-component" v-if="confirmComponentRemove">
-                    <button class="sheet-longtext-danger-alert" @click="removeComponent()">Confirmar</button>
+                <div class="macro-button-confirm-remove-component" v-if="confirmComponentRemove">
+                    <button class="macro-button-danger-alert" @click="removeComponent()">Confirmar</button>
                     <button @click="confirmComponentRemove = false">Cancelar</button>
                 </div>
             </div>
         </div>
-        <div :class="`sheet-longtext-controls ${controls ? 'sheet-longtext-show-controls' : 'sheet-longtext-hide-controls'}`"
-            v-if="!mobile && !readonly" ref="sheet-longtext-controls">
+        <div :class="`macro-button-controls ${controls ? 'macro-button-show-controls' : 'macro-button-hide-controls'}`"
+            ref="macro-button-controls" v-if="!mobile && !readonly">
             <img class="sheet-controls-config" src="../../assets/img/setting.svg" @click="toggleConfig()">
             <img class="sheet-controls-remove" src="../../assets/img/cancel.svg" @click="toggleControlsOff()">
         </div>
         <!-- Mobile -->
-        <div class="sheet-longtext-mobile" v-if="mobile" @click="expanded = true">
-            <div class="sheet-longtext-mobile-name">
+        <div class="macro-button-mobile" v-if="mobile">
+            <div class="macro-button-mobile-name" @click="expanded = true">
                 <h4>{{ name }}</h4>
             </div>
-            <div class="sheet-longtext-mobile-value">
+            <div class="macro-button-mobile-value" @click="expanded = true">
                 <p>{{ value }}</p>
             </div>
-            <div class="sheet-longtext-mobile-footer">
+            <div class="macro-button-mobile-roll-button">
+                <button @click="roll()">Jogar dado</button>
+            </div>
+            <div class="macro-button-mobile-footer" @click="expanded = true">
                 <p>Clique para expandir</p>
             </div>
         </div>
-        <div class="sheet-longtext-mobile-expanded" v-if="mobile && expanded">
-            <div class="sheet-longtext-mobile-expanded-box">
-                <button class="sheet-longtext-mobile-back-button"
-                    @click="toggleVisualizeMode(); expanded = false;" v-if="readonly">Voltar</button>
-                <div class="sheet-longtext-mobile-expanded-controls" v-if="!readonly">
+        <div class="macro-button-mobile-expanded" v-if="mobile && expanded">
+            <div class="macro-button-mobile-expanded-box">
+                <button class="macro-button-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;"
+                    v-if="readonly">Voltar</button>
+                <div class="macro-button-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
-                    <div class="sheet-longtext-mobile-config-item-row">
-                        <button @click="toggleVisualizeMode()" ref="sheet-longtext-mobile-toggle-visualize-mode-button"
-                            :class="visualizeMode == true ? 'sheet-longtext-mobile-expanded-button-active' : ''">Visualizar</button>
-                        <button @click="toggleEditMode()" ref="sheet-longtext-mobile-toggle-edit-mode-button"
-                            :class="editMode == true ? 'sheet-longtext-mobile-expanded-button-active' : ''">Editar</button>
+                    <div class="macro-button-mobile-config-item-row">
+                        <button @click="toggleVisualizeMode()" ref="macro-button-mobile-toggle-visualize-mode-button"
+                            :class="visualizeMode == true ? 'macro-button-mobile-expanded-button-active' : ''">Visualizar</button>
+                        <button @click="toggleEditMode()" ref="macro-button-mobile-toggle-edit-mode-button"
+                            :class="editMode == true ? 'macro-button-mobile-expanded-button-active' : ''">Editar</button>
                     </div>
                     <p v-if="editMode && !visualizeMode">Seção</p>
-                    <select :value="section" @change="section = $refs['sheet-longtext-mobile-section'].value"
-                        ref="sheet-longtext-mobile-section" v-if="editMode && !visualizeMode">
+                    <select :value="section" @change="section = $refs['macro-button-mobile-section'].value"
+                        ref="macro-button-mobile-section" v-if="editMode && !visualizeMode">
                         <option v-for="item in sections" :key="item" :value="sections.indexOf(item)">{{ item.name }}
                         </option>
                     </select>
                     <p v-if="editMode && !visualizeMode">Posição</p>
-                    <div class="sheet-longtext-mobile-config-item-row" v-if="editMode && !visualizeMode">
+                    <div class="macro-button-mobile-config-item-row" v-if="editMode && !visualizeMode">
                         <img src="../../assets/img/navigateIcon.svg" @click="previousPosition()">
                         <input type="number" :value="position" disabled />
                         <img src="../../assets/img/navigateIcon.svg" @click="nextPosition()">
                     </div>
-                    <button class="sheet-longtext-mobile-expanded-remove-button" v-if="editMode && !visualizeMode"
+                    <button class="macro-button-mobile-expanded-remove-button" v-if="editMode && !visualizeMode"
                         @click="confirmComponentRemove = true">Remover
                         componente</button>
                     <div class="confirmation-pop-up" v-if="confirmComponentRemove">
@@ -300,23 +310,23 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div class="sheet-longtext-mobile-expanded-visualize-body" v-if="visualizeMode && !editMode">
-                    <div class="sheet-longtext-mobile-expanded-name">
+                <div class="macro-button-mobile-expanded-visualize-body" v-if="visualizeMode && !editMode">
+                    <div class="macro-button-mobile-expanded-name">
                         <h4>{{ name }}</h4>
                     </div>
-                    <div class="sheet-longtext-mobile-expanded-value">
+                    <div class="macro-button-mobile-expanded-value">
                         <p>{{ value }}</p>
                     </div>
                 </div>
-                <div class="sheet-longtext-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
-                    <div class="sheet-longtext-mobile-expanded-name">
-                        <input v-model="name" placeholder="Insira um nome para o atributo" @keyup="validateName()"
+                <div class="macro-button-mobile-expanded-edit-body" v-else-if="!visualizeMode && editMode && !readonly">
+                    <div class="macro-button-mobile-expanded-name">
+                        <input v-model="name" placeholder="Insira um nome para o componente" @keyup="validateName()"
                             @change="validateName()">
                     </div>
-                    <div class="sheet-longtext-mobile-expanded-value">
+                    <div class="macro-button-mobile-expanded-value">
                         <p v-if="validationErrors.name.state">{{ validationErrors.name.actualMessage }}</p>
                         <p v-if="validationErrors.value.state">{{ validationErrors.value.actualMessage }}</p>
-                        <textarea v-model="value" placeholder="Insira um valor para o atributo" @keyup="validateValue()"
+                        <textarea v-model="value" placeholder="Insira um valor para o componente" @keyup="validateValue()"
                             @change="validateValue()"></textarea>
                     </div>
                 </div>
@@ -325,15 +335,23 @@ export default {
     </div>
 </template>
 <style>
-.sheet-longtext-show-controls {
+.show-number-component {
     display: flex !important;
 }
 
-.sheet-longtext-hide-controls {
+.hide-number-component {
     display: none !important;
 }
 
-.sheet-longtext-wrapper {
+.macro-button-show-controls {
+    display: flex !important;
+}
+
+.macro-button-hide-controls {
+    display: none !important;
+}
+
+.macro-button-wrapper {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -343,8 +361,8 @@ export default {
     margin: 5px 5px;
 }
 
-.sheet-longtext,
-.sheet-longtext-config {
+.macro-button,
+.macro-button-config {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -358,69 +376,28 @@ export default {
     position: relative;
 }
 
-.sheet-longtext-config {
+.macro-button-config {
     justify-content: flex-start;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-.sheet-longtext-config::-webkit-scrollbar-track {
+.macro-button-config::-webkit-scrollbar-track {
     background-color: var(--background);
     border-radius: 10px;
 }
 
-.sheet-longtext-config::-webkit-scrollbar {
+.macro-button-config::-webkit-scrollbar {
     width: 10px;
     background-color: var(--background);
 }
 
-.sheet-longtext-config::-webkit-scrollbar-thumb {
+.macro-button-config::-webkit-scrollbar-thumb {
     background-color: var(--background-secondary);
     border-radius: 10px;
 }
 
-.sheet-longtext-config-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 5px;
-    padding: 0;
-    width: 100%;
-}
-
-.sheet-longtext-config-item p {
-    margin: 0;
-    padding: 0;
-    font-weight: bold;
-}
-
-.sheet-longtext-config-item input,
-.sheet-longtext-config-item select {
-    margin: 0;
-    padding: 5px 5px;
-    width: 10em;
-    height: 2em;
-    border: none;
-    border-radius: 5px;
-    background-color: var(--background);
-    color: var(--text);
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.2em;
-    outline: none;
-}
-
-.sheet-longtext-config-item input {
-    width: 3em;
-    height: 2em;
-    text-align: center;
-    font-size: 1.2em;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-.sheet-longtext-confirm-remove-component {
+.macro-button-confirm-remove-component {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -430,7 +407,7 @@ export default {
     margin-bottom: 5px;
 }
 
-.sheet-longtext-config-item button {
+.macro-button-config-item button {
     margin: 5px 0;
     padding: 5px 5px;
     width: 10em;
@@ -446,11 +423,11 @@ export default {
     cursor: pointer;
 }
 
-.sheet-longtext-config-item button:hover {
+.macro-button-config-item button:hover {
     background-color: var(--background-secondary);
 }
 
-.sheet-longtext-config-item p {
+.macro-button-config-item p {
     margin: 0;
     padding: 0;
     font-weight: bold;
@@ -459,18 +436,63 @@ export default {
     text-align: center;
 }
 
-.sheet-longtext-config-item input::-webkit-outer-spin-button,
-.sheet-longtext-config-item input::-webkit-inner-spin-button {
+.macro-button-danger-alert {
+    color: var(--cancel-secondary) !important;
+}
+
+.macro-button-config-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    padding: 0;
+    width: 100%;
+}
+
+.macro-button-config-item p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+.macro-button-config-item input,
+.macro-button-config-item select {
+    margin: 0;
+    padding: 5px 5px;
+    width: 10em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--text);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    outline: none;
+}
+
+.macro-button-config-item input {
+    width: 3em;
+    height: 2em;
+    text-align: center;
+    font-size: 1.2em;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.macro-button-config-item input::-webkit-outer-spin-button,
+.macro-button-config-item input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.sheet-longtext-config-item input[type=number] {
+.macro-button-config-item input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
 
-.sheet-longtext-config-item-row {
+.macro-button-config-item-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -478,7 +500,7 @@ export default {
     width: 80%;
 }
 
-.sheet-longtext-config-item-row img {
+.macro-button-config-item-row img {
     width: 2em;
     height: 2em;
     margin: 0 5px;
@@ -486,15 +508,15 @@ export default {
     filter: var(--background-filter);
 }
 
-.sheet-longtext-config-item-row img:hover {
+.macro-button-config-item-row img:hover {
     filter: var(--background-filter-hover);
 }
 
-.sheet-longtext-config-item-row img:first-of-type {
+.macro-button-config-item-row img:first-of-type {
     rotate: 180deg;
 }
 
-.sheet-longtext-controls {
+.macro-button-controls {
     display: none;
     flex-direction: column;
     justify-content: flex-start;
@@ -502,7 +524,7 @@ export default {
     height: 10em;
 }
 
-.sheet-longtext-controls img {
+.macro-button-controls img {
     width: 95%;
     background-color: var(--primary);
     border-radius: 50%;
@@ -512,11 +534,11 @@ export default {
     z-index: 10;
 }
 
-.sheet-longtext-controls img:hover {
+.macro-button-controls img:hover {
     background-color: var(--secondary);
 }
 
-.sheet-longtext-header {
+.macro-button-header {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -535,7 +557,7 @@ export default {
     position: relative;
 }
 
-.sheet-longtext-header textarea {
+.macro-button-header textarea {
     margin: 0;
     width: 100%;
     height: 100%;
@@ -550,22 +572,23 @@ export default {
     overflow-y: auto;
 }
 
-.sheet-longtext-header textarea::-webkit-scrollbar-track {
+.macro-button-header textarea::-webkit-scrollbar-track {
     background-color: var(--background);
     border-radius: 10px;
 }
 
-.sheet-longtext-header textarea::-webkit-scrollbar {
+.macro-button-header textarea::-webkit-scrollbar {
     width: 10px;
     background-color: var(--background);
+    border-radius: 10px;
 }
 
-.sheet-longtext-header textarea::-webkit-scrollbar-thumb {
+.macro-button-header textarea::-webkit-scrollbar-thumb {
     background-color: var(--background-secondary);
     border-radius: 10px;
 }
 
-.sheet-longtext-body {
+.macro-button-body {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -575,10 +598,9 @@ export default {
     box-sizing: border-box;
     font-weight: bold;
     margin: 0;
-    padding: 5px;
 }
 
-.sheet-longtext-body p {
+.macro-button-body p {
     margin: 0;
     padding: 0;
     font-weight: bold;
@@ -587,15 +609,43 @@ export default {
     text-align: center;
 }
 
-.sheet-longtext-body textarea {
-    margin: 0;
+.macro-button-roll-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30%;
+}
+
+.macro-button-roll-button button {
     width: 100%;
     height: 100%;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+}
+
+.macro-button-roll-button button:hover {
+    background-color: var(--background-secondary);
+}
+
+.macro-button-body textarea {
+    margin: 0;
+    width: 100%;
+    height: 70%;
     background-color: transparent;
     border: none;
-    text-align: justify;
+    text-align: center;
     font-weight: bold;
-    font-size: 1.3em;
+    font-size: 2em;
     color: var(--text);
     text-overflow: ellipsis;
     overflow: hidden;
@@ -608,29 +658,28 @@ export default {
     overflow-y: auto;
 }
 
-.sheet-longtext-body textarea::placeholder {
+.macro-button-body textarea::placeholder {
     color: var(--text);
     font-size: 0.8em;
     opacity: 0.5;
 }
 
-.sheet-longtext-body textarea::-webkit-scrollbar-track {
+.macro-button-body textarea::-webkit-scrollbar-track {
     background-color: var(--background);
     border-radius: 10px;
 }
 
-.sheet-longtext-body textarea::-webkit-scrollbar {
+.macro-button-body textarea::-webkit-scrollbar {
     width: 10px;
     background-color: var(--background);
-    border-radius: 10px;
 }
 
-.sheet-longtext-body textarea::-webkit-scrollbar-thumb {
+.macro-button-body textarea::-webkit-scrollbar-thumb {
     background-color: var(--background-secondary);
     border-radius: 10px;
 }
 
-.sheet-longtext-footer {
+.macro-button-footer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -648,19 +697,15 @@ export default {
     padding: 5px;
 }
 
-.sheet-longtext-danger-alert {
-    color: var(--cancel-secondary) !important;
-}
-
 @media (max-width: 800px) {
-    .sheet-longtext-wrapper {
+    .macro-button-wrapper {
         width: 48%;
         height: 9em;
         margin: 4px 2px;
     }
 }
 
-.sheet-longtext-mobile {
+.macro-button-mobile {
     width: 100%;
     height: 9em;
     background-color: var(--primary);
@@ -673,7 +718,7 @@ export default {
     transition: 0.3s;
 }
 
-.sheet-longtext-mobile-name {
+.macro-button-mobile-name {
     box-sizing: border-box;
     width: 100%;
     height: 25%;
@@ -691,7 +736,7 @@ export default {
     vertical-align: middle;
 }
 
-.sheet-longtext-mobile-name h4 {
+.macro-button-mobile-name h4 {
     font-size: 0.8em;
     font-weight: bold;
     margin: 0;
@@ -701,8 +746,8 @@ export default {
     hyphens: auto;
 }
 
-.sheet-longtext-mobile-value {
-    height: 60%;
+.macro-button-mobile-value {
+    height: 40%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -713,7 +758,7 @@ export default {
     padding: 0;
 }
 
-.sheet-longtext-mobile-value p {
+.macro-button-mobile-value p {
     font-size: unset;
     font-weight: bold;
     margin: 0;
@@ -723,6 +768,33 @@ export default {
     color: var(--text);
     overflow: hidden;
     text-align: center !important;
+    text-overflow: ellipsis;
+}
+
+.macro-button-mobile-roll-button {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+}
+
+.macro-button-mobile-roll-button button {
+    width: 100%;
+    height: 100%;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    color: var(--text);
+    font-size: 0.8em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
 }
 
 .overflow {
@@ -730,7 +802,7 @@ export default {
     white-space: nowrap;
 }
 
-.sheet-longtext-mobile-footer {
+.macro-button-mobile-footer {
     width: 100%;
     height: 15%;
     box-sizing: border-box;
@@ -748,14 +820,14 @@ export default {
     vertical-align: middle;
 }
 
-.sheet-longtext-mobile-footer p {
+.macro-button-mobile-footer p {
     font-size: 0.9em;
     font-weight: bold;
     margin: 0;
     width: 100%;
 }
 
-.sheet-longtext-mobile-expanded {
+.macro-button-mobile-expanded {
     position: fixed;
     top: 66px;
     left: 0;
@@ -765,10 +837,9 @@ export default {
     z-index: 2;
     padding-top: 5px;
     overflow-y: scroll;
-    margin-bottom: 10px;
 }
 
-.sheet-longtext-mobile-expanded-box {
+.macro-button-mobile-expanded-box {
     width: 100%;
     height: 100%;
     display: flex;
@@ -777,7 +848,7 @@ export default {
     align-items: center;
 }
 
-.sheet-longtext-mobile-expanded-controls {
+.macro-button-mobile-expanded-controls {
     width: 90%;
     height: fit-content;
     display: flex;
@@ -786,7 +857,8 @@ export default {
     align-items: center;
 }
 
-.sheet-longtext-mobile-expanded-controls button, .sheet-longtext-mobile-back-button  {
+.macro-button-mobile-expanded-controls button,
+.macro-button-mobile-back-button {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -799,11 +871,11 @@ export default {
     padding: 0;
 }
 
-.sheet-longtext-mobile-back-button {
+.macro-button-mobile-back-button {
     width: 90% !important;
 }
 
-.sheet-longtext-mobile-config-item-row {
+.macro-button-mobile-config-item-row {
     width: 100%;
     height: 3em;
     display: flex;
@@ -812,7 +884,7 @@ export default {
     align-items: center;
 }
 
-.sheet-longtext-mobile-expanded-config-item-row button {
+.macro-button-mobile-expanded-config-item-row button {
     width: 48%;
     height: 3em;
     background-color: var(--primary);
@@ -825,13 +897,13 @@ export default {
     padding: 0;
 }
 
-.sheet-longtext-mobile-expanded-button-active {
+.macro-button-mobile-expanded-button-active {
     background-color: var(--background) !important;
     border: 2px solid var(--primary) !important;
     color: var(--text) !important;
 }
 
-.sheet-longtext-mobile-expanded p {
+.macro-button-mobile-expanded p {
     width: 100%;
     text-align: center;
     color: var(--text);
@@ -841,7 +913,7 @@ export default {
     padding: 0;
 }
 
-.sheet-longtext-mobile-expanded select {
+.macro-button-mobile-expanded select {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -854,7 +926,7 @@ export default {
     padding: 0;
 }
 
-.sheet-longtext-mobile-expanded input {
+.macro-button-mobile-expanded input {
     width: 100%;
     height: 3em;
     background-color: var(--primary);
@@ -868,7 +940,7 @@ export default {
     text-align: center;
 }
 
-.sheet-longtext-mobile-expanded input[type=number] {
+.macro-button-mobile-expanded input[type=number] {
     width: 3em;
     height: 3em;
     text-align: center;
@@ -877,18 +949,18 @@ export default {
     appearance: none;
 }
 
-.sheet-longtext-mobile-expanded input::-webkit-outer-spin-button,
-.sheet-longtext-mobile-expanded input::-webkit-inner-spin-button {
+.macro-button-mobile-expanded input::-webkit-outer-spin-button,
+.macro-button-mobile-expanded input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.sheet-longtext-mobile-expanded input[type=number] {
+.macro-button-mobile-expanded input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
 
-.sheet-longtext-mobile-config-item-row img {
+.macro-button-mobile-config-item-row img {
     width: 3em;
     height: 3em;
     margin: 0 50px;
@@ -896,15 +968,15 @@ export default {
     filter: var(--primary-filter);
 }
 
-.sheet-longtext-mobile-config-item-row img:first-of-type {
+.macro-button-mobile-config-item-row img:first-of-type {
     rotate: 180deg;
 }
 
-.sheet-longtext-mobile-expanded-remove-button {
+.macro-button-mobile-expanded-remove-button {
     margin: 15px 0 !important;
 }
 
-.sheet-longtext-mobile-expanded-visualize-body {
+.macro-button-mobile-expanded-visualize-body {
     width: 90%;
     height: fit-content;
     display: flex;
@@ -914,7 +986,7 @@ export default {
     margin-top: 10px;
 }
 
-.sheet-longtext-mobile-expanded-name {
+.macro-button-mobile-expanded-name {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -934,7 +1006,7 @@ export default {
     vertical-align: middle;
 }
 
-.sheet-longtext-mobile-expanded-edit-body .sheet-longtext-mobile-expanded-value p {
+.macro-button-mobile-expanded-edit-body .macro-button-mobile-expanded-value p {
     font-size: 0.9em;
     color: red;
     font-weight: bold;
@@ -947,7 +1019,7 @@ export default {
     text-align: center !important;
 }
 
-.sheet-longtext-mobile-expanded-name h4 {
+.macro-button-mobile-expanded-name h4 {
     font-size: 1.2em;
     font-weight: bold;
     margin: 0;
@@ -957,8 +1029,8 @@ export default {
     hyphens: auto;
 }
 
-.sheet-longtext-mobile-expanded-value {
-    height: fit-content;
+.macro-button-mobile-expanded-value {
+    height: max-content;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -972,23 +1044,22 @@ export default {
     margin-bottom: 70px;
 }
 
-.sheet-longtext-mobile-expanded-value p {
-    font-size: 1.1em;
+.macro-button-mobile-expanded-value p {
+    font-size: 2em;
     font-weight: bold;
     margin: 0;
-    padding: 0px 10px;
-    width: 95%;
-    height: min-content;
+    padding: 0px 15px;
+    width: 90%;
+    height: 100%;
     border: none;
     color: var(--text);
     text-align: justify !important;
     padding: 5px;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    hyphens: auto;
+    overflow: hidden;
+    word-break: break-all;
 }
 
-.sheet-longtext-mobile-expanded-edit-body {
+.macro-button-mobile-expanded-edit-body {
     width: 90%;
     height: fit-content;
     display: flex;
@@ -998,7 +1069,7 @@ export default {
     margin-top: 10px;
 }
 
-.sheet-longtext-mobile-expanded-edit-body input {
+.macro-button-mobile-expanded-edit-body input {
     width: 100%;
     height: 100%;
     background-color: var(--background);
@@ -1013,7 +1084,7 @@ export default {
     text-align: center;
 }
 
-.sheet-longtext-mobile-expanded-edit-body textarea {
+.macro-button-mobile-expanded-edit-body textarea {
     width: 95%;
     height: 50vmax;
     background-color: var(--primary);
@@ -1021,7 +1092,7 @@ export default {
     border-radius: 0 0 10px 10px;
     outline: none;
     color: var(--text);
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: bold;
     margin: 0;
     padding: 5px;

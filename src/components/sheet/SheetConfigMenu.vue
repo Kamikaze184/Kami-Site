@@ -15,7 +15,7 @@ export default {
                     messages: {
                         tooShort: 'O nome da ficha deve ter no mínimo 3 caracteres',
                         tooLong: 'O nome da ficha deve ter no máximo 32 caracteres',
-                        invalidChars: 'O nome de usuário deve conter apenas letras, números e _',
+                        invalidChars: 'O nome da ficha deve conter apenas letras, números e _',
                     },
                 },
             },
@@ -79,7 +79,7 @@ export default {
                 return
             }
             else {
-                eventEmitter.emit('edit-sheet-name', this.sheetName)
+                eventEmitter.emit('sheet-edit-sheet-name', this.sheetName)
             }
         },
         toggleSheetVisibility() {
@@ -87,13 +87,13 @@ export default {
                 return
             }
             else {
-                eventEmitter.emit('toggle-sheet-visibility', this.sheetPublic)
+                eventEmitter.emit('sheet-toggle-sheet-visibility', this.sheetPublic)
             }
         },
         deleteSheet() {
             if (this.sheetDeleteConfirm) {
                 this.deletingSheet = true
-                eventEmitter.emit('delete-sheet')
+                eventEmitter.emit('sheet-delete-sheet')
             }
         }
     },

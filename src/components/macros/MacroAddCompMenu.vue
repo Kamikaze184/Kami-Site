@@ -14,10 +14,10 @@ export default {
                     state: false,
                     actualMessage: '',
                     messages: {
-                        empty: 'O nome do atributo não pode ser vazio',
-                        tooLong: 'O nome do atributo não pode ter mais de 32 caracteres',
-                        invalidChars: 'O nome do atributo não pode conter caracteres especiais',
-                        alreadyExists: 'O nome do atributo já existe',
+                        empty: 'O nome do componente não pode ser vazio',
+                        tooLong: 'O nome do componente não pode ter mais de 32 caracteres',
+                        invalidChars: 'O nome do componente não pode conter caracteres especiais',
+                        alreadyExists: 'O nome do componente já existe',
                     }
                 }
             }
@@ -25,7 +25,7 @@ export default {
     },
     methods: {
         closeMenu() {
-            eventEmitter.emit('close-sheet-menu')
+            eventEmitter.emit('close-macro-menu')
             this.newComponent = {
                 name: '',
                 type: 0
@@ -66,7 +66,7 @@ export default {
                 return
             }
 
-            eventEmitter.emit('sheet-create-new-component', this.newComponent)
+            eventEmitter.emit('macro-create-new-component', this.newComponent)
             this.newComponent = {
                 name: '',
                 type: 0
@@ -74,50 +74,36 @@ export default {
         }
     },
     mounted(){
-        eventEmitter.on('sheet-set-section-attributes', (sectionAttributes) => {
+        eventEmitter.on('macro-set-section-attributes', (sectionAttributes) => {
             this.sectionAttributes = sectionAttributes
         })
-        eventEmitter.emit('sheet-get-section-attributes')
+        eventEmitter.emit('macro-get-section-attributes')
     }
 }
 </script>
 <template>
-    <div id="sheet-add-comp-menu" ref="sheet-add-comp-menu">
-        <div class="sheet-add-comp-menu-list">
-            <div class="sheet-add-comp-menu-box">
-                <div class="sheet-add-comp-menu-item">
-                    <div class="sheet-add-comp-menu-item-title">
+    <div id="macro-add-comp-menu" ref="macro-add-comp-menu">
+        <div class="macro-add-comp-menu-list">
+            <div class="macro-add-comp-menu-box">
+                <div class="macro-add-comp-menu-item">
+                    <div class="macro-add-comp-menu-item-title">
                         <h1>Adicionar novo componente</h1>
                     </div>
                 </div>
-                <div class="sheet-add-comp-menu-item">
-                    <div class="sheet-add-comp-menu-item-title">
+                <div class="macro-add-comp-menu-item">
+                    <div class="macro-add-comp-menu-item-title">
                         <h2>Nome do componente</h2>
                     </div>
-                    <div class="sheet-add-comp-menu-item-value">
+                    <div class="macro-add-comp-menu-item-value">
                         <input type="text" v-model="newComponent.name" @keyup="validateComponentName()"
                             @change="validateComponentName()">
                         <p v-if="validationErrors.newComponentName.state">{{ validationErrors.newComponentName.actualMessage }}</p>
                     </div>
                 </div>
-                <div class="sheet-add-comp-menu-item">
-                    <div class="sheet-add-comp-menu-item-title">
-                        <h2>Tipo do componente</h2>
-                    </div>
-                    <div class="sheet-add-comp-menu-item-value">
-                        <select v-model="newComponent.type">
-                            <option value="0">Texto</option>
-                            <option value="1">Número</option>
-                            <option value="2">Imagem</option>
-                            <option value="3">Lista</option>
-                            <option value="4">Barra</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="sheet-add-comp-menu-item">
+                <div class="macro-add-comp-menu-item">
                     <button @click="createNewComponent()">Confirmar</button>
                 </div>
-                <div class="sheet-add-comp-menu-item">
+                <div class="macro-add-comp-menu-item">
                     <button @click="closeMenu()">Voltar</button>
                 </div>
             </div>
@@ -125,7 +111,7 @@ export default {
     </div>
 </template>
 <style>
-#sheet-add-comp-menu {
+#macro-add-comp-menu {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -138,7 +124,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheet-add-comp-menu-list {
+.macro-add-comp-menu-list {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -150,7 +136,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheet-add-comp-menu-box {
+.macro-add-comp-menu-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -163,7 +149,7 @@ export default {
     height: 40em;
 }
 
-.sheet-add-comp-menu-item {
+.macro-add-comp-menu-item {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -172,7 +158,7 @@ export default {
     margin: 1em 0;
 }
 
-.sheet-add-comp-menu-item-title {
+.macro-add-comp-menu-item-title {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -181,7 +167,7 @@ export default {
     margin: 5px
 }
 
-.sheet-add-comp-menu-item-value {
+.macro-add-comp-menu-item-value {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -190,7 +176,7 @@ export default {
     margin: 5px
 }
 
-.sheet-add-comp-menu-item-value p {
+.macro-add-comp-menu-item-value p {
     font-size: 1.1em;
     font-weight: bold;
     color: var( --cancel-secondary);
@@ -198,7 +184,7 @@ export default {
     text-align: center;
 }
 
-.sheet-add-comp-menu-item-title h1 {
+.macro-add-comp-menu-item-title h1 {
     font-size: 2em;
     font-weight: 700;
     color: var(--text);
@@ -206,14 +192,14 @@ export default {
     text-align: center;
 }
 
-.sheet-add-comp-menu-item-title h2 {
+.macro-add-comp-menu-item-title h2 {
     font-size: 1.5em;
     font-weight: 700;
     color: var(--text);
     margin: 0;
 }
 
-.sheet-add-comp-menu-item-value input {
+.macro-add-comp-menu-item-value input {
     font-size: 1em;
     width: 70%;
     height: 40px;
@@ -223,7 +209,7 @@ export default {
     outline: none;
 }
 
-.sheet-add-comp-menu-item-value select {
+.macro-add-comp-menu-item-value select {
     font-size: 1em;
     width: 70%;
     height: 40px;
@@ -233,7 +219,7 @@ export default {
     outline: none;
 }
 
-.sheet-add-comp-menu-item button {
+.macro-add-comp-menu-item button {
     font-size: 1em;
     font-weight: bold;
     width: 70%;
@@ -248,32 +234,32 @@ export default {
     transition: all 0.2s linear;
 }
 
-.sheet-add-comp-menu-item button:hover {
+.macro-add-comp-menu-item button:hover {
     background-color: var(--background-secondary);
 }
 
-.sheet-delete-confirm {
+.macro-delete-confirm {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.sheet-delete-confirm p {
+.macro-delete-confirm p {
     font-size: 1em;
     font-weight: bold;
     color: var(--text);
     margin: 0;
 }
 
-.sheet-delete-confirm-buttons {
+.macro-delete-confirm-buttons {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.sheet-delete-confirm-buttons button {
+.macro-delete-confirm-buttons button {
     font-size: 1em;
     font-weight: bold;
     width: 45%;
@@ -299,11 +285,11 @@ export default {
 }
 
 @media (max-width: 800px) {
-    #sheet-add-comp-menu {
+    #macro-add-comp-menu {
         margin-bottom: 0;
     }
 
-    .sheet-add-comp-menu-box {
+    .macro-add-comp-menu-box {
         width: 80%;
         height: 70%;
         text-align: center;
