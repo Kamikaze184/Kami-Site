@@ -593,7 +593,7 @@ export default {
             eventEmitter.emit('sheet-set-max-position', this.sheet.attributes.sections[this.actualSectionIndex].attributes.length - 1)
         })
 
-        eventEmitter.on('sheet-close-sheet-menu', () => {
+        eventEmitter.on('close-sheet-menu', () => {
             this.menu = 'None'
         })
 
