@@ -418,8 +418,7 @@ export default {
                         <div class="synced-discord" v-else>
                             <div class="discord-profile">
                                 <img class="discord-avatar" :src="originalUser.discord.avatar_url">
-                                <p class="discord-username">{{ originalUser.discord.username }}#{{
-                                    originalUser.discord.discriminator }}</p>
+                                <p class="discord-username">{{ originalUser.discord.username }}</p>
                             </div>
                             <button @click="confirmations.unsyncDiscord = true">Desvincular conta do Discord</button>
                         </div>

@@ -14,6 +14,7 @@ import SheetEditSectionMenu from '../components/sheet/SheetEditSectionMenu.vue'
 import { eventEmitter } from '../utils/EventEmitter.js'
 import config from '../config/publicVars.js'
 import socket from '../services/websocket.service'
+import lastUseStore from '../utils/LastUseStore'
 
 const componentList = [SheetLongText, SheetNumber, SheetImage, SheetList, SheetBar]
 
@@ -66,7 +67,7 @@ export default {
             },
             cache: 'no-cache'
         })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
                 if (data.sheet) {
                     if (this.$store.state.user.id == userId) {
@@ -112,9 +113,18 @@ export default {
                         this.sheetLoaded = true
                     }
 
+                    lastUseStore.set('sheets', `${this.sheet.user_id}-${this.sheet.sheet_name}`, {
+                        id: this.sheet.id,
+                        name: this.sheet.sheet_name,
+                        userid: this.sheet.user_id,
+                        username: this.sheet.user.username,
+                        lastUse: Date.now()
+                    })
+
                     socket.emit('open-sheet', this.sheet.id)
                 }
                 else {
+                    lastUseStore.delete('sheets', `${userId}-${sheetName}`)
                     window.location.href = '/login'
                 }
             })
@@ -226,7 +236,7 @@ export default {
             this.actualSectionIndex = this.sheet.attributes.sections.length - 1
             this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
             this.sections = this.getSheetSections()
-            eventEmitter.emit('set-sections', this.sections)
+            eventEmitter.emit('sheet-set-sections', this.sections)
 
             this.reDefinePosition()
         },
@@ -234,23 +244,23 @@ export default {
             this.sheet.attributes.sections[this.actualSectionIndex].name = sectionName
             this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
             this.sections = this.getSheetSections()
-            eventEmitter.emit('set-sections', this.sections)
+            eventEmitter.emit('sheet-set-sections', this.sections)
         },
         openAddNewSectionMenu() {
             if (this.isSheetOwner) {
-                eventEmitter.emit('set-sections', this.sections)
+                eventEmitter.emit('sheet-set-sections', this.sections)
                 this.menu = 'AddSection'
             }
         },
         openEditSectionMenu() {
             if (this.isSheetOwner) {
-                eventEmitter.emit('set-section', this.sections)
+                eventEmitter.emit('sheet-set-section', this.sections)
                 this.menu = 'EditSection'
             }
         },
         openAddCompMenu() {
             if (this.isSheetOwner) {
-                eventEmitter.emit('set-section-attributes', this.sheet.attributes.sections[this.actualSectionIndex].attributes)
+                eventEmitter.emit('sheet-set-section-attributes', this.sheet.attributes.sections[this.actualSectionIndex].attributes)
                 this.menu = 'AddComp'
             }
         },
@@ -391,11 +401,11 @@ export default {
 
                     if (res.status == 200) {
                         if (this.sheet.sheet_name != updatedSheet.sheet_name) {
-                            eventEmitter.emit('add-notification', `Ficha ${this.sheetName} renomeada e salva`, 'As altereções foram salvas com sucesso', 'Trivial')
+                            eventEmitter.emit('add-notification', `Ficha ${this.sheetName} renomeada e salva`, 'As alterações foram salvas com sucesso', 'Trivial')
                             window.location.href = `/ficha/${this.userId}/${this.sheetName}`
                         }
                         else {
-                            eventEmitter.emit('add-notification', `Ficha ${this.sheetName} salva`, 'As altereções foram salvas com sucesso', 'Trivial')
+                            eventEmitter.emit('add-notification', `Ficha ${this.sheetName} salva`, 'As alterações foram salvas com sucesso', 'Trivial')
                             this.sheetSavedSuccess = true
                         }
                     }
@@ -433,16 +443,17 @@ export default {
                 })
 
                 if (res.status == 200) {
-                    eventEmitter.emit('add-notification', `Ficha ${this.sheetName} apagar`, 'A ficha foi apagada com sucesso', 'Trivial')
+                    lastUseStore.delete('sheets', `${this.sheet.user_id}-${this.sheet.sheet_name}`)
+                    eventEmitter.emit('add-notification', `Ficha ${this.sheetName} apagada`, 'A ficha foi apagada com sucesso', 'Trivial')
                     window.location.href = `/fichas`
                 }
                 else if (res.status == 401) {
-                    eventEmitter.emit('add-notification', 'Erro ao apgar a ficha', 'Você não tem permissão para apagar essa ficha', 'Trivial')
+                    eventEmitter.emit('add-notification', 'Erro ao apagar a ficha', 'Você não tem permissão para apagar essa ficha', 'Trivial')
                     localStorage.removeItem('token')
                     window.location.href = '/login'
                 }
                 else {
-                    this.sheetValidationErrors = ['Erro desconhecido ao tentar deletar a ficha, tente novamente mais tarde']
+                    this.sheetValidationErrors = ['Erro desconhecido ao tentar apagar a ficha, tente novamente mais tarde']
                     this.menu = 'ShowErrors'
                 }
             }
@@ -487,7 +498,7 @@ export default {
             }
         })
 
-        eventEmitter.on('remove-component', (component) => {
+        eventEmitter.on('sheet-remove-component', (component) => {
             const sectionIndex = component.getAttribute('position').split('-')[0]
             const componentIndex = component.getAttribute('position').split('-')[1]
 
@@ -498,7 +509,7 @@ export default {
             this.reDefinePosition()
         })
 
-        eventEmitter.on('update-component', (component, name, value) => {
+        eventEmitter.on('sheet-update-component', (component, name, value) => {
             if (component.classList[0] == 'sheet-image-wrapper') {
                 if (value) {
                     const sectionIndex = component.getAttribute('position').split('-')[0]
@@ -519,7 +530,7 @@ export default {
             }
         })
 
-        eventEmitter.on('move-component', (component, section, position) => {
+        eventEmitter.on('sheet-move-component', (component, section, position) => {
             const sectionIndex = component.getAttribute('position').split('-')[0]
             const componentIndex = component.getAttribute('position').split('-')[1]
 
@@ -545,11 +556,11 @@ export default {
             this.reDefinePosition()
 
             if (position != componentIndex) {
-                eventEmitter.emit('component-being-moved', component)
+                eventEmitter.emit('sheet-component-being-moved', component)
             }
         })
 
-        eventEmitter.on('invalid-component', (component, errors) => {
+        eventEmitter.on('sheet-invalid-component', (component, errors) => {
             const sectionIndex = component.getAttribute('position').split('-')[0]
             const componentIndex = component.getAttribute('position').split('-')[1]
 
@@ -559,7 +570,7 @@ export default {
             }
         })
 
-        eventEmitter.on('valid-component', (component) => {
+        eventEmitter.on('sheet-valid-component', (component) => {
             const sectionIndex = component.getAttribute('position').split('-')[0]
             const componentIndex = component.getAttribute('position').split('-')[1]
 
@@ -569,61 +580,61 @@ export default {
             }
         })
 
-        eventEmitter.on('edit-sheet-name', (sheetName) => {
+        eventEmitter.on('sheet-edit-sheet-name', (sheetName) => {
             this.sheetName = sheetName
             this.menu = 'None'
         })
 
-        eventEmitter.on('get-sections', () => {
-            eventEmitter.emit('set-sections', this.sections)
+        eventEmitter.on('sheet-get-sections', () => {
+            eventEmitter.emit('sheet-set-sections', this.sections)
         })
 
-        eventEmitter.on('get-max-position', () => {
-            eventEmitter.emit('set-max-position', this.sheet.attributes.sections[this.actualSectionIndex].attributes.length - 1)
+        eventEmitter.on('sheet-get-max-position', () => {
+            eventEmitter.emit('sheet-set-max-position', this.sheet.attributes.sections[this.actualSectionIndex].attributes.length - 1)
         })
 
-        eventEmitter.on('close-sheet-menu', () => {
+        eventEmitter.on('sheet-close-sheet-menu', () => {
             this.menu = 'None'
         })
 
-        eventEmitter.on('create-new-section', (sectionName) => {
+        eventEmitter.on('sheet-create-new-section', (sectionName) => {
             this.menu = 'None'
             this.createNewSection(sectionName)
         })
 
-        eventEmitter.on('create-new-component', (component) => {
+        eventEmitter.on('sheet-create-new-component', (component) => {
             this.menu = 'None'
             this.createNewComponent(component)
         })
 
-        eventEmitter.on('edit-section', (sectionName) => {
+        eventEmitter.on('sheet-edit-section', (sectionName) => {
             this.menu = 'None'
             this.editSection(sectionName)
         })
 
-        eventEmitter.on('get-actual-section', () => {
-            eventEmitter.emit('set-actual-section', this.sheet.attributes.sections[this.actualSectionIndex])
+        eventEmitter.on('sheet-get-actual-section', () => {
+            eventEmitter.emit('sheet-set-actual-section', this.sheet.attributes.sections[this.actualSectionIndex])
         })
 
-        eventEmitter.on('delete-sheet', () => {
+        eventEmitter.on('sheet-delete-sheet', () => {
             this.deleteSheet()
         })
 
-        eventEmitter.on('toggle-sheet-visibility', (sheet_visibility) => {
+        eventEmitter.on('sheet-toggle-sheet-visibility', (sheet_visibility) => {
             this.sheet.is_public = sheet_visibility
         })
 
-        eventEmitter.on('delete-section', (section) => {
+        eventEmitter.on('sheet-delete-section', (section) => {
             this.menu = 'None'
             this.sheet.attributes.sections.splice(section.position, 1)
             this.actualSectionIndex = 0
             this.actualSectionName = this.sheet.attributes.sections[this.actualSectionIndex].name
             this.sections = this.getSheetSections()
-            eventEmitter.emit('set-sections', this.sections)
+            eventEmitter.emit('sheet-set-sections', this.sections)
             this.reDefinePosition()
         })
 
-        eventEmitter.on('clear-section', (section) => {
+        eventEmitter.on('sheet-clear-section', (section) => {
             this.menu = 'None'
             this.sheet.attributes.sections[section.position].attributes = []
             this.reDefinePosition()

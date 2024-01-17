@@ -1,7 +1,7 @@
 <script>
 import socket from '../services/websocket.service'
 import config from '../config/publicVars'
-const signedRoutes = ['Dashboard', 'Sheets', 'Macros', 'Campaigns', 'Sheet', 'Config']
+const signedRoutes = ['Dashboard', 'Sheets', 'Macros', 'Campaigns', 'Sheet', 'Config', 'Macro']
 
 export default {
   data() {
@@ -96,7 +96,7 @@ export default {
 
           this.$refs['signed-nav-bar'].style.zIndex = '4'
 
-          if (this.$route.name != 'Sheet') {
+          if (this.$route.name != 'Sheet' && this.$route.name != 'Macro') {
             this.$refs['toggle-signed-nav-bar'].style.filter = 'var(--primary-filter)'
           }
 
@@ -165,7 +165,7 @@ export default {
         <div class="dropdown-content">
           <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/fichas">Fichas</router-link>
-          <router-link to="/campanhas">Campanhas</router-link>
+          <!-- <router-link to="/campanhas">Campanhas</router-link> -->
           <router-link to="/macros">Macros</router-link>
           <router-link to="/logout" cancel="true">Sair</router-link>
         </div>
@@ -195,7 +195,7 @@ export default {
             <div class="mobile-sign-menu-content">
               <router-link to="/dashboard">Dashboard</router-link>
               <router-link to="/fichas">Fichas</router-link>
-              <router-link to="/campanhas">Campanhas</router-link>
+              <!-- <router-link to="/campanhas">Campanhas</router-link> -->
               <router-link to="/macros">Macros</router-link>
               <router-link to="/logout" cancel="true">Sair</router-link>
             </div>
@@ -224,7 +224,7 @@ export default {
         <div class="dashboard-buttons">
           <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/fichas" class="menu-button">Fichas</router-link>
-          <router-link to="/campanhas" class="menu-button">Campanhas</router-link>
+          <!-- <router-link to="/campanhas" class="menu-button">Campanhas</router-link> -->
           <router-link to="/macros" class="menu-button">Macros</router-link>
         </div>
         <div class="other-buttons">
@@ -733,8 +733,6 @@ export default {
 #signed-nav-bar .menu-buttons .link-active {
   background-color: var(--background-secondary);
 }
-
-
 
 @media screen and (max-width: 800px) {
   #nav-bar {

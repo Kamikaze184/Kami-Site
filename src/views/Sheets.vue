@@ -19,7 +19,7 @@ export default {
                     messages: {
                         tooShort: 'O nome da ficha deve ter no mínimo 3 caracteres',
                         tooLong: 'O nome da ficha deve ter no máximo 32 caracteres',
-                        invalidChars: 'O nome de usuário deve conter apenas letras, números e _',
+                        invalidChars: 'O nome da ficha deve conter apenas letras, números e _',
                         duplicated: 'Já existe uma ficha com esse nome',
                     },
                 },
@@ -125,7 +125,7 @@ export default {
         })
             .then(res => res.json())
             .then(data => {
-                this.sheets = data.sheets
+                this.sheets = data.sheets || []
                 this.sheetsLoaded = true
             })
 

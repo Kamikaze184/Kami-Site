@@ -87,7 +87,7 @@ export default {
             }
         },
         removeComponent() {
-            eventEmitter.emit('remove-component', this.$refs['sheet-image'])
+            eventEmitter.emit('sheet-remove-component', this.$refs['sheet-image'])
         },
         toggleVisualizeMode() {
             this.visualizeMode = true
@@ -115,17 +115,17 @@ export default {
 
         this.readonly = this.$refs['sheet-image'].getAttribute('readonly') == ''
 
-        eventEmitter.on('set-sections', (sections) => {
+        eventEmitter.on('sheet-set-sections', (sections) => {
             this.sections = sections
         })
-        eventEmitter.emit('get-sections')
+        eventEmitter.emit('sheet-get-sections')
 
-        eventEmitter.on('set-max-position', (positions) => {
+        eventEmitter.on('sheet-set-max-position', (positions) => {
             this.maxPosition = positions
         })
-        eventEmitter.emit('get-max-position')
+        eventEmitter.emit('sheet-get-max-position')
 
-        eventEmitter.on('component-being-moved', async (component) => {
+        eventEmitter.on('sheet-component-being-moved', async (component) => {
             if (component.getAttribute('name') == this.name) {
                 if (this.mobile) {
                     this.expanded = true
@@ -142,13 +142,13 @@ export default {
         value() {
             this.value = this.value.trim()
             this.validateValue()
-            eventEmitter.emit('update-component', this.$refs['sheet-image'], this.name, this.value)
+            eventEmitter.emit('sheet-update-component', this.$refs['sheet-image'], this.name, this.value)
         },
         section() {
-            eventEmitter.emit('move-component', this.$refs['sheet-image'], this.section, this.position)
+            eventEmitter.emit('sheet-move-component', this.$refs['sheet-image'], this.section, this.position)
         },
         position() {
-            eventEmitter.emit('move-component', this.$refs['sheet-image'], this.section, this.position)
+            eventEmitter.emit('sheet-move-component', this.$refs['sheet-image'], this.section, this.position)
         },
         validationErrors: {
             handler() {
@@ -159,10 +159,10 @@ export default {
                             actualMessage: this.validationErrors.value.actualMessage
                         }
                     }
-                    eventEmitter.emit('invalid-component', this.$refs['sheet-image'], errors)
+                    eventEmitter.emit('sheet-invalid-component', this.$refs['sheet-image'], errors)
                 }
                 else {
-                    eventEmitter.emit('valid-component', this.$refs['sheet-image'])
+                    eventEmitter.emit('sheet-valid-component', this.$refs['sheet-image'])
                 }
             },
             deep: true
@@ -228,7 +228,7 @@ export default {
         </div>
         <div class="sheet-image-mobile-expanded" v-if="mobile && expanded">
             <div class="sheet-image-mobile-expanded-box">
-                <button class="sheet-image-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
+                <button class="sheet-image-mobile-back-button" @click="toggleVisualizeMode(); expanded = false;" v-if="readonly">Voltar</button>
                 <div class="sheet-image-mobile-expanded-controls" v-if="!readonly">
                     <button @click="toggleVisualizeMode(); expanded = false;">Voltar</button>
                     <div class="sheet-image-mobile-config-item-row">

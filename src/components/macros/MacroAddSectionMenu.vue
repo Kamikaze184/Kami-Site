@@ -24,7 +24,7 @@ export default {
     },
     methods: {
         closeMenu() {
-            eventEmitter.emit('close-sheet-menu')
+            eventEmitter.emit('close-macro-menu')
         },
         validateSectionName() {
             const sectionName = this.newSection.name.trim()
@@ -61,41 +61,41 @@ export default {
                 return
             }
 
-            eventEmitter.emit('sheet-create-new-section', this.newSection.name)
+            eventEmitter.emit('macro-create-new-section', this.newSection.name)
             this.newSection.name = ''
         }
     },
     mounted() {
-        eventEmitter.on('sheet-set-sections', (sections) => {
+        eventEmitter.on('macro-set-sections', (sections) => {
             this.sections = sections
         })
-        eventEmitter.emit('sheet-get-sections')
+        eventEmitter.emit('macro-get-sections')
     }
 }
 </script>
 <template>
-    <div id="sheet-add-section-menu" ref="sheet-add-section-menu">
-        <div class="sheet-add-section-menu-list">
-            <div class="sheet-add-section-menu-box">
-                <div class="sheet-add-section-menu-item">
-                    <div class="sheet-add-section-menu-item-title">
+    <div id="macro-add-section-menu" ref="macro-add-section-menu">
+        <div class="macro-add-section-menu-list">
+            <div class="macro-add-section-menu-box">
+                <div class="macro-add-section-menu-item">
+                    <div class="macro-add-section-menu-item-title">
                         <h1>Criar nova seção</h1>
                     </div>
                 </div>
-                <div class="sheet-add-section-menu-item">
-                    <div class="sheet-add-section-menu-item-title">
+                <div class="macro-add-section-menu-item">
+                    <div class="macro-add-section-menu-item-title">
                         <h2>Nome da seção</h2>
                     </div>
-                    <div class="sheet-add-section-menu-item-value">
+                    <div class="macro-add-section-menu-item-value">
                         <input v-model="newSection.name" type="text" placeholder="Não pode ser vazio"
                             @keyup="validateSectionName()" @change="validateSectionName()" />
                         <p v-if="validationErrors.newSection.state">{{ validationErrors.newSection.actualMessage }}</p>
                     </div>
-                    <div class="sheet-add-section-menu-item-value">
+                    <div class="macro-add-section-menu-item-value">
                         <button @click="createNewSection()">Confirmar</button>
                     </div>
                 </div>
-                <div class="sheet-add-section-menu-item">
+                <div class="macro-add-section-menu-item">
                     <button @click="closeMenu()">Voltar</button>
                 </div>
             </div>
@@ -103,7 +103,7 @@ export default {
     </div>
 </template>
 <style>
-#sheet-add-section-menu {
+#macro-add-section-menu {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -116,7 +116,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheet-add-section-menu-list {
+.macro-add-section-menu-list {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -128,7 +128,7 @@ export default {
     z-index: 2 !important;
 }
 
-.sheet-add-section-menu-box {
+.macro-add-section-menu-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -141,7 +141,7 @@ export default {
     height: 40em;
 }
 
-.sheet-add-section-menu-item {
+.macro-add-section-menu-item {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -150,7 +150,7 @@ export default {
     margin: 1em 0;
 }
 
-.sheet-add-section-menu-item-title {
+.macro-add-section-menu-item-title {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -159,7 +159,7 @@ export default {
     margin: 5px
 }
 
-.sheet-add-section-menu-item-value {
+.macro-add-section-menu-item-value {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -168,21 +168,21 @@ export default {
     margin: 5px
 }
 
-.sheet-add-section-menu-item-title h1 {
+.macro-add-section-menu-item-title h1 {
     font-size: 2em;
     font-weight: 700;
     color: var(--text);
     margin: 0;
 }
 
-.sheet-add-section-menu-item-title h2 {
+.macro-add-section-menu-item-title h2 {
     font-size: 1.5em;
     font-weight: 700;
     color: var(--text);
     margin: 0;
 }
 
-.sheet-add-section-menu-item-value input {
+.macro-add-section-menu-item-value input {
     font-size: 1em;
     width: 70%;
     height: 40px;
@@ -192,7 +192,7 @@ export default {
     outline: none;
 }
 
-.sheet-add-section-menu-item-value p {
+.macro-add-section-menu-item-value p {
     font-size: 1.1em;
     font-weight: bold;
     color: var( --cancel-secondary);
@@ -200,7 +200,7 @@ export default {
     text-align: center;
 }
 
-.sheet-add-section-menu-item button {
+.macro-add-section-menu-item button {
     font-size: 1em;
     font-weight: bold;
     width: 70%;
@@ -215,32 +215,32 @@ export default {
     transition: all 0.2s linear;
 }
 
-.sheet-add-section-menu-item button:hover {
+.macro-add-section-menu-item button:hover {
     background-color: var(--background-secondary);
 }
 
-.sheet-delete-confirm {
+.macro-delete-confirm {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.sheet-delete-confirm p {
+.macro-delete-confirm p {
     font-size: 1em;
     font-weight: bold;
     color: var(--text);
     margin: 0;
 }
 
-.sheet-delete-confirm-buttons {
+.macro-delete-confirm-buttons {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.sheet-delete-confirm-buttons button {
+.macro-delete-confirm-buttons button {
     font-size: 1em;
     font-weight: bold;
     width: 45%;
@@ -266,11 +266,11 @@ export default {
 }
 
 @media (max-width: 800px) {
-    #sheet-add-section-menu {
+    #macro-add-section-menu {
         margin-bottom: 0;
     }
 
-    .sheet-add-section-menu-box {
+    .macro-add-section-menu-box {
         width: 80%;
         height: 70%;
         text-align: center;
