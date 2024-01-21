@@ -166,13 +166,10 @@ export default {
     },
     watch: {
         name() {
-            this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('sheet-update-component', this.$refs['sheet-number'], this.name, this.value)
         },
         value() {
-            this.value = this.value.trim()
-
             if (this.mobile) {
                 if (this.value.length > 3 && this.value.length < 6) {
                     this.$refs['sheet-number'].querySelector('.sheet-number-mobile-value p').style.fontSize = `${5 - (this.value.length - 3) * (0.1 + (0.1 * this.value.length))}em`

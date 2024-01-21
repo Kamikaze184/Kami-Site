@@ -45,7 +45,7 @@ export default {
                 this.validationErrors.macroName.actualMessage = this.validationErrors.macroName.messages.tooLong
                 return
             }
-            else if (!macroName.match(/^[a-zA-Z0-9_]{1,}(?: [a-zA-Z0-9_]+){0,}$/gim)) {
+            else if (macroName.match(/['$%]/g)) {
                 this.validationErrors.macroName.state = true
                 this.validationErrors.macroName.actualMessage = this.validationErrors.macroName.messages.invalidChars
                 return

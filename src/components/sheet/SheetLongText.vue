@@ -166,12 +166,10 @@ export default {
     },
     watch: {
         name() {
-            this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('sheet-update-component', this.$refs['sheet-longtext'], this.name, this.value)
         },
         value() {
-            this.value = this.value.trim()
             this.validateValue()
             eventEmitter.emit('sheet-update-component', this.$refs['sheet-longtext'], this.name, this.value)
         },

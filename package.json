@@ -1,13 +1,20 @@
 {
   "name": "kami-site",
   "private": true,
-  "version": "5.12.1",
+  "version": "5.12.2",
   "type": "module",
   "scripts": {
     "dev": "vite --port 4000",
     "build": "vite build",
     "preview": "vite preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alanfilho184/Kami-Site.git"
+  },
+  "keywords": [],
+  "author": "alanfilho184",
+  "license": "CC BY-NC-ND 4.0",
   "dependencies": {
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
