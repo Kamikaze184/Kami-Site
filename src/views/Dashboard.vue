@@ -30,7 +30,15 @@ export default {
             }
 
             if (lastUsedMacros) {
-                this.macros = Object.values(lastUsedMacros)
+                let macros = Object.values(lastUsedMacros)
+
+                macros = macros.sort((a, b) => {
+                    return b.lastUse - a.lastUse
+                })
+
+                macros = macros.slice(0, 5)
+
+                this.macros = macros
             }
         }
     },
