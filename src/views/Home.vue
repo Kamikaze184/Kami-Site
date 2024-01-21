@@ -28,24 +28,8 @@ export default {
         this.usersCount = data.usersCount
         this.sheetsCount = data.sheetsCount
         this.commandsCount = data.commandsCount
+
       })
-  },
-  metaInfo: {
-    title: 'Kami - Home',
-    titleTemplate: '%s',
-    htmlAttrs: {
-      lang: 'pt-br'
-    },
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width,initial-scale=1' },
-      { name: 'theme-color', content: '#000000' },
-      { name: 'description', content: 'O Kami é um BOT para o aplicativo de mensagens Discord, criado com a intenção de ajudar jogadores e mestres de RPG\'s, facilitando algumas coisas durante as sessões e ajudando os mesmos a se organizarem, tendo como principais funções a criação de fichas de personagens e a rolagem de dados, entre diversas outras funções. E tem mais coisas vindo por ai!' },
-      { name: 'keywords', content: 'kami, bot, discord, rpg, ficha, ficha de personagem, ficha de rpg, ficha de personagem de rpg, ficha de rpg online, ficha de personagem online, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online, ficha de personagem online, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online, ficha de personagem online, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis, ficha de rpg online gratis, ficha de personagem online gratis, ficha de rpg gratis, ficha de personagem gratis' },
-      { name: 'robots', content: 'index, follow' },
-      { name: 'googlebot', content: 'index, follow' },
-      { name: 'google', content: 'nositelinkssearchbox' },
-    ]
   }
 }
 </script>
@@ -53,12 +37,11 @@ export default {
 <template>
   <div id="home">
     <div class="home-description">
-      <h1>Que tal algo para facilitar seus RPG's?</h1>
-      <p>O Kami é um BOT para o aplicativo de mensagens Discord, criado com a intenção de ajudar jogadores e mestres de
-        RPG's, facilitando algumas coisas durante as sessões e ajudando os mesmos a se organizarem, tendo como
-        principais funções a criação de fichas de personagens e a rolagem de dados, entre diversas outras funções.
-        E tem mais coisas vindo por ai!</p>
-      <button>Adicione o Kami</button>
+      <h1>Que tal algo para facilitar seus RPGs?</h1>
+      <p>O Kami é uma plataforma para facilitar a vida de mestres e jogadores de RPGs online, com seu principal foco a
+        criação de fichas 100% personalizaveis para qualquer sistema e criação de macros de rolagens de dados, além do
+        compartilhamento e sincronização em tempo real de informações entre usuários e dispositivos!</p>
+      <button @click="$router.push({ name: 'Dashboard' })">Acesse agora</button>
     </div>
     <div class="home-botinfo">
       <div class="home-botinfo-box">
@@ -110,7 +93,7 @@ export default {
 
 .home-description p {
   color: var(--text-secondary);
-  width: 60%;
+  width: 50%;
   font-size: 1em;
   margin: 0;
   margin-bottom: 20px;

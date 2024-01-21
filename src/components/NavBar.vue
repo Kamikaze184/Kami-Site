@@ -152,9 +152,7 @@ export default {
     </router-link>
     <div class="nav-links">
       <router-link to="/">Inicio</router-link>
-      <router-link to="/comandos">Comandos</router-link>
       <router-link to="/tutoriais">Tutoriais</router-link>
-      <router-link to="/convite">Adicione o Kami</router-link>
       <router-link to="/login" v-if="!sign || !userLoaded">Login</router-link>
       <div class="sign-dropdown" v-else-if="sign && userLoaded">
         <div class="user-profile drop-trigger">
@@ -165,7 +163,6 @@ export default {
         <div class="dropdown-content">
           <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/fichas">Fichas</router-link>
-          <!-- <router-link to="/campanhas">Campanhas</router-link> -->
           <router-link to="/macros">Macros</router-link>
           <router-link to="/logout" cancel="true">Sair</router-link>
         </div>
@@ -181,9 +178,7 @@ export default {
 
       <ul id="menu-content">
         <li><router-link to="/">Início</router-link></li>
-        <li><router-link to="/comandos">Comandos</router-link></li>
         <li><router-link to="/tutoriais">Tutoriais</router-link></li>
-        <li><router-link to="/convite">Adicione o Kami</router-link></li>
         <li v-if="!sign || !userLoaded"><router-link to="/login">Login</router-link></li>
         <li v-else-if="sign && userLoaded">
           <div class="mobile-sign-menu">
@@ -195,7 +190,6 @@ export default {
             <div class="mobile-sign-menu-content">
               <router-link to="/dashboard">Dashboard</router-link>
               <router-link to="/fichas">Fichas</router-link>
-              <!-- <router-link to="/campanhas">Campanhas</router-link> -->
               <router-link to="/macros">Macros</router-link>
               <router-link to="/logout" cancel="true">Sair</router-link>
             </div>
@@ -215,16 +209,14 @@ export default {
       </div>
       <div class="menu-buttons">
         <div class="base-buttons">
-          <router-link to="/">Inicio</router-link>
           <div class="sub-buttons">
-            <router-link to="/comandos">Comandos</router-link>
+            <router-link to="/">Inicio</router-link>
             <router-link to="/tutoriais">Tutoriais</router-link>
           </div>
         </div>
         <div class="dashboard-buttons">
           <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/fichas" class="menu-button">Fichas</router-link>
-          <!-- <router-link to="/campanhas" class="menu-button">Campanhas</router-link> -->
           <router-link to="/macros" class="menu-button">Macros</router-link>
         </div>
         <div class="other-buttons">
@@ -340,12 +332,12 @@ export default {
 
 .dropdown-content a[cancel='true'] {
   color: var(--cancel-secondary);
-  background-color: var(--cancel);
+  background-color: var(--background);
 }
 
 .dropdown-content a[cancel='true']:hover {
   background-color: var(--cancel-secondary);
-  color: var(--cancel);
+  color: var(--background);
 }
 
 .sign-dropdown:hover .dropdown-content {

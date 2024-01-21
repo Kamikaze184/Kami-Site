@@ -140,7 +140,6 @@ export default {
     },
     watch: {
         value() {
-            this.value = this.value.trim()
             this.validateValue()
             eventEmitter.emit('sheet-update-component', this.$refs['sheet-image'], this.name, this.value)
         },

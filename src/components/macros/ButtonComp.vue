@@ -170,13 +170,10 @@ export default {
     },
     watch: {
         name() {
-            this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('macro-update-component', this.$refs['macro-button'], this.name, this.value)
         },
         value() {
-            this.value = this.value.trim()
-
             this.validateValue()
             eventEmitter.emit('macro-update-component', this.$refs['macro-button'], this.name, this.value)
         },

@@ -233,7 +233,6 @@ export default {
     },
     watch: {
         name() {
-            this.name = this.name.trim()
             this.validateName()
             eventEmitter.emit('sheet-update-component', this.$refs['sheet-list'], this.name, this.value)
         },

@@ -62,7 +62,7 @@ export default {
                 this.validationErrors.sheetName.actualMessage = this.validationErrors.sheetName.messages.tooLong
                 return
             }
-            else if (!sheetName.match(/^[a-zA-Z0-9_]{1,}(?: [a-zA-Z0-9_]+){0,}$/gim) || sheetName.search(' ') != -1) {
+            else if (sheetName.match(/['$%]/g)) {
                 this.validationErrors.sheetName.state = true
                 this.validationErrors.sheetName.actualMessage = this.validationErrors.sheetName.messages.invalidChars
                 return
